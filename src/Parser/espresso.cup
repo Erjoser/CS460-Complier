@@ -1,0 +1,235 @@
+package Parser;
+
+import Scanner.Scanner;
+import AST.*;
+import Utilities.Error;
+
+
+/* Java 1.2 parser for CUP.  
+ * Copyright (C) 1998 C. Scott Ananian <cananian@alumni.princeton.edu>
+ * This program is released under the terms of the GPL; see the file
+ * COPYING for more details.  There is NO WARRANTY on this code.
+ */
+
+parser code  {: 
+  public Scanner lexer;
+
+  public parser(Scanner l) {
+    this();
+    lexer=l;
+  }
+
+  public void syntax_error(java_cup.runtime.Symbol current) {
+    if(current.value == null) {
+      System.out.println("Unexpected end of file." + Scanner.curLine);
+      System.exit(1);
+    }	
+    else {
+      Token t = (Token)current.value;
+	System.out.println(Error.fileName + ":" + Scanner.lineCount + ": Syntax error:\n\n" + Scanner.curLine);
+	for (int i=1; i<Scanner.curLine.length()+1-t.getLexeme().length(); i++) 
+	  System.out.print(" ");
+        System.out.println("^");
+
+      System.exit(1);
+    }
+  }
+:};
+
+scan with {: return lexer.next_token(); :};
+
+// -----------------------------------------------------------------------------
+// Terminals
+// -----------------------------------------------------------------------------
+
+// Note: The order here must be that of the names[] array in Token.java
+
+// Types
+terminal Token BYTE, CHAR, SHORT, INT, LONG; // integrals
+// YOUR CODE HERE
+
+// Keywords
+terminal Token BREAK; 		// break
+terminal Token CLASS; 		// class
+// YOUR CODE HERE
+
+// Modifiers
+// YOUR CODE HERE
+
+// Literals and Identifiers
+// YOUR CODE HERE
+
+// Operators
+// YOUR CODE HERE
+
+// Misc
+// YOUR CODE HERE
+
+// Brackets
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// Non terminals
+// -----------------------------------------------------------------------------
+
+// Note: Order doesn't matter, but do it in the same blocks as in the grammar.
+
+// 19.2) The Syntactic Grammar
+non terminal AST goal;
+
+// 19.3) Lexical Structure
+// YOUR CODE HERE
+
+// 19.4) Types, Values, and Variables
+// YOUR CODE HERE
+
+// 19.5) Names
+// YOUR CODE HERE
+
+// 19.6) Packages
+// YOUR CODE HERE
+ 
+// 19.7) Productions used only in the LALR(1) grammar
+// YOUR CODE HERE
+
+// 19.8) Classes
+// 19.8.1) Class Declaration
+// YOUR CODE HERE
+
+// 19.8.2) Field Declarations
+// YOUR CODE HERE
+
+// 19.8.3) Method Declarations
+// YOUR CODE HERE
+
+// 19.8.4) Static Initializers
+// YOUR CODE HERE
+
+// 19.8.5) Constructor Declarations
+// YOUR CODE HERE
+
+// 19.9) Interfaces
+// 19.9.1) Interface Declarations
+// YOUR CODE HERE
+
+// 19.10) Arrays
+// YOUR CODE HERE
+
+// 19.11) Blocks and Statements
+// YOUR CODE HERE
+
+// 19.12) Expressions
+// YOUR CODE HERE
+
+start with goal;
+
+// -----------------------------------------------------------------------------
+// 19.2) The Syntactic Grammar
+// -----------------------------------------------------------------------------
+
+goal ::=	compilation_unit
+	;
+// -----------------------------------------------------------------------------
+// 19.3) Lexical Structure.
+// -----------------------------------------------------------------------------
+
+literal ::=	
+		INTEGER_LITERAL
+	|       LONG_LITERAL
+	|       FLOAT_LITERAL
+	|       DOUBLE_LITERAL
+	|	BOOLEAN_LITERAL
+	|	STRING_LITERAL
+	|	NULL_LITERAL
+	|       CHARACTER_LITERAL
+	;
+
+// -----------------------------------------------------------------------------
+// 19.4) Types, Values, and Variables
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.5) Names
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.6) Packages
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.7) Productions used only in the LALR(1) grammar
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.8) Classes
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// 19.8.1) Class Declaration:
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.8.2) Field Declarations
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.8.3) Method Declarations
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.8.4) Static Initializers
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.8.5) Constructor Declarations
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.9) Interfaces
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// 19.9.1) Interface Declarations
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.10) Arrays
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.11) Blocks and Statements
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// 19.12) Expressions
+// -----------------------------------------------------------------------------
+
+// YOUR CODE HERE
+
+// -----------------------------------------------------------------------------
+// End of productions
+// -----------------------------------------------------------------------------
