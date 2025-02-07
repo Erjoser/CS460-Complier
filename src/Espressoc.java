@@ -4,6 +4,7 @@ import Parser.*;
 import Phases.*;
 import Utilities.Settings;
 import AST.*;
+import CodeGenerator.WriteFiles;
 
 /**
  * The main driver class of the espresso compiler.
@@ -92,6 +93,9 @@ public class Espressoc {
 		    Settings.fileExt = 	"."+argv[i+1];
 		    i++;
 		    continue;
+		} else if (argv[i].equals("-var")) {
+			Settings.generateVars = true;	
+		    continue;
 		} else if (argv[i].equals("-I")) {
 		    if (argv[i+1].charAt(argv[i+1].length()-1) == '/')
 			argv[i+1] = argv[i+1].substring(0, argv[i+1].length()-1);
@@ -130,7 +134,35 @@ public class Espressoc {
 	    
 	    switch (phase) {
 	    case 1: new Phase1().execute(p, debugLevel, 0x0001); break;
+		//<--
+	    case 2: new Phase2().execute(p, debugLevel, 0x0003); break;
+	    case 3: new Phase3().execute(p, debugLevel, 0x0007); break;
+	    case 4: new Phase4().execute(p, debugLevel, 0x000F); break;
+	    case 5: new Phase5().execute(p, debugLevel, 0x001F); break;
+	    case 6: new Phase6().execute(p, debugLevel, 0x003F); break;
+		//<<--
+	    case 7: new Phase7().execute(p, debugLevel, 0x007F); break;
+		//-->>
+		//-->
 	    default: System.out.println("Phase " + phase + " does not exist.");
+	    }
+	    
+	    if (phase >= 6) {
+		boolean writeOptimizedCode = (phase == 7);
+		Compilation program = (Compilation)Phase.root;
+		for (int j=0; j<program.types().nchildren;j++) {
+		    ClassDecl cd = (ClassDecl)program.types().children[j];
+		    if (!Utilities.Settings.generateEVMCode) {
+			// do not generate code for Runnable, Object or Thread                                                                        
+			if (cd.name().equals("java/lang/Runnable") ||
+			    cd.name().equals("java/lang/Thread") ||
+			    cd.name().equals("java/lang/Object"))
+			    continue;
+		    }
+		    if (cd.generateCode())
+			WriteFiles.writeFile(cd, writeOptimizedCode, Utilities.Settings.writeCommentsInJasminFile);
+		}
+		
 	    }
 	    System.out.println("============= S = U = C = C = E = S = S =================");
 	}
