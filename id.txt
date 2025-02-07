@@ -4,4 +4,3 @@ are two put both of the group member's info
 
 Name                    Student ID              e-mail
 ----------------------------------------------------------------------
-Eric Garcia		2001908737		garcie51@unlv.nevada.edu
