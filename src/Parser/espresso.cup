@@ -205,26 +205,26 @@ non terminal AST modifier;
 
 // 19.8) Classes
 // 19.8.1) Class Declaration
-non terminal AST class_declaration;
-non terminal AST super_opt, super; 
-non terminal AST interfaces_opt, interfaces, interface_type_list;
-non terminal AST class_body;
-non terminal AST class_body_declarations, class_body_declarations_opt;
-non terminal AST class_body_declaration;
+non terminal ClassDecl class_declaration;
+non terminal Super super_opt, super; 
+non terminal Sequence interfaces_opt, interfaces, interface_type_list;
+non terminal Type class_body;
+non terminal Sequence class_body_declarations, class_body_declarations_opt;
+non terminal ClassBodyDecl class_body_declaration;
 
 // 19.8.2) Field Declarations
-non terminal AST field_declaration;
-non terminal AST variable_declarators;
-non terminal AST variable_declarator;
-non terminal AST variable_declarator_id;
-non terminal AST variable_initializers_opt;
-non terminal AST variable_initializer;
+non terminal FieldDecl field_declaration;
+non terminal VarDecl variable_declarators;
+non terminal VarDecl variable_declarator;
+non terminal VarDecl variable_declarator_id;
+non terminal Sequence variable_initializers_opt;
+non terminal Var variable_initializer;
 
 // 19.8.3) Method Declarations
-non terminal AST method_declaration;
-non terminal AST method_body;
-non terminal AST formal_parameter_list_opt, formal_parameter_list;
-non terminal AST formal_parameter;
+non terminal MethodDecl method_declaration;
+non terminal Name method_body;
+non terminal Sequence formal_parameter_list_opt, formal_parameter_list;
+non terminal Type formal_parameter;
 
 // 19.8.4) Static Initializers
 non terminal AST static_initializer;   
@@ -239,42 +239,42 @@ non terminal AST explicit_constructor_invocation;
 non terminal AST interface_declaration;
 non terminal AST extends_interfaces, extends_interfaces_opt, interface_body;
 non terminal AST interface_member_declarations_opt;
-non terminal AST interface_member_declarations, interface_member_declaration;
-non terminal AST constant_declaration;
-non terminal AST abstract_method_declaration;
+non terminal Sequence interface_member_declarations, interface_member_declaration;
+non terminal Literal constant_declaration;
+non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
 non terminal AST array_initializer;
-non terminal AST variable_initializers;
+non terminal Var variable_initializers;
 
 // 19.11) Blocks and Statements
-non terminal AST block;
-non terminal AST block_statements_opt, block_statements;
-non terminal AST block_statement;
+non terminal Block block;
+non terminal Sequence block_statements_opt, block_statements;
+non terminal Statement block_statement;
 non terminal AST local_variable_declaration;
-non terminal AST statement, statement_no_short_if;
-non terminal AST statement_without_trailing_substatement;
-non terminal AST empty_statement;
-non terminal AST expression_statement;
-non terminal AST statement_expression;
-non terminal AST if_then_statement;
-non terminal AST if_then_else_statement, if_then_else_statement_no_short_if;
-non terminal AST do_statement;
-non terminal AST switch_statement;
-non terminal AST  switch_block;
-non terminal AST switch_block_statement_groups_opt;
-non terminal AST switch_block_statement_groups;
-non terminal AST switch_block_statement_group;
-non terminal AST switch_label;
-non terminal AST switch_labels;
-non terminal AST while_statement, while_statement_no_short_if;
-non terminal AST for_statement, for_statement_no_short_if;
-non terminal AST for_init_opt, for_init;
-non terminal AST for_update_opt, for_update;
-non terminal AST statement_expression_list;
-non terminal AST break_statement; 
-non terminal AST continue_statement;
-non terminal AST return_statement;
+non terminal LocalDecl statement, statement_no_short_if;
+non terminal Statement statement_without_trailing_substatement;
+non terminal Statement empty_statement;
+non terminal ExprStat expression_statement;
+non terminal ExprStat statement_expression;
+non terminal IfStat if_then_statement;
+non terminal IfStat if_then_else_statement, if_then_else_statement_no_short_if;
+non terminal DoStat do_statement;
+non terminal SwitchStat switch_statement;
+non terminal SwitchGroup  switch_block;
+non terminal SwitchStat switch_block_statement_groups_opt;
+non terminal SwitchStat switch_block_statement_groups;
+non terminal SwitchStat switch_block_statement_group;
+non terminal SwitchLabel switch_label;
+non terminal SwitchLabel switch_labels;
+non terminal WhileStat while_statement, while_statement_no_short_if;
+non terminal ForStat for_statement, for_statement_no_short_if;
+non terminal ForStat for_init_opt, for_init;
+non terminal ForStat for_update_opt, for_update;
+non terminal ExprStat statement_expression_list;
+non terminal BreakStat break_statement; 
+non terminal ContinueStat continue_statement;
+non terminal ReturnStat return_statement;
 
 // 19.12) Expressions
 non terminal AST primary, primary_no_new_array;
