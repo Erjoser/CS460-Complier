@@ -178,26 +178,26 @@ terminal Token LBRACK, RBRACK;  // [ ]
 non terminal Compilation goal;
 
 // 19.3) Lexical Structure
-non terminal AST literal;
+non terminal Literal literal;
 
 // 19.4) Types, Values, and Variables
-non terminal AST type;
-non terminal AST primitive_type;
-non terminal AST reference_type;
-non terminal AST class_or_interface_type;
-non terminal AST class_type;
-non terminal AST interface_type;
-non terminal AST array_type;
+non terminal Type type;
+non terminal PrimativeType primitive_type;
+non terminal Type reference_type;
+non terminal ClassType class_or_interface_type;
+non terminal ClassType class_type;
+non terminal ClassType interface_type;
+non terminal ArrayType array_type;
 
 // 19.5) Names
 non terminal Name name; 
 
 // 19.6) Packages
-non terminal AST compilation_unit;
-non terminal AST import_declarations_opt, import_declarations;
-non terminal AST import_declaration;
-non terminal AST type_declarations_opt, type_declarations;
-non terminal AST type_declaration;
+non terminal Compilation compilation_unit;
+non terminal Sequence import_declarations_opt, import_declarations;
+non terminal Name import_declaration;
+non terminal Type type_declarations_opt, type_declarations;
+non terminal Type type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
 non terminal AST modifiers_opt, modifiers; 
@@ -227,12 +227,12 @@ non terminal Sequence formal_parameter_list_opt, formal_parameter_list;
 non terminal Type formal_parameter;
 
 // 19.8.4) Static Initializers
-non terminal AST static_initializer;   
+non terminal StaticInitDecl static_initializer;   
 
 // 19.8.5) Constructor Declarations
-non terminal AST constructor_declaration;
-non terminal AST constructor_body;
-non terminal AST explicit_constructor_invocation;
+non terminal ConstructorDecl constructor_declaration;
+non terminal ConstructorBody constructor_body;
+non terminal Invocation explicit_constructor_invocation;
 
 // 19.9) Interfaces
 // 19.9.1) Interface Declarations
@@ -244,8 +244,9 @@ non terminal Literal constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
-non terminal AST array_initializer;
-non terminal Var variable_initializers;
+non terminal ArrayType array_initializer;
+non terminal Invocation variable_initializers;
+
 
 // 19.11) Blocks and Statements
 non terminal Block block;
@@ -277,32 +278,31 @@ non terminal ContinueStat continue_statement;
 non terminal ReturnStat return_statement;
 
 // 19.12) Expressions
-non terminal AST primary, primary_no_new_array;
-non terminal AST class_instance_creation_expression;
-non terminal AST argument_list_opt, argument_list;
-non terminal AST array_creation_expression;
-non terminal AST dim_expr;
-non terminal AST dim_exprs, dims_opt, dims;
-non terminal AST field_access;
-non terminal AST method_invocation;
-non terminal AST array_access;
-non terminal AST postfix_expression;
-non terminal AST post_increment_expression, post_decrement_expression;
-non terminal AST unary_expression;
-non terminal AST pre_increment_expression, pre_decrement_expression;
-non terminal AST unary_expression_not_plus_minus;
-non terminal AST cast_expression;
-non terminal AST multiplicative_expression, additive_expression;
-non terminal AST shift_expression, relational_expression, equality_expression;
-non terminal AST and_expression, exclusive_or_expression, inclusive_or_expression;
-non terminal AST conditional_and_expression, conditional_or_expression;
-non terminal AST conditional_expression, assignment_expression;
-non terminal AST assignment;
-non terminal AST assignment_operator;
-non terminal AST left_hand_side;
-non terminal AST expression_opt, expression;
-non terminal AST constant_expression;
-
+non terminal PrimitiveType primary, primary_no_new_array;
+non terminal Expression class_instance_creation_expression;
+non terminal Sequence argument_list_opt, argument_list;
+non terminal Sequence array_creation_expression;
+non terminal ExprStat dim_expr;
+non terminal ExprStat dim_exprs, dims_opt, dims;
+non terminal Invocation field_access;
+non terminal Invocation method_invocation;
+non terminal ArrayAccessExpr array_access;
+non terminal Expression postfix_expression;
+non terminal Expression post_increment_expression, post_decrement_expression;
+non terminal Expression unary_expression;
+non terminal Expression pre_increment_expression, pre_decrement_expression;
+non terminal Expression unary_expression_not_plus_minus;
+non terminal Expression cast_expression;
+non terminal Expression multiplicative_expression, additive_expression;
+non terminal Expression shift_expression, relational_expression, equality_expression;
+non terminal Expression and_expression, exclusive_or_expression, inclusive_or_expression;
+non terminal Expression conditional_and_expression, conditional_or_expression;
+non terminal Expression conditional_expression, assignment_expression;
+non terminal Assignment assignment;
+non terminal Assignment assignment_operator;
+non terminal Var left_hand_side;
+non terminal Expression expression_opt, expression;
+non terminal Expression constant_expression;
 
 start with goal;
 
