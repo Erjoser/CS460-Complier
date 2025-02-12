@@ -1033,7 +1033,7 @@ primary ::=1
 	|	array_creation_expression:a	     
 	;
 
-// Type: @ 2
+// Type: 2
 primary_no_new_array ::=	
 		literal:l  			     
 	|	THIS:l 				     
@@ -1045,25 +1045,25 @@ primary_no_new_array ::=
 	;
 
 
-// Type:2 3
+// Type: 3
 class_instance_creation_expression ::=
 		NEW class_type:t LPAREN argument_list_opt:a RPAREN
 					
 	;
 
-// Type:3 4
+// Type: 4
 argument_list_opt ::=
 		argument_list:l 	
 	|       /* Empty */             
 	;
 
-// Type:4 5
+// Type: 5
 argument_list ::=
 		expression:l 		
 	|	argument_list:ls COMMA expression:l
 	;
 
-// Type: @ 6
+// Type:  6
 array_creation_expression ::=
 		NEW primitive_type:t dim_exprs:d1 dims_opt:d2
 	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2
@@ -1071,27 +1071,27 @@ array_creation_expression ::=
 	|	NEW class_or_interface_type:t dims:d array_initializer:i
 	;
 
-// Type:5 7
+// Type: 7
 dim_exprs ::=	dim_expr:d     	       	 
 	|	dim_exprs:ds dim_expr:d	 
 	;
 
-// Type:6 8
+// Type: 8
 dim_expr ::=	LBRACK expression:e RBRACK 
 	;
 
-// Type:7 9
+// Type: 9
 dims_opt ::=
 		dims:d			
 	|	/* Epsilon */		
 	;
 
-// Type: 8 10
+// Type:  10
 dims ::=	LBRACK RBRACK	        
      	|	dims:d LBRACK RBRACK	
 	;
 
-// Type: 9 11
+// Type:  11
 field_access ::=
 		primary:e DOT name:n 	
 	|	SUPER:s DOT name:n      
@@ -1106,7 +1106,7 @@ method_invocation ::=
 	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN 
 	;
 
-// Type: 10 13
+// Type:  13
 array_access ::=
 		name:n LBRACK expression:e RBRACK        
 	|	primary_no_new_array:p LBRACK expression:e RBRACK
@@ -1120,12 +1120,12 @@ postfix_expression ::=
 	|       name:n                      
 	;
 
-// Type: 11 15
+// Type:  15
 post_increment_expression ::=
 		postfix_expression:e PLUSPLUS:o 
 	;
 
-// Type:12 16
+// Type: 16
 post_decrement_expression ::=
 		postfix_expression:e MINUSMINUS:o
 	;
@@ -1139,19 +1139,19 @@ unary_expression ::=
 	|	unary_expression_not_plus_minus:l 
 	;
 
-// Type:13 18
+// Type: 18
 pre_increment_expression ::=
 		PLUSPLUS:o unary_expression:e	
 	;
 
-// Type: 14 19
+// Type:  19
 pre_decrement_expression ::=
 		MINUSMINUS:o unary_expression:e	
 	;
 
-// Type:15 20
+// Type: 20
 //	public UnaryPreExpr(Expression expr, PreOp op) {
-	public PreOp(Token t, int kind) {
+//	public PreOp(Token t, int kind) {
 unary_expression_not_plus_minus ::=
 		postfix_expression:l 	
 	|	COMP:o unary_expression:e
