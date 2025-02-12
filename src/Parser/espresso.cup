@@ -631,7 +631,7 @@ method_body ::=
 // Type: Sequence
 formal_parameter_list_opt ::=
 		formal_parameter_list:l  {: RESULT = l; :}
-	|	/* Empty */		{: RESULT = new Sequence :}
+	|	/* Empty */		{: RESULT = new Sequence(); :}
 	;
 
 // Type: Sequence
@@ -680,6 +680,7 @@ static_initializer ::=
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
+		{: RESULT = new ConstructorDecl(new Sequence(m), n, , new Sequence(b)); :}
 	;
 
 // Type: 
@@ -729,21 +730,21 @@ interface_body ::=
 	
 // Type: 
 interface_member_declarations_opt ::=
-		interface_member_declarations:id 
-	|	/* Empty */	                 
+		interface_member_declarations:id {: RESULT = id; :}
+	|	/* Empty */	             {: RESULT = new Sequence(); :}    
 	;
 
 // Type: 
 interface_member_declarations ::=
-		interface_member_declaration:i         
+		interface_member_declaration:i     {: RESULT = i; :}    
 	|	interface_member_declarations:is
-			interface_member_declaration:i 
+			interface_member_declaration:i  {: RESULT = is.append(i); :}
 	;
 
 // Type: 
 interface_member_declaration ::=
-		constant_declaration:cd         
-	|	abstract_method_declaration:md  
+		constant_declaration:cd   {: RESULT = cd; :}       
+	|	abstract_method_declaration:md  {: RESULT = md; :}
 	;
 	
 // Type: Sequence(FieldDecl) :> AST
@@ -765,8 +766,9 @@ constant_declaration ::=
                         
 	;
 
-// Type: 
-abstract_method_declaration ::=
+// Type: ***********************************************************************************************
+
+abstract_method_declaration ::= 
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
 	|	modifiers_opt:m  VOID:v	 name:n 
@@ -778,18 +780,21 @@ abstract_method_declaration ::=
 // -----------------------------------------------------------------------------
 
 // Type:
+//public ArrayLiteral(Sequence /* Expression */ seq) {
 array_initializer ::=
 		LBRACE variable_initializers_opt:v RBRACE 
+		{: RESULT = new ArrayLiteral(v); :}
 	;
 
 // Type:
+// 	public Var(Name name) {
 variable_initializers_opt ::=
-	        variable_initializers:v		
-	|	/* Epsilon */			
+	        variable_initializers:v	{: RESULT = new ArrayLiteral(v); :}
+	|	/* Epsilon */	{: RESULT = new Sequence(); :}		
 	;
 
 	
-// Type: 
+// Type:
 variable_initializers ::=
 		variable_initializer:v		
 	|	variable_initializers:vs COMMA variable_initializer:v
@@ -799,27 +804,29 @@ variable_initializers ::=
 // 19.11) Blocks and Statements
 // -----------------------------------------------------------------------------
 
-// Type: 
+// Type: 1
+// public Block(Sequence /* of Statements */ stats) {
 block ::=	
 		LBRACE block_statements_opt:l RBRACE 
+		{: RESULT = new Block(l); :}
 	;
 
-// Type: 
+// Type: 2
 block_statements_opt ::=
-		block_statements:l 	
-	|       /* Empty */		
+		block_statements:l 	{: RESULT = l; :}
+	|       /* Empty */		{: RESULT = new Sequence(); :}
 	;
 
-// Type:
+// Type:3
 block_statements ::=
-		block_statement:l  	
-	|	block_statements:ls block_statement:l
+		block_statement:l  		{: RESULT = new Serquence().append(l); :}
+	|	block_statements:ls block_statement:l {: RESULT = ls.append(l); :}
 	;
 
-// Type: 
+// Type: 4
 block_statement ::=
-		local_variable_declaration:l SEMICOLON 
-	|	statement:l                            
+		local_variable_declaration:l SEMICOLON  {: RESULT = l; :}
+	|	statement:l  {: RESULT = l; :}                           
 	;
 
 // Type: Sequence(LocalDecl) :> AST
@@ -848,7 +855,7 @@ local_variable_declaration ::=
                        :}
 	;
 
-// Type:
+// Type: e
 statement ::=	
 		statement_without_trailing_substatement:l 
 	|	if_then_statement:l 			  
@@ -857,7 +864,7 @@ statement ::=
 	|	for_statement:l 			  
 	;
 
-// Type:
+// Type:e
 statement_no_short_if ::=
 		statement_without_trailing_substatement:l 
 	|	if_then_else_statement_no_short_if:l 	  
@@ -867,57 +874,66 @@ statement_no_short_if ::=
 
 // Type:
 statement_without_trailing_substatement ::=
-		block:l 		
-	|	empty_statement:l 	
-	|	expression_statement:l 	
-	|	switch_statement:l      
-	|	do_statement:l          
-	|	break_statement:l 	
-	|	continue_statement:l 	
-	|	return_statement:l 	
+		block:l 		{: RESULT = l; :} 
+	|	empty_statement:l 	 {: RESULT = l; :} 
+	|	expression_statement:l 	 {: RESULT = l; :} 
+	|	switch_statement:l       {: RESULT = l; :} 
+	|	do_statement:l        {: RESULT = l; :}   
+	|	break_statement:l 	 {: RESULT = l; :} 
+	|	continue_statement:l 	 {: RESULT = l; :} 
+	|	return_statement:l 	 {: RESULT = l; :} 
 	;
 
-// Type: 
+// Type: 5 ************************************************************
 empty_statement ::=
-		SEMICOLON              
+		SEMICOLON   {: RESULT = NULL; :}           
 	;
 
-// Type:
+// Type:6
 expression_statement ::=
-		statement_expression:l SEMICOLON 
+		statement_expression:l SEMICOLON {: RESULT = l; :}
 	;
 
 // Type:
+//    public ExprStat(Expression expression) {
 statement_expression ::=
-		assignment:l                         
-	|	pre_increment_expression:l           
-	| 	pre_decrement_expression:l           
-	|	post_increment_expression:l 	     
-	|	post_decrement_expression:l 	     
-	|	method_invocation:l 		     
-	|	class_instance_creation_expression:l 
+		assignment:l         {: RESULT = new ExprStat(l); :}                
+	|	pre_increment_expression:l   {: RESULT = new ExprStat(l); :}          
+	| 	pre_decrement_expression:l    {: RESULT = new ExprStat(l); :}         
+	|	post_increment_expression:l  {: RESULT = new ExprStat(l); :} 	     
+	|	post_decrement_expression:l  {: RESULT = new ExprStat(l); :} 	     
+	|	method_invocation:l 	 {: RESULT = new ExprStat(l); :} 	     
+	|	class_instance_creation_expression:l  {: RESULT = new ExprStat(l); :} 
 	;
 
-// Type:
+// Type:7
+//    public IfStat(Expression expr, Statement thenpart) {
+
 if_then_statement ::=
 		IF LPAREN expression:e RPAREN statement:t
+		 {: RESULT = new IfStat(e,t); :}
 	;
 
-// Type: 
+// Type: 8
+//public IfStat(Expression expr, Statement thenpart, Statement elsepart) {
 if_then_else_statement ::=
 		IF LPAREN expression:e RPAREN statement_no_short_if:t
 		ELSE statement:ls
+		{: RESULT = new IfStat(e,t,ls); :}
 	;
 
-// Type:
+// Type:9
 if_then_else_statement_no_short_if ::=
 		IF LPAREN expression:e RPAREN statement_no_short_if:t
 		ELSE statement_no_short_if:ls
+		{: RESULT = new IfStat(e,t,ls); :}
 	;
 
-// Type:
+// Type:10
+//    public DoStat(Statement stat, Expression expr) {
 do_statement ::=
 		DO statement:s WHILE LPAREN expression:e RPAREN SEMICOLON
+				 {: RESULT = new IfStat(s,e); :}
 	;
 
 // Type SwitchStat :> Statement :> AST
@@ -926,35 +942,37 @@ switch_statement ::=
 			{: RESULT = new SwitchStat(e, s); :}
 	;
 
-// Type:
+// Type:11
 switch_block ::=
 		LBRACE switch_block_statement_groups_opt:s RBRACE
+		{: RESULT = s; :}
 	;
 
-// Type: 
+// Type: 12
 switch_block_statement_groups_opt ::=
-		switch_block_statement_groups:ss  
+		switch_block_statement_groups:ss {: RESULT = ss; :}  
 	|	/* Empty */			  
 	;
 	
-// Type: 
+// Type: 13
+//	public SwitchGroup(Sequence /* SwitchLabels */ labels, Sequence /* Statement */ stmts) {
 switch_block_statement_groups ::=
-		switch_block_statement_group:s	
-	|	switch_block_statement_groups:ss switch_block_statement_group:s
+		switch_block_statement_group:s	{: RESULT = s; :}
+	|	switch_block_statement_groups:ss switch_block_statement_group:s {: RESULT = new SwitchGroup(ss,s); :}
 	;
 
-// Type:
+// Type: 14
 switch_block_statement_group ::=
-		switch_labels:l block_statements:s   
+		switch_labels:l block_statements:s   {: RESULT = new SwitchGroup(l,s); :}
 	;
 
 // Type: 
 switch_labels ::=
-		switch_label:s			 
-	|	switch_labels:ss  switch_label:s 
+		switch_label:s	{: RESULT = s; :}		 
+	|	switch_labels:ss  switch_label:s  {: RESULT = ss.append(s); :}
 	;
 
-// Type: 
+// Type:  
 switch_label ::=
 		CASE constant_expression:e COLON   
 	|	DEFAULT COLON                      
@@ -1030,8 +1048,8 @@ return_statement ::=
 // 19.12) Expressions
 // -----------------------------------------------------------------------------
 
-// Type:
-primary ::=1
+// Type:1
+primary ::=
 		primary_no_new_array:p		     
 	|	array_creation_expression:a	     
 	;
