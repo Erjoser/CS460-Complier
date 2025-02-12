@@ -386,7 +386,7 @@ class_type ::=
 	;
 
 // Type: ClassType :> AST
-interface_type ::=
+interface_type ::=type_declarations
 		class_or_interface_type:c     	{: RESULT = c; :}
 	;
 
@@ -401,7 +401,7 @@ array_type ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
-name	::=	IDENTIFIER:i
+name	::=	IDENTIFIER:i {: RESULT = i; :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -431,16 +431,16 @@ import_declaration ::=
 		IMPORT name:n SEMICOLON   {:  RESULT = n; :}
         ;
 
-// Type: 
+// Type: type :> AST
 type_declarations_opt ::= 
-		type_declarations:e 	
-	|	/* Empty */          	
+		type_declarations:e 	{:  RESULT = e; :}
+	|	/* Empty */     	  {: RESULT = new Sequence(); :}   	
 	;
 
-// Type: 
+// Type: type :> AST
 type_declarations ::=
-		type_declaration:t  	
-	|	type_declarations:ts type_declaration:t 
+		type_declaration:t  {: RESULT = new Sequence(t); :}	
+	|	type_declarations:ts type_declaration:t  {: RESULT = ts.append(t); :}
 	;
 
 // Type: 
@@ -580,14 +580,14 @@ field_declaration ::=
 			:}
 	;
 
-// Type:
+// Type: VarDecl
 variable_declarators ::=
 		variable_declarator:v 	
 	|	variable_declarators:vs COMMA variable_declarator:v
 					
 	;
 
-// Type: 
+// Type: VarDecl
 variable_declarator ::=
 		variable_declarator_id:n					
 	|	variable_declarator_id:n EQ variable_initializer:i
@@ -627,13 +627,13 @@ method_body ::=
 	;
 
 
-// Type: 
+// Type: Sequence
 formal_parameter_list_opt ::=
 		formal_parameter_list:l 
 	|	/* Empty */		
 	;
 
-// Type:
+// Type: Sequence
 formal_parameter_list ::=
 		formal_parameter:l	
 	|	formal_parameter_list:ls COMMA formal_parameter:l
@@ -1028,12 +1028,12 @@ return_statement ::=
 // -----------------------------------------------------------------------------
 
 // Type:
-primary ::=
+primary ::=1
 		primary_no_new_array:p		     
 	|	array_creation_expression:a	     
 	;
 
-// Type:
+// Type: @ 2
 primary_no_new_array ::=	
 		literal:l  			     
 	|	THIS:l 				     
@@ -1045,25 +1045,25 @@ primary_no_new_array ::=
 	;
 
 
-// Type:
+// Type:2 3
 class_instance_creation_expression ::=
 		NEW class_type:t LPAREN argument_list_opt:a RPAREN
 					
 	;
 
-// Type:
+// Type:3 4
 argument_list_opt ::=
 		argument_list:l 	
 	|       /* Empty */             
 	;
 
-// Type:
+// Type:4 5
 argument_list ::=
 		expression:l 		
 	|	argument_list:ls COMMA expression:l
 	;
 
-// Type:
+// Type: @ 6
 array_creation_expression ::=
 		NEW primitive_type:t dim_exprs:d1 dims_opt:d2
 	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2
@@ -1071,34 +1071,34 @@ array_creation_expression ::=
 	|	NEW class_or_interface_type:t dims:d array_initializer:i
 	;
 
-// Type:
+// Type:5 7
 dim_exprs ::=	dim_expr:d     	       	 
 	|	dim_exprs:ds dim_expr:d	 
 	;
 
-// Type:
+// Type:6 8
 dim_expr ::=	LBRACK expression:e RBRACK 
 	;
 
-// Type:
+// Type:7 9
 dims_opt ::=
 		dims:d			
 	|	/* Epsilon */		
 	;
 
-// Type: 
+// Type: 8 10
 dims ::=	LBRACK RBRACK	        
      	|	dims:d LBRACK RBRACK	
 	;
 
-// Type: 
+// Type: 9 11
 field_access ::=
 		primary:e DOT name:n 	
 	|	SUPER:s DOT name:n      
 	|       name:e DOT name:n       
 	;
 
-// Type: 
+// Type:  12
 method_invocation ::=
 		name:n LPAREN argument_list_opt:a RPAREN
         |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN
@@ -1106,13 +1106,13 @@ method_invocation ::=
 	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN 
 	;
 
-// Type: 
+// Type: 10 13
 array_access ::=
 		name:n LBRACK expression:e RBRACK        
 	|	primary_no_new_array:p LBRACK expression:e RBRACK
 	;
 
-// Type:
+// Type: 14
 postfix_expression ::=
 		primary:l 		    
  	|	post_increment_expression:l 
@@ -1120,17 +1120,17 @@ postfix_expression ::=
 	|       name:n                      
 	;
 
-// Type: 
+// Type: 11 15
 post_increment_expression ::=
 		postfix_expression:e PLUSPLUS:o 
 	;
 
-// Type:
+// Type:12 16
 post_decrement_expression ::=
 		postfix_expression:e MINUSMINUS:o
 	;
 
-// Type:
+// Type: 17
 unary_expression ::=
 		pre_increment_expression:p
 	|	pre_decrement_expression:p
@@ -1139,22 +1139,24 @@ unary_expression ::=
 	|	unary_expression_not_plus_minus:l 
 	;
 
-// Type:
+// Type:13 18
 pre_increment_expression ::=
 		PLUSPLUS:o unary_expression:e	
 	;
 
-// Type:
+// Type: 14 19
 pre_decrement_expression ::=
 		MINUSMINUS:o unary_expression:e	
 	;
 
-// Type:
+// Type:15 20
+//	public UnaryPreExpr(Expression expr, PreOp op) {
+	public PreOp(Token t, int kind) {
 unary_expression_not_plus_minus ::=
 		postfix_expression:l 	
 	|	COMP:o unary_expression:e
-	|	NOT:o unary_expression:e
-	|	cast_expression:c
+	|	NOT:o unary_expression:e {: RESULT = new(UnaryPreExpr(e , new PreOp(o, PreOp.NOT))); :}
+	|	cast_expression:c  {: RESULT = i; :}
 	;
 
 // Type: CastExpr :> Expression :> AST
@@ -1169,22 +1171,27 @@ cast_expression ::=
 
 	;
 
-// Type:
+// Type: 21
+//  public BinaryExpr(Expression left, Expression right, BinOp op) {
+// BinOp(Token t, int kind)
 multiplicative_expression ::=
-		unary_expression:l 
+		unary_expression:l  {: RESULT = l; :}
 	|	multiplicative_expression:e1 MULT:o unary_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.MULT)); :}
 	|	multiplicative_expression:e1 DIV:o unary_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.DIV)); :} 
 	|	multiplicative_expression:e1 MOD:o unary_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.MOD)); :}
 	;
 
-// Type: 
+// Type: 22
 additive_expression ::= 
 		multiplicative_expression:l 
 	|	additive_expression:e1 PLUS:o multiplicative_expression:e2
 	|	additive_expression:e1 MINUS:o multiplicative_expression:e2
 	;
 
-// Type:
+// Type: 23
 shift_expression ::=
 		additive_expression:l 
 	|	shift_expression:e1 LSHIFT:o additive_expression:e2
@@ -1235,7 +1242,14 @@ conditional_and_expression ::=
 
 // Type:
 conditional_or_expression ::=
-		conditional_and_expression:l 
+		conditional_and_expression:l // Type: Sequence(ClassBodyDecl) :> AST
+class_body_declaration ::=
+		field_declaration:l        {: RESULT = l; :}
+	|	method_declaration:l       {: RESULT = new Sequence(l); :}		
+	|       static_initializer:l       {: RESULT = new Sequence(l); :}
+	|	constructor_declaration:l  {: RESULT = new Sequence(l); :}
+	;
+
 	|	conditional_or_expression:e1 OROR:o conditional_and_expression:e2
 	;
 
