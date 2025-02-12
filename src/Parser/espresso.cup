@@ -1050,41 +1050,41 @@ return_statement ::=
 
 // Type:1
 primary ::=
-		primary_no_new_array:p		     
-	|	array_creation_expression:a	     
+		primary_no_new_array:p		 {: RESULT = p; :}    
+	|	array_creation_expression:a	     {: RESULT = a; :}
 	;
 
-// Type: 2
+// Type: 2 
 primary_no_new_array ::=	
-		literal:l  			     
-	|	THIS:l 				     
-	|	LPAREN expression:l RPAREN 	     
-	|	class_instance_creation_expression:l 
-	|	field_access:l 			     
-	|	method_invocation:l   		     
-	|	array_access:l			     
+		literal:l  		{: RESULT = l; :}	     
+	|	THIS:l 			{: RESULT = l; :}    
+	|	LPAREN expression:l RPAREN {: RESULT = l; :}   
+	|	class_instance_creation_expression:l {: RESULT = l; :}
+	|	field_access:l 			{: RESULT = l; :}     
+	|	method_invocation:l   	{: RESULT = l; :}	     
+	|	array_access:l			 {: RESULT = l; :}    
 	;
 
 
-// Type: 3
+// Type: 3*****************************************************************************
 class_instance_creation_expression ::=
 		NEW class_type:t LPAREN argument_list_opt:a RPAREN
-					
+					{: RESULT = l; :} 
 	;
 
 // Type: 4
 argument_list_opt ::=
-		argument_list:l 	
-	|       /* Empty */             
+		argument_list:l 	{: RESULT = l; :} 
+	|       /* Empty */     {: RESULT = new Sequence(); :}        
 	;
 
 // Type: 5
 argument_list ::=
-		expression:l 		
-	|	argument_list:ls COMMA expression:l
+		expression:l 		{: RESULT = new Expression(l); :}	
+	|	argument_list:ls COMMA expression:l {: RESULT = ls.append(l); :}
 	;
 
-// Type:  6
+// Type:  6 *********************************************************************************
 array_creation_expression ::=
 		NEW primitive_type:t dim_exprs:d1 dims_opt:d2
 		
@@ -1097,8 +1097,8 @@ array_creation_expression ::=
 	;
 
 // Type: 7
-dim_exprs ::=	dim_expr:d     	       	 
-	|	dim_exprs:ds dim_expr:d	 
+dim_exprs ::=	dim_expr:d     	{: RESULT = l; :}         	 
+	|	dim_exprs:ds dim_expr:d	 {: RESULT = ls.append(l); :}
 	;
 
 // Type: 8
@@ -1151,27 +1151,34 @@ post_increment_expression ::=
 	;
 
 // Type: 16
+//public UnaryPostExpr(Expression expr, PostOp op) {
+//public PostOp(Token t, int kind) {
 post_decrement_expression ::=
 		postfix_expression:e MINUSMINUS:o
+		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS))); :}
 	;
 
 // Type: 17
+
 unary_expression ::=
-		pre_increment_expression:p
-	|	pre_decrement_expression:p
-	| 	PLUS:o unary_expression:e
-	|	MINUS:o unary_expression:e
-	|	unary_expression_not_plus_minus:l 
+		pre_increment_expression:p {: RESULT = p; :}
+	|	pre_decrement_expression:p {: RESULT = p; :}
+	| 	PLUS:o unary_expression:e 		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.PLUS))); :}
+
+	|	MINUS:o unary_expression:e 		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUS))); :}
+
+	|	unary_expression_not_plus_minus:l  	{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.NOT))); :}
+
 	;
 
 // Type: 18
 pre_increment_expression ::=
-		PLUSPLUS:o unary_expression:e	
+		PLUSPLUS:o unary_expression:e	{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.PLUSPLUS))); :}
 	;
 
 // Type:  19
 pre_decrement_expression ::=
-		MINUSMINUS:o unary_expression:e	
+		MINUSMINUS:o unary_expression:e	 {: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS))); :}
 	;
 
 // Type: 20
@@ -1211,63 +1218,88 @@ multiplicative_expression ::=
 
 // Type: 22
 additive_expression ::= 
-		multiplicative_expression:l 
+		multiplicative_expression:l   {: RESULT = l; :}
 	|	additive_expression:e1 PLUS:o multiplicative_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.PLUS)); :}
 	|	additive_expression:e1 MINUS:o multiplicative_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.PLUS)); :}
+
 	;
 
 // Type: 23
 shift_expression ::=
-		additive_expression:l 
+		additive_expression:l   {: RESULT = l; :}
 	|	shift_expression:e1 LSHIFT:o additive_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.LSHIFT)); :}
 	|	shift_expression:e1 RSHIFT:o additive_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.RSHIFT)); :}
 	|	shift_expression:e1 RRSHIFT:o additive_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.RRSHIFT)); :}
 	;
 
 // Type:
 relational_expression ::=
-		shift_expression:l 
+		shift_expression:l   {: RESULT = l; :}
 	|	relational_expression:e1 LT:o shift_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.LT)); :}
 	|	relational_expression:e1 GT:o shift_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.GT)); :}
 	|	relational_expression:e1 LTEQ:o shift_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.LTEQ)); :}
 	|	relational_expression:e1 GTEQ:o shift_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.GTEQ)); :}
 	|     	relational_expression:e1 INSTANCEOF:o name:e2 
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.INSTANCEOF)); :}
 	;
 
 // Type:
 equality_expression ::=
-		relational_expression:l 
+		relational_expression:l   {: RESULT = l; :}
 	|	equality_expression:e1 EQEQ:o relational_expression:e2
+			{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.EQEQ)); :}
 	|	equality_expression:e1 NOTEQ:o relational_expression:e2
+			{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.NOTEQ)); :}
 	;
 
 // Type:
 and_expression ::=
-		equality_expression:l 
+		equality_expression:l   {: RESULT = l; :}
 	|	and_expression:e1 AND:o equality_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.AND)); :}
+
 	;
 
 // Type:
 exclusive_or_expression ::=
-		and_expression:l 
+		and_expression:l   {: RESULT = l; :}
 	|	exclusive_or_expression:e1 XOR:o and_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.XOR)); :}
 	;
 
 // Type: 
 inclusive_or_expression ::=
-		exclusive_or_expression:l 
+		exclusive_or_expression:l   {: RESULT = l; :}
 	|	inclusive_or_expression:e1 OR:o exclusive_or_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.OR)); :}
+
 	;
 
 // Type:
 conditional_and_expression ::=
-		inclusive_or_expression:l 
+		inclusive_or_expression:l   {: RESULT = l; :}
 	|	conditional_and_expression:e1 ANDAND:o inclusive_or_expression:e2
+	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.ANDAND)); :}
 	;
 
 // Type:
 conditional_or_expression ::=
-		conditional_and_expression:l // Type: Sequence(ClassBodyDecl) :> AST
+		conditional_and_expression:l  {: RESULT = l; :}
+	|	conditional_or_expression:e1 OROR:o conditional_and_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.OROR)); :}
+
+	;
+	
+// Type: Sequence(ClassBodyDecl) :> AST
 class_body_declaration ::=
 		field_declaration:l        {: RESULT = l; :}
 	|	method_declaration:l       {: RESULT = new Sequence(l); :}		
@@ -1275,40 +1307,39 @@ class_body_declaration ::=
 	|	constructor_declaration:l  {: RESULT = new Sequence(l); :}
 	;
 
-	|	conditional_or_expression:e1 OROR:o conditional_and_expression:e2
-	;
 
-// Type:
+// Type: ***********************************************************************************
 conditional_expression ::=
-		conditional_or_expression:l 
+		conditional_or_expression:l   {: RESULT = l; :}
 	|	conditional_or_expression:t QUEST expression:tb COLON conditional_expression:fb
 	;
 
 // Type:
 assignment_expression ::=
-		conditional_expression:l 
-	|	assignment:l             
+		conditional_expression:l   {: RESULT = l; :}
+	|	assignment:l              {: RESULT = l; :} 
 	;
 
 // Type:
 assignment ::=	
 	left_hand_side:e1 assignment_operator:o assignment_expression:e2
+		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o)); :}
 	;
 
 // Type:
 assignment_operator ::=
-                EQ:o        
-        |       MULTEQ:o    
-        |       DIVEQ:o     
-        |       MODEQ:o     
-        |       PLUSEQ:o    
-        |       MINUSEQ:o   
-        |       LSHIFTEQ:o  
-        |       RSHIFTEQ:o  
-        |       RRSHIFTEQ:o 
-        |       ANDEQ:o     
-        |       XOREQ:o     
-        |       OREQ:o      
+                EQ:o        {: RESULT = new BinOp(o); :}
+        |       MULTEQ:o     {: RESULT = new BinOp(o); :}
+        |       DIVEQ:o      {: RESULT = new BinOp(o); :}
+        |       MODEQ:o      {: RESULT = new BinOp(o); :}
+        |       PLUSEQ:o     {: RESULT = new BinOp(o); :}
+        |       MINUSEQ:o    {: RESULT = new BinOp(o); :}
+        |       LSHIFTEQ:o   {: RESULT = new BinOp(o); :}
+        |       RSHIFTEQ:o   {: RESULT = new BinOp(o); :}
+        |       RRSHIFTEQ:o  {: RESULT = new BinOp(o); :}
+        |       ANDEQ:o      {: RESULT = new BinOp(o); :}
+        |       XOREQ:o      {: RESULT = new BinOp(o); :}
+        |       OREQ:o       {: RESULT = new BinOp(o); :}
         ;       
 
 // Type:
