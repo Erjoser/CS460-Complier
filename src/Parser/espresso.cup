@@ -178,26 +178,26 @@ terminal Token LBRACK, RBRACK;  // [ ]
 non terminal Compilation goal;
 
 // 19.3) Lexical Structure
-non terminal Literal literal;
+non terminal AST literal;
 
 // 19.4) Types, Values, and Variables
-non terminal Type type;
-non terminal PrimativeType primitive_type;
-non terminal Type reference_type;
-non terminal ClassType class_or_interface_type;
-non terminal ClassType class_type;
-non terminal ClassType interface_type;
-non terminal ArrayType array_type;
+non terminal AST type;
+non terminal AST primitive_type;
+non terminal AST reference_type;
+non terminal AST class_or_interface_type;
+non terminal AST class_type;
+non terminal AST interface_type;
+non terminal AST array_type;
 
 // 19.5) Names
 non terminal Name name; 
 
 // 19.6) Packages
-non terminal Compilation compilation_unit;
-non terminal Sequence import_declarations_opt, import_declarations;
-non terminal Name import_declaration;
-non terminal Type type_declarations_opt, type_declarations;
-non terminal Type type_declaration;
+non terminal AST compilation_unit;
+non terminal AST import_declarations_opt, import_declarations;
+non terminal AST import_declaration;
+non terminal AST type_declarations_opt, type_declarations;
+non terminal AST type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
 non terminal AST modifiers_opt, modifiers; 
@@ -227,12 +227,12 @@ non terminal Sequence formal_parameter_list_opt, formal_parameter_list;
 non terminal Type formal_parameter;
 
 // 19.8.4) Static Initializers
-non terminal StaticInitDecl static_initializer;   
+non terminal AST static_initializer;   
 
 // 19.8.5) Constructor Declarations
-non terminal ConstructorDecl constructor_declaration;
-non terminal ConstructorBody constructor_body;
-non terminal Invocation explicit_constructor_invocation;
+non terminal AST constructor_declaration;
+non terminal AST constructor_body;
+non terminal AST explicit_constructor_invocation;
 
 // 19.9) Interfaces
 // 19.9.1) Interface Declarations
@@ -244,9 +244,8 @@ non terminal Literal constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
-non terminal ArrayType array_initializer;
-non terminal Invocation variable_initializers;
-
+non terminal AST array_initializer;
+non terminal Var variable_initializers;
 
 // 19.11) Blocks and Statements
 non terminal Block block;
@@ -278,31 +277,32 @@ non terminal ContinueStat continue_statement;
 non terminal ReturnStat return_statement;
 
 // 19.12) Expressions
-non terminal PrimitiveType primary, primary_no_new_array;
-non terminal Expression class_instance_creation_expression;
-non terminal Sequence argument_list_opt, argument_list;
-non terminal Sequence array_creation_expression;
-non terminal ExprStat dim_expr;
-non terminal ExprStat dim_exprs, dims_opt, dims;
-non terminal Invocation field_access;
-non terminal Invocation method_invocation;
-non terminal ArrayAccessExpr array_access;
-non terminal Expression postfix_expression;
-non terminal Expression post_increment_expression, post_decrement_expression;
-non terminal Expression unary_expression;
-non terminal Expression pre_increment_expression, pre_decrement_expression;
-non terminal Expression unary_expression_not_plus_minus;
-non terminal Expression cast_expression;
-non terminal Expression multiplicative_expression, additive_expression;
-non terminal Expression shift_expression, relational_expression, equality_expression;
-non terminal Expression and_expression, exclusive_or_expression, inclusive_or_expression;
-non terminal Expression conditional_and_expression, conditional_or_expression;
-non terminal Expression conditional_expression, assignment_expression;
-non terminal Assignment assignment;
-non terminal Assignment assignment_operator;
-non terminal Var left_hand_side;
-non terminal Expression expression_opt, expression;
-non terminal Expression constant_expression;
+non terminal AST primary, primary_no_new_array;
+non terminal AST class_instance_creation_expression;
+non terminal AST argument_list_opt, argument_list;
+non terminal AST array_creation_expression;
+non terminal AST dim_expr;
+non terminal AST dim_exprs, dims_opt, dims;
+non terminal AST field_access;
+non terminal AST method_invocation;
+non terminal AST array_access;
+non terminal AST postfix_expression;
+non terminal AST post_increment_expression, post_decrement_expression;
+non terminal AST unary_expression;
+non terminal AST pre_increment_expression, pre_decrement_expression;
+non terminal AST unary_expression_not_plus_minus;
+non terminal AST cast_expression;
+non terminal AST multiplicative_expression, additive_expression;
+non terminal AST shift_expression, relational_expression, equality_expression;
+non terminal AST and_expression, exclusive_or_expression, inclusive_or_expression;
+non terminal AST conditional_and_expression, conditional_or_expression;
+non terminal AST conditional_expression, assignment_expression;
+non terminal AST assignment;
+non terminal AST assignment_operator;
+non terminal AST left_hand_side;
+non terminal AST expression_opt, expression;
+non terminal AST constant_expression;
+
 
 start with goal;
 
@@ -386,7 +386,7 @@ class_type ::=
 	;
 
 // Type: ClassType :> AST
-interface_type ::=type_declarations
+interface_type ::=
 		class_or_interface_type:c     	{: RESULT = c; :}
 	;
 
@@ -401,7 +401,7 @@ array_type ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
-name	::=	IDENTIFIER:i {: RESULT = i; :}
+name	::=	IDENTIFIER:i
 	;
 
 // -----------------------------------------------------------------------------
@@ -431,22 +431,22 @@ import_declaration ::=
 		IMPORT name:n SEMICOLON   {:  RESULT = n; :}
         ;
 
-// Type: type :> AST
+// Type: 
 type_declarations_opt ::= 
-		type_declarations:e 	{:  RESULT = e; :}
-	|	/* Empty */     	  {: RESULT = new Type(); :}   	
-	;
-
-// Type: type :> AST
-type_declarations ::=
-		type_declaration:t  {: RESULT = new Type(t); :}	
-	|	type_declarations:ts type_declaration:t  {: RESULT = ts.append(t); :}
+		type_declarations:e 	
+	|	/* Empty */          	
 	;
 
 // Type: 
+type_declarations ::=
+		type_declaration:t  	
+	|	type_declarations:ts type_declaration:t 
+	;
+
+// Type: Sequence :> AST
 type_declaration ::=
-		class_declaration:c    	
-	|	interface_declaration:c 
+		class_declaration:c    		{:  RESULT = c; :}
+	|	interface_declaration:c		{:  RESULT = c; :}
 	;
 
 
@@ -467,12 +467,11 @@ modifiers ::=
 	;
 
 // Type: Modifier :> AST
-// public Modifier(Token t, int modifier) {
 modifier ::=
-		PUBLIC:m   
-	|	PRIVATE:m  
-	|	STATIC:m    {: RESULT = new Modifier(m, Modifier.Static); :}
-	|	FINAL:m   {: RESULT = new Modifier(m, Modifier.Final); :}  
+		PUBLIC:m   {: RESULT = new Modifier(m, Modifier.Public); :} 
+	|	PRIVATE:m  {: RESULT = new Modifier(m, Modifier.Private); :} 
+	|	STATIC:m   
+	|	FINAL:m    
 	|	ABSTRACT:m {: RESULT = new Modifier(m, Modifier.Abstract); :} 
 	;
 
@@ -581,63 +580,63 @@ field_declaration ::=
 			:}
 	;
 
-// Type: VarDecl ***************
-variable_declarators ::= 
-		variable_declarator:v 	{: RESULT = v; :}
+// Type:
+variable_declarators ::=
+		variable_declarator:v 	
 	|	variable_declarators:vs COMMA variable_declarator:v
+					
 	;
 
-// Type: VarDecl ***************************
-//	public Var(Name name, Expression init) {
+// Type: 
 variable_declarator ::=
-		variable_declarator_id:n {: RESULT = n; :}					
-	|	variable_declarator_id:n EQ variable_initializer:i  {: RESULT = new Var(n , i); :}
+		variable_declarator_id:n					
+	|	variable_declarator_id:n EQ variable_initializer:i
 	;
 
 
-// Type: 
+// Type: VarDecl :> AST
 variable_declarator_id ::=
-		name:n			
-	|	variable_declarator_id:v LBRACK RBRACK
+		name:n									{:  RESULT = n; :}
+	|	variable_declarator_id:v LBRACK RBRACK  {:  RESULT = v; :}
 	;
 
-// Type: 
+// Type: Var :> AST
 variable_initializer ::=
-		expression:l 		
-	|	array_initializer:a	
+		expression:l 			{:  RESULT = l; :}
+	|	array_initializer:a		{:  RESULT = a; :}
 	;
 
 // -----------------------------------------------------------------------------
 // 19.8.3) Method Declarations
 // -----------------------------------------------------------------------------
 
-// Type: 
+// Type: MethodDecl :> Type :> AST
 method_declaration ::=
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b    
+		method_body:b						 {:  RESULT = new MethodDecl(m, r, n, p , b, MethodDecl.IS_NOT_INTERFACE); :}
 	|	modifiers_opt:m  VOID:v	 name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b    
+		method_body:b						 {:  RESULT = new MethodDecl(m, v, n, p , b, MethodDecl.IS_NOT_INTERFACE); :}
 	;
 
 // Type: 
 method_body ::=
-		block:b		
-	|	SEMICOLON	
+		block:b		{:  RESULT = b; :}
+	|	SEMICOLON	//Unsure if this needs an action or not, return to this later
 	;
 
 
-// Type: Sequence
+// Type: 
 formal_parameter_list_opt ::=
-		formal_parameter_list:l  {: RESULT = l; :}
-	|	/* Empty */		{: RESULT = new Sequence(); :}
+		formal_parameter_list:l 
+	|	/* Empty */		
 	;
 
-// Type: Sequence
+// Type:
 formal_parameter_list ::=
-		formal_parameter:l	 {: RESULT = l; :}
-	|	formal_parameter_list:ls COMMA formal_parameter:l  {: RESULT = ls.append(l); :}
+		formal_parameter:l	
+	|	formal_parameter_list:ls COMMA formal_parameter:l
 	;
 
 // Type: ParamDecl :> AST
@@ -667,7 +666,7 @@ formal_parameter ::=
 
 // Type: 
 static_initializer ::= 
-		STATIC block:b		
+		STATIC block:b		{:  RESULT = b; :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -675,20 +674,17 @@ static_initializer ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
-//     public ConstructorDecl(Sequence /* of Modifiers */ modifiers, Name name,  Sequence /* of ParamDecl */ params, CInvocation cInvocation, Sequence /* of Statement */ body) {
-
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
-		{: RESULT = new ConstructorDecl(new Sequence(m), n, , new Sequence(b)); :}
 	;
 
-// Type: 
+// Type: ConstructorBody :> AST
 constructor_body ::=
-		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE
-	|	LBRACE explicit_constructor_invocation:e RBRACE
-	|	LBRACE block_statements:b RBRACE
-	|       LBRACE RBRACE
+		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = e.append(b); :}
+	|	LBRACE explicit_constructor_invocation:e							{:  RESULT = e; :}
+	|	LBRACE block_statements:b RBRACE									{:  RESULT = b; :}
+	|       LBRACE RBRACE													//Again unsure what to do with only tokens
 	;
 
 // Type: 
@@ -705,46 +701,46 @@ explicit_constructor_invocation ::=
 // 19.9.1) Interface Declarations
 // -----------------------------------------------------------------------------
 
-// Type: 
+// Type: Sequence(ClassDecl) :> AST
 interface_declaration ::=
-		modifiers_opt:m INTERFACE name:n 
-		extends_interfaces_opt:e interface_body:i
+		modifiers_opt:m INTERFACE name:n				{:  RESULT = m.append(n); :}
+		extends_interfaces_opt:e interface_body:i		{:  RESULT = e.append(i); :}
 	;
 
-// Type:
+// Type: Sequence(ClassType) :> AST
 extends_interfaces_opt ::=
-		extends_interfaces:ei		
+		extends_interfaces:ei							{:  RESULT = ei; :}
 	|	/* Empty */			
 	;
 
-// Type: 
+// Type: Sequence(ClassType) :> AST
 extends_interfaces ::=
-		EXTENDS interface_type:it	
-	|	extends_interfaces:ei COMMA interface_type:it
+		EXTENDS interface_type:it						{:  RESULT = it; :}
+	|	extends_interfaces:ei COMMA interface_type:it	{:  RESULT = ei.appends(it); :}
 	;
 
-// Type: 
+// Type: Sequence(ClassType) :> AST
 interface_body ::=
-		LBRACE interface_member_declarations_opt:io RBRACE
+		LBRACE interface_member_declarations_opt:io RBRACE	{:  RESULT = io; :}
 	;
 	
 // Type: 
 interface_member_declarations_opt ::=
-		interface_member_declarations:id {: RESULT = id; :}
-	|	/* Empty */	             {: RESULT = new Sequence(); :}    
+		interface_member_declarations:id 
+	|	/* Empty */	                 
 	;
 
 // Type: 
 interface_member_declarations ::=
-		interface_member_declaration:i     {: RESULT = i; :}    
+		interface_member_declaration:i         
 	|	interface_member_declarations:is
-			interface_member_declaration:i  {: RESULT = is.append(i); :}
+			interface_member_declaration:i 
 	;
 
 // Type: 
 interface_member_declaration ::=
-		constant_declaration:cd   {: RESULT = cd; :}       
-	|	abstract_method_declaration:md  {: RESULT = md; :}
+		constant_declaration:cd         
+	|	abstract_method_declaration:md  
 	;
 	
 // Type: Sequence(FieldDecl) :> AST
@@ -766,9 +762,8 @@ constant_declaration ::=
                         
 	;
 
-// Type: ***********************************************************************************************
-
-abstract_method_declaration ::= 
+// Type: 
+abstract_method_declaration ::=
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
 	|	modifiers_opt:m  VOID:v	 name:n 
@@ -780,53 +775,48 @@ abstract_method_declaration ::=
 // -----------------------------------------------------------------------------
 
 // Type:
-//public ArrayLiteral(Sequence /* Expression */ seq) {
 array_initializer ::=
 		LBRACE variable_initializers_opt:v RBRACE 
-		{: RESULT = new ArrayLiteral(v); :}
 	;
 
 // Type:
-// 	public Var(Name name) {
 variable_initializers_opt ::=
-	        variable_initializers:v	{: RESULT = new ArrayLiteral(v); :}
-	|	/* Epsilon */	{: RESULT = new Sequence(); :}		
+	        variable_initializers:v		
+	|	/* Epsilon */			
 	;
 
 	
-// Type:
+// Type: Var :> AST
 variable_initializers ::=
-		variable_initializer:v		
-	|	variable_initializers:vs COMMA variable_initializer:v
+		variable_initializer:v										{:  RESULT = v; :}
+	|	variable_initializers:vs COMMA variable_initializer:v		{:  RESULT = vs.append(v); :}
 	;
 
 // -----------------------------------------------------------------------------
 // 19.11) Blocks and Statements
 // -----------------------------------------------------------------------------
 
-// Type: 1
-// public Block(Sequence /* of Statements */ stats) {
+// Type: 
 block ::=	
 		LBRACE block_statements_opt:l RBRACE 
-		{: RESULT = new Block(l); :}
 	;
 
-// Type: 2
+// Type: 
 block_statements_opt ::=
-		block_statements:l 	{: RESULT = l; :}
-	|       /* Empty */		{: RESULT = new Sequence(); :}
+		block_statements:l 	
+	|       /* Empty */		
 	;
 
-// Type:3
+// Type:
 block_statements ::=
-		block_statement:l  		{: RESULT = new Serquence().append(l); :}
-	|	block_statements:ls block_statement:l {: RESULT = ls.append(l); :}
+		block_statement:l  	
+	|	block_statements:ls block_statement:l
 	;
 
-// Type: 4
+// Type: 
 block_statement ::=
-		local_variable_declaration:l SEMICOLON  {: RESULT = l; :}
-	|	statement:l  {: RESULT = l; :}                           
+		local_variable_declaration:l SEMICOLON 
+	|	statement:l                            
 	;
 
 // Type: Sequence(LocalDecl) :> AST
@@ -855,7 +845,7 @@ local_variable_declaration ::=
                        :}
 	;
 
-// Type: e
+// Type:
 statement ::=	
 		statement_without_trailing_substatement:l 
 	|	if_then_statement:l 			  
@@ -864,76 +854,67 @@ statement ::=
 	|	for_statement:l 			  
 	;
 
-// Type:e
+// Type: Statement :> AST
 statement_no_short_if ::=
-		statement_without_trailing_substatement:l 
-	|	if_then_else_statement_no_short_if:l 	  
-	|	while_statement_no_short_if:l 		  
-	|	for_statement_no_short_if:l 		  
+		statement_without_trailing_substatement:l	{:  RESULT = l; :}
+	|	if_then_else_statement_no_short_if:l 		{:  RESULT = l; :}
+	|	while_statement_no_short_if:l 				{:  RESULT = l; :}
+	|	for_statement_no_short_if:l 				{:  RESULT = l; :}
 	;
 
-// Type:
+// Type: Statement :> AST
 statement_without_trailing_substatement ::=
-		block:l 		{: RESULT = l; :} 
-	|	empty_statement:l 	 {: RESULT = l; :} 
-	|	expression_statement:l 	 {: RESULT = l; :} 
-	|	switch_statement:l       {: RESULT = l; :} 
-	|	do_statement:l        {: RESULT = l; :}   
-	|	break_statement:l 	 {: RESULT = l; :} 
-	|	continue_statement:l 	 {: RESULT = l; :} 
-	|	return_statement:l 	 {: RESULT = l; :} 
+		block:l 					{:  RESULT = l; :}
+	|	empty_statement:l 			{:  RESULT = l; :}
+	|	expression_statement:l 		{:  RESULT = l; :}
+	|	switch_statement:l			{:  RESULT = l; :}
+	|	do_statement:l				{:  RESULT = l; :}
+	|	break_statement:l 			{:  RESULT = l; :}
+	|	continue_statement:l 		{:  RESULT = l; :}
+	|	return_statement:l 			{:  RESULT = l; :}
 	;
 
-// Type: 5 ************************************************************
+// Type: 
 empty_statement ::=
-		SEMICOLON   {: RESULT = NULL; :}           
-	;
-
-// Type:6
-expression_statement ::=
-		statement_expression:l SEMICOLON {: RESULT = l; :}
+		SEMICOLON              
 	;
 
 // Type:
-//    public ExprStat(Expression expression) {
-statement_expression ::=
-		assignment:l         {: RESULT = new ExprStat(l); :}                
-	|	pre_increment_expression:l   {: RESULT = new ExprStat(l); :}          
-	| 	pre_decrement_expression:l    {: RESULT = new ExprStat(l); :}         
-	|	post_increment_expression:l  {: RESULT = new ExprStat(l); :} 	     
-	|	post_decrement_expression:l  {: RESULT = new ExprStat(l); :} 	     
-	|	method_invocation:l 	 {: RESULT = new ExprStat(l); :} 	     
-	|	class_instance_creation_expression:l  {: RESULT = new ExprStat(l); :} 
+expression_statement ::=
+		statement_expression:l SEMICOLON 
 	;
 
-// Type:7
-//    public IfStat(Expression expr, Statement thenpart) {
+// Type:
+statement_expression ::=
+		assignment:l                         
+	|	pre_increment_expression:l           
+	| 	pre_decrement_expression:l           
+	|	post_increment_expression:l 	     
+	|	post_decrement_expression:l 	     
+	|	method_invocation:l 		     
+	|	class_instance_creation_expression:l 
+	;
 
+// Type:
 if_then_statement ::=
 		IF LPAREN expression:e RPAREN statement:t
-		 {: RESULT = new IfStat(e,t); :}
 	;
 
-// Type: 8
-//public IfStat(Expression expr, Statement thenpart, Statement elsepart) {
+// Type: 
 if_then_else_statement ::=
 		IF LPAREN expression:e RPAREN statement_no_short_if:t
 		ELSE statement:ls
-		{: RESULT = new IfStat(e,t,ls); :}
 	;
 
-// Type:9
+// Type:
 if_then_else_statement_no_short_if ::=
 		IF LPAREN expression:e RPAREN statement_no_short_if:t
 		ELSE statement_no_short_if:ls
-		{: RESULT = new IfStat(e,t,ls); :}
 	;
 
-// Type:10
-//    public DoStat(Statement stat, Expression expr) {
+// Type:
 do_statement ::=
 		DO statement:s WHILE LPAREN expression:e RPAREN SEMICOLON
-				 {: RESULT = new IfStat(s,e); :}
 	;
 
 // Type SwitchStat :> Statement :> AST
@@ -942,246 +923,239 @@ switch_statement ::=
 			{: RESULT = new SwitchStat(e, s); :}
 	;
 
-// Type:11
+// Type:
 switch_block ::=
 		LBRACE switch_block_statement_groups_opt:s RBRACE
-		{: RESULT = s; :}
 	;
 
-// Type: 12
+// Type: 
 switch_block_statement_groups_opt ::=
-		switch_block_statement_groups:ss {: RESULT = ss; :}  
+		switch_block_statement_groups:ss  
 	|	/* Empty */			  
 	;
 	
-// Type: 13
-//	public SwitchGroup(Sequence /* SwitchLabels */ labels, Sequence /* Statement */ stmts) {
+// Type: 
 switch_block_statement_groups ::=
-		switch_block_statement_group:s	{: RESULT = s; :}
-	|	switch_block_statement_groups:ss switch_block_statement_group:s {: RESULT = new SwitchGroup(ss,s); :}
+		switch_block_statement_group:s	
+	|	switch_block_statement_groups:ss switch_block_statement_group:s
 	;
 
-// Type: 14
+// Type:
 switch_block_statement_group ::=
-		switch_labels:l block_statements:s   {: RESULT = new SwitchGroup(l,s); :}
+		switch_labels:l block_statements:s   
 	;
 
 // Type: 
 switch_labels ::=
-		switch_label:s	{: RESULT = s; :}		 
-	|	switch_labels:ss  switch_label:s  {: RESULT = ss.append(s); :}
+		switch_label:s			 
+	|	switch_labels:ss  switch_label:s 
 	;
 
-// Type:  
+// Type: SwitchLabel :> AST
 switch_label ::=
-		CASE constant_expression:e COLON   
-	|	DEFAULT COLON                      
+		CASE constant_expression:e COLON	  {: RESULT = e; :}
+	|	DEFAULT COLON						  //3rd time, only tokens help
 	;
 
-// Type:
+// Type: WhileStat :> AST
 while_statement ::=
-		WHILE LPAREN expression:e RPAREN statement:s
+		WHILE LPAREN expression:e RPAREN statement:s	{: RESULT = e.append(s); :}
 	;
 
-// Type: 
+// Type: WhileStat :> AST
 while_statement_no_short_if ::=
-		WHILE LPAREN expression:e RPAREN statement_no_short_if:s
+		WHILE LPAREN expression:e RPAREN statement_no_short_if:s	{: RESULT = e.append(s); :}
 	;
 
-// Type:
+// Type: ForStat :> AST
 for_statement ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement:s
+		for_update_opt:u RPAREN statement:s							{: RESULT = i.append(e.append(u.append(s))); :}
 	;
 
-// Type: 
+// Type: ForStat :> AST
 for_statement_no_short_if ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement_no_short_if:s
+		for_update_opt:u RPAREN statement_no_short_if:s				{: RESULT = i.append(e.append(u.append(s))); :}
 	;
 
-// Type: 
+// Type: ForStat :> AST
 for_init_opt ::=
-		for_init:l 		
+		for_init:l 							{: RESULT = l; :}
 	|       /* Empty */    		
 	;
 
-// Type: 
+// Type: ForStat :> AST
 for_init ::=	
-		statement_expression_list:l  
-	|	local_variable_declaration:l 
+		statement_expression_list:l			{: RESULT = l; :}
+	|	local_variable_declaration:l		{: RESULT = l; :}
 	;
 
-// Type: 
+// Type: ForStat :> AST
 for_update_opt ::=
-		for_update:l 		
+		for_update:l 						{: RESULT = l; :}
 	|       /* Empty */		
 	;
 
-// Type: 
+// Type: ForStat :> AST
 for_update ::=	
-		statement_expression_list:l 
+		statement_expression_list:l			{: RESULT = l; :}
 	;
 
-// Type: 
+// Type: ExprStat :> AST
 statement_expression_list ::=
-		statement_expression:e 	
-	|	statement_expression_list:es COMMA statement_expression:e
+		statement_expression:e 				{: RESULT = e; :}
+	|	statement_expression_list:es COMMA statement_expression:e	{: RESULT = es.append(e); :}
 	;
 
-// Type: 
+// Type: BreakStat :> AST
 break_statement ::=
-		BREAK:b SEMICOLON
+		BREAK:b SEMICOLON						{: RESULT = b; :}
 	;
 
-// Type: 
-continue_statement ::=
-		CONTINUE:c SEMICOLON
+// Type: ContinueStat :> AST
+continue_statement ::=	
+		CONTINUE:c SEMICOLON					{: RESULT = c; :}
 	;
 
-// Type:
+// Type: ReturnStat :> AST
 return_statement ::=
-		RETURN:r expression_opt:e SEMICOLON
+		RETURN:r expression_opt:e SEMICOLON		{: RESULT = r.append(e); :}
 	;
 
 // -----------------------------------------------------------------------------
 // 19.12) Expressions
 // -----------------------------------------------------------------------------
 
-// Type:1
+// Type: PrimitiveType :> AST
 primary ::=
-		primary_no_new_array:p		     
-	|	array_creation_expression:a	     
+		primary_no_new_array:p					{: RESULT = p; :}
+	|	array_creation_expression:a				{: RESULT = a; :}
 	;
 
-// Type: 2
+// Type: Expression :> AST
 primary_no_new_array ::=	
-		literal:l  			     
-	|	THIS:l 				     
-	|	LPAREN expression:l RPAREN 	     
-	|	class_instance_creation_expression:l 
-	|	field_access:l 			     
-	|	method_invocation:l   		     
-	|	array_access:l			     
+		literal:l  								{: RESULT = l; :}
+	|	THIS:l 									{: RESULT = l; :}
+	|	LPAREN expression:l RPAREN 				{: RESULT = l; :}
+	|	class_instance_creation_expression:l	{: RESULT = l; :}
+	|	field_access:l 							{: RESULT = l; :}
+	|	method_invocation:l   					{: RESULT = l; :}
+	|	array_access:l							{: RESULT = l; :}
 	;
 
 
-// Type: 3
+// Type: Sequence :> AST
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = t.appends(a); :}
 					
 	;
 
-// Type: 4
+// Type: Sequence :> AST
 argument_list_opt ::=
-		argument_list:l 	
+		argument_list:l 					{: RESULT = l; :}
 	|       /* Empty */             
 	;
 
-// Type: 5
+// Type: Sequence :> AST
 argument_list ::=
-		expression:l 		
-	|	argument_list:ls COMMA expression:l
+		expression:l 						{: RESULT = l; :}
+	|	argument_list:ls COMMA expression:l	{: RESULT = ls.append(l); :}
 	;
 
-// Type:  6
+// Type: Sequence :> AST
 array_creation_expression ::=
-		NEW primitive_type:t dim_exprs:d1 dims_opt:d2
-		
-	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2
-	
-	|	NEW primitive_type:t dims:d array_initializer:i
-	
-	|	NEW class_or_interface_type:t dims:d array_initializer:i
-	
+		NEW primitive_type:t dim_exprs:d1 dims_opt:d2				{: RESULT = t.append(d1.append(d2)); :}
+	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2		{: RESULT = t.append(d1.append(d2)); :}
+	|	NEW primitive_type:t dims:d array_initializer:i				{: RESULT = t.append(d.append(i)); :}
+	|	NEW class_or_interface_type:t dims:d array_initializer:i	{: RESULT = t.append(d.append(i)); :}
 	;
 
-// Type: 7
-dim_exprs ::=	dim_expr:d     	       	 
-	|	dim_exprs:ds dim_expr:d	 
+// Type: ExprStat :> AST
+dim_exprs ::=	
+		dim_expr:d     	       				{: RESULT = d; :}
+	|	dim_exprs:ds dim_expr:d				{: RESULT = ds.append(d); :}
 	;
 
-// Type: 8
-dim_expr ::=	LBRACK expression:e RBRACK 
+// Type: ExprStat :> AST
+dim_expr ::=	LBRACK expression:e RBRACK	{: RESULT = e; :}
 	;
 
-// Type: 9
+// Type: ExprStat :> AST
 dims_opt ::=
-		dims:d			
+		dims:d								{: RESULT = d; :}
 	|	/* Epsilon */		
 	;
 
-// Type:  10
-dims ::=	LBRACK RBRACK	        
-     	|	dims:d LBRACK RBRACK	
+// Type: ExprStat :> AST
+dims ::=	LBRACK RBRACK					//4th time, token only ask in class
+     	|	dims:d LBRACK RBRACK			{: RESULT = d; :}
 	;
 
-// Type:  11
+// Type: Invocation :> AST
 field_access ::=
-		primary:e DOT name:n 	
-	|	SUPER:s DOT name:n      
-	|       name:e DOT name:n       
+		primary:e DOT name:n 				{: RESULT = e.append(n); :}
+	|	SUPER:s DOT name:n					{: RESULT = s.append(n); :}
+	|       name:e DOT name:n				{: RESULT = e.append(n); :}
 	;
 
-// Type:  12
+// Type: Invocation :> AST
 method_invocation ::=
-		name:n LPAREN argument_list_opt:a RPAREN
-        |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN
-	|	SUPER:s DOT name:f LPAREN argument_list_opt:a RPAREN 
-	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN 
+		name:n LPAREN argument_list_opt:a RPAREN					{: RESULT = n.append(a); :}
+        |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN	{: RESULT = t.append(f.append(a)); :}
+	|	SUPER:s DOT name:f LPAREN argument_list_opt:a RPAREN		{: RESULT = s.append(f.append(a)); :}
+	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN			{: RESULT = t.append(f.append(a)); :}
 	;
 
-// Type:  13
+// Type: ArrayAccessExpr :> AST
 array_access ::=
-		name:n LBRACK expression:e RBRACK        
-	|	primary_no_new_array:p LBRACK expression:e RBRACK
+		name:n LBRACK expression:e RBRACK						{: RESULT = n.append(e); :}
+	|	primary_no_new_array:p LBRACK expression:e RBRACK		{: RESULT = p.append(e); :}
 	;
 
-// Type: 14
+// Type: Expression :> AST
 postfix_expression ::=
-		primary:l 		    
- 	|	post_increment_expression:l 
-	|	post_decrement_expression:l 
-	|       name:n                      
+		primary:l 						{: RESULT = l; :}
+ 	|	post_increment_expression:l		{: RESULT = l; :}
+	|	post_decrement_expression:l		{: RESULT = l; :}
+	|       name:n						{: RESULT = n; :} 
 	;
 
-// Type:  15
+// Type: Expression :> AST
 post_increment_expression ::=
-		postfix_expression:e PLUSPLUS:o 
+		postfix_expression:e PLUSPLUS:o			{: RESULT = e.append(o); :}
 	;
 
-// Type: 16
+// Type:
 post_decrement_expression ::=
 		postfix_expression:e MINUSMINUS:o
 	;
 
-// Type: 17
+// Type: Expression :> AST
 unary_expression ::=
-		pre_increment_expression:p
-	|	pre_decrement_expression:p
-	| 	PLUS:o unary_expression:e
-	|	MINUS:o unary_expression:e
-	|	unary_expression_not_plus_minus:l 
+		pre_increment_expression:p				{: RESULT = p; :}
+	|	pre_decrement_expression:p				{: RESULT = p; :}
+	| 	PLUS:o unary_expression:e				{: RESULT = o.append(e); :}
+	|	MINUS:o unary_expression:e				{: RESULT = o.append(e); :}
+	|	unary_expression_not_plus_minus:l		{: RESULT = l; :}
 	;
 
-// Type: 18
+// Type:
 pre_increment_expression ::=
 		PLUSPLUS:o unary_expression:e	
 	;
 
-// Type:  19
+// Type:
 pre_decrement_expression ::=
 		MINUSMINUS:o unary_expression:e	
 	;
 
-// Type: 20
-//	public UnaryPreExpr(Expression expr, PreOp op) {
-//	public PreOp(Token t, int kind) {
+// Type: Expression :> AST
 unary_expression_not_plus_minus ::=
-		postfix_expression:l 	
-	|	COMP:o unary_expression:e
-	|	NOT:o unary_expression:e {: RESULT = new(UnaryPreExpr(e , new PreOp(o, PreOp.NOT))); :}
-	|	cast_expression:c  {: RESULT = i; :}
+		postfix_expression:l 			{: RESULT = l; :}
+	|	COMP:o unary_expression:e		{: RESULT = o.append(e); :}
+	|	NOT:o unary_expression:e
+	|	cast_expression:c
 	;
 
 // Type: CastExpr :> Expression :> AST
@@ -1196,42 +1170,37 @@ cast_expression ::=
 
 	;
 
-// Type: 21
-//  public BinaryExpr(Expression left, Expression right, BinOp op) {
-// BinOp(Token t, int kind)
+// Type:
 multiplicative_expression ::=
-		unary_expression:l  {: RESULT = l; :}
+		unary_expression:l 
 	|	multiplicative_expression:e1 MULT:o unary_expression:e2
-	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.MULT)); :}
 	|	multiplicative_expression:e1 DIV:o unary_expression:e2
-	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.DIV)); :} 
 	|	multiplicative_expression:e1 MOD:o unary_expression:e2
-	{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.MOD)); :}
 	;
 
-// Type: 22
+// Type: 
 additive_expression ::= 
 		multiplicative_expression:l 
 	|	additive_expression:e1 PLUS:o multiplicative_expression:e2
 	|	additive_expression:e1 MINUS:o multiplicative_expression:e2
 	;
 
-// Type: 23
+// Type: Expression :> AST
 shift_expression ::=
-		additive_expression:l 
-	|	shift_expression:e1 LSHIFT:o additive_expression:e2
-	|	shift_expression:e1 RSHIFT:o additive_expression:e2
-	|	shift_expression:e1 RRSHIFT:o additive_expression:e2
+		additive_expression:l									{: RESULT = l; :}
+	|	shift_expression:e1 LSHIFT:o additive_expression:e2		{: RESULT = e1.append(o.append(e2)); :}
+	|	shift_expression:e1 RSHIFT:o additive_expression:e2		{: RESULT = e1.append(o.append(e2)); :}
+	|	shift_expression:e1 RRSHIFT:o additive_expression:e2	{: RESULT = e1.append(o.append(e2)); :}
 	;
 
-// Type:
+// Type: Expression :> AST
 relational_expression ::=
-		shift_expression:l 
-	|	relational_expression:e1 LT:o shift_expression:e2
-	|	relational_expression:e1 GT:o shift_expression:e2
+		shift_expression:l										
+	|	relational_expression:e1 LT:o shift_expression:e2		
+	|	relational_expression:e1 GT:o shift_expression:e2		
 	|	relational_expression:e1 LTEQ:o shift_expression:e2
 	|	relational_expression:e1 GTEQ:o shift_expression:e2
-	|     	relational_expression:e1 INSTANCEOF:o name:e2 
+	|     	relational_expression:e1 INSTANCEOF:o name:e2
 	;
 
 // Type:
@@ -1267,14 +1236,7 @@ conditional_and_expression ::=
 
 // Type:
 conditional_or_expression ::=
-		conditional_and_expression:l // Type: Sequence(ClassBodyDecl) :> AST
-class_body_declaration ::=
-		field_declaration:l        {: RESULT = l; :}
-	|	method_declaration:l       {: RESULT = new Sequence(l); :}		
-	|       static_initializer:l       {: RESULT = new Sequence(l); :}
-	|	constructor_declaration:l  {: RESULT = new Sequence(l); :}
-	;
-
+		conditional_and_expression:l 
 	|	conditional_or_expression:e1 OROR:o conditional_and_expression:e2
 	;
 
@@ -1295,20 +1257,20 @@ assignment ::=
 	left_hand_side:e1 assignment_operator:o assignment_expression:e2
 	;
 
-// Type:
+// Type: AssignmentOp :>
 assignment_operator ::=
-                EQ:o        
-        |       MULTEQ:o    
-        |       DIVEQ:o     
-        |       MODEQ:o     
-        |       PLUSEQ:o    
-        |       MINUSEQ:o   
-        |       LSHIFTEQ:o  
-        |       RSHIFTEQ:o  
-        |       RRSHIFTEQ:o 
-        |       ANDEQ:o     
-        |       XOREQ:o     
-        |       OREQ:o      
+                EQ:o			{: RESULT = o; :}
+        |       MULTEQ:o		{: RESULT = o; :}
+        |       DIVEQ:o			{: RESULT = o; :}
+        |       MODEQ:o			{: RESULT = o; :}
+        |       PLUSEQ:o		{: RESULT = o; :}
+        |       MINUSEQ:o		{: RESULT = o; :}
+        |       LSHIFTEQ:o		{: RESULT = o; :}
+        |       RSHIFTEQ:o		{: RESULT = o; :}
+        |       RRSHIFTEQ:o		{: RESULT = o; :}
+        |       ANDEQ:o			{: RESULT = o; :}
+        |       XOREQ:o			{: RESULT = o; :}
+        |       OREQ:o			{: RESULT = o; :}
         ;       
 
 // Type:
