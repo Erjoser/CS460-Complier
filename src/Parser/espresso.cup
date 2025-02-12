@@ -434,12 +434,12 @@ import_declaration ::=
 // Type: type :> AST
 type_declarations_opt ::= 
 		type_declarations:e 	{:  RESULT = e; :}
-	|	/* Empty */     	  {: RESULT = new Sequence(); :}   	
+	|	/* Empty */     	  {: RESULT = new Type(); :}   	
 	;
 
 // Type: type :> AST
 type_declarations ::=
-		type_declaration:t  {: RESULT = new Sequence(t); :}	
+		type_declaration:t  {: RESULT = new Type(t); :}	
 	|	type_declarations:ts type_declaration:t  {: RESULT = ts.append(t); :}
 	;
 
@@ -467,11 +467,12 @@ modifiers ::=
 	;
 
 // Type: Modifier :> AST
+// public Modifier(Token t, int modifier) {
 modifier ::=
 		PUBLIC:m   
 	|	PRIVATE:m  
-	|	STATIC:m   
-	|	FINAL:m    
+	|	STATIC:m    {: RESULT = new Modifier(m, Modifier.Static); :}
+	|	FINAL:m   {: RESULT = new Modifier(m, Modifier.Final); :}  
 	|	ABSTRACT:m {: RESULT = new Modifier(m, Modifier.Abstract); :} 
 	;
 
@@ -1066,9 +1067,13 @@ argument_list ::=
 // Type:  6
 array_creation_expression ::=
 		NEW primitive_type:t dim_exprs:d1 dims_opt:d2
+		
 	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2
+	
 	|	NEW primitive_type:t dims:d array_initializer:i
+	
 	|	NEW class_or_interface_type:t dims:d array_initializer:i
+	
 	;
 
 // Type: 7
