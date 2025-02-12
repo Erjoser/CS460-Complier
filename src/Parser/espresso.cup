@@ -774,10 +774,10 @@ constant_declaration ::=
 abstract_method_declaration ::= 
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
-		{:  RESULT = new MethodDecl(m, r, n, p ,NULL , MethodDecl.IS_NOT_INTERFACE); :}
+		{:  RESULT = new MethodDecl(m, r, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
 	|	modifiers_opt:m  VOID:v	 name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
-		{:  RESULT = new MethodDecl(m, v, n, p ,NULL , MethodDecl.IS_NOT_INTERFACE); :}
+		{:  RESULT = new MethodDecl(m, v, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -1097,6 +1097,8 @@ array_creation_expression ::=
 	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2		{: RESULT = t.append(d1.append(d2)); :}
 	|	NEW primitive_type:t dims:d array_initializer:i				{: RESULT = t.append(d.append(i)); :}
 	|	NEW class_or_interface_type:t dims:d array_initializer:i	{: RESULT = t.append(d.append(i)); :}
+	;
+	
 // Type: 7
 dim_exprs ::=	dim_expr:d     	{: RESULT = l; :}         	 
 	|	dim_exprs:ds dim_expr:d	 {: RESULT = ls.append(l); :}
