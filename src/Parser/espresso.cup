@@ -581,17 +581,17 @@ field_declaration ::=
 			:}
 	;
 
-// Type: VarDecl
-variable_declarators ::=
-		variable_declarator:v 	
+// Type: VarDecl ***************
+variable_declarators ::= 
+		variable_declarator:v 	{: RESULT = v; :}
 	|	variable_declarators:vs COMMA variable_declarator:v
-					
 	;
 
-// Type: VarDecl
+// Type: VarDecl ***************************
+//	public Var(Name name, Expression init) {
 variable_declarator ::=
-		variable_declarator_id:n					
-	|	variable_declarator_id:n EQ variable_initializer:i
+		variable_declarator_id:n {: RESULT = n; :}					
+	|	variable_declarator_id:n EQ variable_initializer:i  {: RESULT = new Var(n , i); :}
 	;
 
 
@@ -630,14 +630,14 @@ method_body ::=
 
 // Type: Sequence
 formal_parameter_list_opt ::=
-		formal_parameter_list:l 
-	|	/* Empty */		
+		formal_parameter_list:l  {: RESULT = l; :}
+	|	/* Empty */		{: RESULT = new Sequence :}
 	;
 
 // Type: Sequence
 formal_parameter_list ::=
-		formal_parameter:l	
-	|	formal_parameter_list:ls COMMA formal_parameter:l
+		formal_parameter:l	 {: RESULT = l; :}
+	|	formal_parameter_list:ls COMMA formal_parameter:l  {: RESULT = ls.append(l); :}
 	;
 
 // Type: ParamDecl :> AST
@@ -675,6 +675,8 @@ static_initializer ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
+//     public ConstructorDecl(Sequence /* of Modifiers */ modifiers, Name name,  Sequence /* of ParamDecl */ params, CInvocation cInvocation, Sequence /* of Statement */ body) {
+
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
