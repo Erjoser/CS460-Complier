@@ -4,4 +4,5 @@ are two put both of the group member's info
 
 Name                    Student ID              e-mail
 ----------------------------------------------------------------------
+Nicolas Galfrascoli	5004578587		galfras@unlv.nevada.edu
 Eric Garcia		2001908737		garcie51@unlv.nevada.edu
