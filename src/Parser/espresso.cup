@@ -681,7 +681,7 @@ static_initializer ::=
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
-		{: RESULT = new ConstructorDecl(new Sequence(m), n, , new Sequence(b)); :}
+		{: RESULT = new ConstructorDecl(new Sequence(m), n, null, new Sequence(b)); :}
 	;
 
 // Type: ConstructorBody :> AST
@@ -1159,7 +1159,7 @@ post_increment_expression ::=
 //public PostOp(Token t, int kind) {
 post_decrement_expression ::=
 		postfix_expression:e MINUSMINUS:o
-		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS))); :}
+		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS)); :}
 	;
 
 // Type: 17
@@ -1167,11 +1167,11 @@ post_decrement_expression ::=
 unary_expression ::=
 		pre_increment_expression:p {: RESULT = p; :}
 	|	pre_decrement_expression:p {: RESULT = p; :}
-	| 	PLUS:o unary_expression:e 		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.PLUS))); :}
+	| 	PLUS:o unary_expression:e 		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.PLUS)); :}
 
-	|	MINUS:o unary_expression:e 		{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUS))); :}
+	|	MINUS:o unary_expression:e 		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUS)); :}
 
-	|	unary_expression_not_plus_minus:l  	{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.NOT))); :}
+	|	unary_expression_not_plus_minus:l  	{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.NOT)); :}
 
 	;
 
@@ -1197,12 +1197,12 @@ unary_expression ::=
 
 // Type: 18
 pre_increment_expression ::=
-		PLUSPLUS:o unary_expression:e	{: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.PLUSPLUS))); :}
+		PLUSPLUS:o unary_expression:e	{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.PLUSPLUS)); :}
 	;
 
 // Type:  19
 pre_decrement_expression ::=
-		MINUSMINUS:o unary_expression:e	 {: RESULT = new (UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS))); :}
+		MINUSMINUS:o unary_expression:e	 {: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS)); :}
 	;
 
 // Type: 20
@@ -1211,7 +1211,7 @@ pre_decrement_expression ::=
 unary_expression_not_plus_minus ::=
 		postfix_expression:l 			{: RESULT = l; :}
 	|	COMP:o unary_expression:e		{: RESULT = o.append(e); :}
-	|	NOT:o unary_expression:e {: RESULT = new(UnaryPreExpr(e , new PreOp(o, PreOp.NOT))); :}
+	|	NOT:o unary_expression:e {: RESULT = new UnaryPreExpr(e , new PreOp(o, PreOp.NOT)); :}
 	|	cast_expression:c  {: RESULT = i; :}
 	;
 
