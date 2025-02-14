@@ -196,21 +196,21 @@ non terminal Name name;
 non terminal Compilation compilation_unit;
 non terminal Sequence import_declarations_opt, import_declarations;
 non terminal Name import_declaration;
-non terminal Type type_declarations_opt, type_declarations;
-non terminal Type type_declaration;
+non terminal ClassDecl type_declarations_opt, type_declarations;
+non terminal ClassDecl type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
-non terminal AST modifiers_opt, modifiers; 
-non terminal AST modifier;
+non terminal Modifiers modifiers_opt, modifiers; 
+non terminal Modifier modifier;
 
 // 19.8) Classes
 // 19.8.1) Class Declaration
 non terminal ClassDecl class_declaration;
-non terminal Super super_opt, super; 
+non terminal ClassType super_opt, super; 
 non terminal Sequence interfaces_opt, interfaces, interface_type_list;
-non terminal Type class_body;
+non terminal Sequence class_body;
 non terminal Sequence class_body_declarations, class_body_declarations_opt;
-non terminal ClassBodyDecl class_body_declaration;
+non terminal Sequence class_body_declaration;
 
 // 19.8.2) Field Declarations
 non terminal FieldDecl field_declaration;
@@ -236,9 +236,9 @@ non terminal Invocation explicit_constructor_invocation;
 
 // 19.9) Interfaces
 // 19.9.1) Interface Declarations
-non terminal AST interface_declaration;
-non terminal AST extends_interfaces, extends_interfaces_opt, interface_body;
-non terminal AST interface_member_declarations_opt;
+non terminal ClassDecl interface_declaration;
+non terminal ClassType extends_interfaces, extends_interfaces_opt, interface_body;
+non terminal ClassType interface_member_declarations_opt;
 non terminal Sequence interface_member_declarations, interface_member_declaration;
 non terminal Literal constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
@@ -252,8 +252,8 @@ non terminal Invocation variable_initializers;
 non terminal Block block;
 non terminal Sequence block_statements_opt, block_statements;
 non terminal Statement block_statement;
-non terminal AST local_variable_declaration;
-non terminal LocalDecl statement, statement_no_short_if;
+non terminal LocalDecl local_variable_declaration;
+non terminal Statement statement, statement_no_short_if;
 non terminal Statement statement_without_trailing_substatement;
 non terminal Statement empty_statement;
 non terminal ExprStat expression_statement;
