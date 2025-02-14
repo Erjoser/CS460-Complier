@@ -542,10 +542,10 @@ class_body_declarations ::=
 
 // Type: Sequence(ClassBodyDecl) :> AST
 class_body_declaration ::=
-		field_declaration:l        {: RESULT = l; :}
-	|	method_declaration:l       {: RESULT = new Sequence(l); :}		
-	|       static_initializer:l       {: RESULT = new Sequence(l); :}
-	|	constructor_declaration:l  {: RESULT = new Sequence(l); :}
+		field_declaration:l			{: RESULT = l; :}
+	|	method_declaration:l		{: RESULT = new Sequence(l); :}		
+	|   static_initializer:l		{: RESULT = new Sequence(l); :}
+	|	constructor_declaration:l	{: RESULT = new Sequence(l); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -687,9 +687,9 @@ constructor_declaration ::=
 // Type: ConstructorBody :> AST
 constructor_body ::=
 		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = e.append(b); :}
-	|	LBRACE explicit_constructor_invocation:e							{:  RESULT = e; :}
+	|	LBRACE explicit_constructor_invocation:e	RBRACE					{:  RESULT = e; :}
 	|	LBRACE block_statements:b RBRACE									{:  RESULT = b; :}
-	|       LBRACE RBRACE													//Again unsure what to do with only tokens
+	|       LBRACE RBRACE
 	;
 	
 // Type: 
@@ -972,15 +972,15 @@ switch_block_statement_group ::=
 		switch_labels:l block_statements:s   {: RESULT = new SwitchGroup(l,s); :}
 	;
 
-// Type: SwitchLabel :> AST
-switch_label ::=
-		CASE constant_expression:e COLON	  {: RESULT = e; :}
-	|	DEFAULT COLON						  //3rd time, only tokens help
+// Type: 
+switch_labels ::=
+		switch_label:s						{: RESULT = s; :}
+	|	switch_labels:ss  switch_label:s	{: RESULT = ss.append(s); :}
 	;
 
 // Type:  
 switch_label ::=
-		CASE constant_expression:e COLON   
+		CASE constant_expression:e COLON	{: RESULT = e; :}
 	|	DEFAULT COLON                      
 	;
 
@@ -1322,15 +1322,6 @@ conditional_or_expression ::=
 		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.OROR)); :}
 
 	;
-	
-// Type: Sequence(ClassBodyDecl) :> AST
-class_body_declaration ::=
-		field_declaration:l        {: RESULT = l; :}
-	|	method_declaration:l       {: RESULT = new Sequence(l); :}		
-	|       static_initializer:l       {: RESULT = new Sequence(l); :}
-	|	constructor_declaration:l  {: RESULT = new Sequence(l); :}
-	;
-
 
 // Type: ***********************************************************************************
 conditional_expression ::=
