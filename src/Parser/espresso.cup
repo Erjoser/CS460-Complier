@@ -292,7 +292,8 @@ non terminal Expression post_increment_expression, post_decrement_expression;
 non terminal Expression unary_expression;
 non terminal Expression pre_increment_expression, pre_decrement_expression;
 non terminal Expression unary_expression_not_plus_minus;
-non terminal Expression cast_expression;
+//non terminal Expression cast_expression;
+non terminal CastExpr cast_expression;
 non terminal Expression multiplicative_expression, additive_expression;
 non terminal Expression shift_expression, relational_expression, equality_expression;
 non terminal Expression and_expression, exclusive_or_expression, inclusive_or_expression;
@@ -1171,7 +1172,7 @@ unary_expression ::=
 
 	|	MINUS:o unary_expression:e 		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUS)); :}
 
-	|	unary_expression_not_plus_minus:l  	{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.NOT)); :}
+	|	unary_expression_not_plus_minus:l  	{: RESULT = l; :}
 
 	;
 
@@ -1210,9 +1211,9 @@ pre_decrement_expression ::=
 //	public PreOp(Token t, int kind) {
 unary_expression_not_plus_minus ::=
 		postfix_expression:l 			{: RESULT = l; :}
-	|	COMP:o unary_expression:e		{: RESULT = o.append(e); :}
+	|	COMP:o unary_expression:e		{: RESULT = new UnaryPreExpr(e , new PreOp(o, PreOp.COMP)); :}
 	|	NOT:o unary_expression:e {: RESULT = new UnaryPreExpr(e , new PreOp(o, PreOp.NOT)); :}
-	|	cast_expression:c  {: RESULT = i; :}
+	|	cast_expression:c  {: RESULT = c; :}
 	;
 
 // Type: CastExpr :> Expression :> AST
@@ -1273,7 +1274,7 @@ relational_expression ::=
 	|	relational_expression:e1 GTEQ:o shift_expression:e2
 		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.GTEQ)); :}
 	|     	relational_expression:e1 INSTANCEOF:o name:e2 
-		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o, BinOp.INSTANCEOF)); :}
+		{: RESULT = new BinaryExpr(e1, new NameExpr(e2), new BinOp(o, BinOp.INSTANCEOF)); :}
 	;
 
 // Type:
@@ -1327,7 +1328,6 @@ conditional_or_expression ::=
 conditional_expression ::=
 		conditional_or_expression:l   {: RESULT = l; :}
 	|	conditional_or_expression:t QUEST expression:tb COLON conditional_expression:fb
-	{: RESULT = l; :}
 	;
 
 // Type:
