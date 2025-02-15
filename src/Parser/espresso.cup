@@ -299,8 +299,8 @@ non terminal Expression and_expression, exclusive_or_expression, inclusive_or_ex
 non terminal Expression conditional_and_expression, conditional_or_expression;
 non terminal Expression conditional_expression, assignment_expression;
 non terminal Assignment assignment;
-non terminal Assignment assignment_operator;
-non terminal Var left_hand_side;
+non terminal AssignmentOp assignment_operator;
+non terminal Expression left_hand_side;
 non terminal Expression expression_opt, expression;
 non terminal Expression constant_expression;
 
@@ -1327,6 +1327,7 @@ conditional_or_expression ::=
 conditional_expression ::=
 		conditional_or_expression:l   {: RESULT = l; :}
 	|	conditional_or_expression:t QUEST expression:tb COLON conditional_expression:fb
+	{: RESULT = l; :}
 	;
 
 // Type:
@@ -1336,30 +1337,34 @@ assignment_expression ::=
 	;
 
 // Type:
+//    public Assignment(Expression /* NameExpr, FieldRef or ArrayAccess only */ left,
+//		      Expression right,
+//		      AssignmentOp op) {
 assignment ::=	
 	left_hand_side:e1 assignment_operator:o assignment_expression:e2
-		{: RESULT = new BinaryExpr(e1, e2, new BinOp(o)); :}
+		{: RESULT = new Assignment(e1, e2, o); :}
 	;
 
 // Type:
+//   public AssignmentOp(Token t, int kind) {
 assignment_operator ::=
-                EQ:o        {: RESULT = new BinOp(o); :}
-        |       MULTEQ:o     {: RESULT = new BinOp(o); :}
-        |       DIVEQ:o      {: RESULT = new BinOp(o); :}
-        |       MODEQ:o      {: RESULT = new BinOp(o); :}
-        |       PLUSEQ:o     {: RESULT = new BinOp(o); :}
-        |       MINUSEQ:o    {: RESULT = new BinOp(o); :}
-        |       LSHIFTEQ:o   {: RESULT = new BinOp(o); :}
-        |       RSHIFTEQ:o   {: RESULT = new BinOp(o); :}
-        |       RRSHIFTEQ:o  {: RESULT = new BinOp(o); :}
-        |       ANDEQ:o      {: RESULT = new BinOp(o); :}
-        |       XOREQ:o      {: RESULT = new BinOp(o); :}
-        |       OREQ:o       {: RESULT = new BinOp(o); :}
+                EQ:o        {: RESULT = new AssignmentOp(o, AssignmentOp.EQ); :}
+        |       MULTEQ:o     {: RESULT = new AssignmentOp(o, AssignmentOp.MULTEQ); :}
+        |       DIVEQ:o      {: RESULT = new AssignmentOp(o, AssignmentOp.DIVEQ); :}
+        |       MODEQ:o      {: RESULT = new AssignmentOp(o, AssignmentOp.MODEQ); :}
+        |       PLUSEQ:o     {: RESULT = new AssignmentOp(o, AssignmentOp.PLUSEQ); :}
+        |       MINUSEQ:o    {: RESULT = new AssignmentOp(o, AssignmentOp.MINUSEQ); :}
+        |       LSHIFTEQ:o   {: RESULT = new AssignmentOp(o, AssignmentOp.LSHIFTEQ); :}
+        |       RSHIFTEQ:o   {: RESULT = new AssignmentOp(o, AssignmentOp.RSHIFTEQ); :}
+        |       RRSHIFTEQ:o  {: RESULT = new AssignmentOp(o, AssignmentOp.RRSHIFTEQ); :}
+        |       ANDEQ:o      {: RESULT = new AssignmentOp(o, AssignmentOp.ANDEQ); :}
+        |       XOREQ:o      {: RESULT = new AssignmentOp(o, AssignmentOp.XOREQ); :}
+        |       OREQ:o       {: RESULT = new AssignmentOp(o, AssignmentOp.OREQ); :}
         ;       
 
 // Type:
 left_hand_side ::=
-		name:n         {: RESULT = n; :}
+		name:n         {: RESULT = new NameExpr(n); :}
 	|	field_access:l {: RESULT = l; :}
 	|	array_access:a {: RESULT = a; :}
 	;
@@ -1367,7 +1372,7 @@ left_hand_side ::=
 // Type:
 expression_opt ::=
 		expression:l {: RESULT = l; :}
-	|       /* Empty */  {: RESULT = new Sequence(); :}
+	|       /* Empty */  // {: RESULT = new Sequence(); :}
 	;
 
 // Type:
