@@ -284,7 +284,8 @@ non terminal Sequence argument_list_opt, argument_list;
 non terminal Sequence array_creation_expression;
 non terminal ExprStat dim_expr;
 non terminal ExprStat dim_exprs, dims_opt, dims;
-non terminal Invocation field_access;
+//non terminal Invocation field_access;
+non terminal FieldRef field_access;
 non terminal Invocation method_invocation;
 non terminal ArrayAccessExpr array_access;
 non terminal Expression postfix_expression;
@@ -1121,24 +1122,28 @@ dims ::=	LBRACK RBRACK					//4th time, token only ask in class
 	;
 
 // Type: Invocation :> AST
+//public FieldRef(Expression target, Name fieldName) {
 field_access ::=
-		primary:e DOT name:n 				{: RESULT = e.append(n); :}
+		primary:e DOT name:n 				{: RESULT = new FieldRef(e,n); :}
 	|	SUPER:s DOT name:n					{: RESULT = s.append(n); :}
-	|       name:e DOT name:n				{: RESULT = e.append(n); :}
+	|       name:e DOT name:n				{: RESULT = new FieldRef(new NameExpr(e),n); :}
 	;
 
 // Type: Invocation :> AST
+//public Invocation(Expression target, Name name, 
+//		      Sequence /* of Expressions*/ params) {
 method_invocation ::=
-		name:n LPAREN argument_list_opt:a RPAREN					{: RESULT = n.append(a); :}
-        |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN	{: RESULT = t.append(f.append(a)); :}
+		name:n LPAREN argument_list_opt:a RPAREN					{: RESULT = new Invocation(n, a); :}
+        |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN	{: RESULT = new Invocation(t, f, a); :}
 	|	SUPER:s DOT name:f LPAREN argument_list_opt:a RPAREN		{: RESULT = s.append(f.append(a)); :}
-	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN			{: RESULT = t.append(f.append(a)); :}
+	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN			{: RESULT = new Invocation(new NameExpr(t), f, a); :}
 	;
 
 // Type: ArrayAccessExpr :> AST
+//  public ArrayAccessExpr(Expression target, Expression index) {
 array_access ::=
-		name:n LBRACK expression:e RBRACK						{: RESULT = n.append(e); :}
-	|	primary_no_new_array:p LBRACK expression:e RBRACK		{: RESULT = p.append(e); :}
+		name:n LBRACK expression:e RBRACK						{: RESULT = new ArrayAccessExpr(new NameExpr(n), e); :}
+	|	primary_no_new_array:p LBRACK expression:e RBRACK		{: RESULT = new ArrayAccessExpr(p, e); :}
 	;
 
 
@@ -1147,12 +1152,12 @@ postfix_expression ::=
 		primary:l 						{: RESULT = l; :}
  	|	post_increment_expression:l		{: RESULT = l; :}
 	|	post_decrement_expression:l		{: RESULT = l; :}
-	|       name:n						{: RESULT = n; :} 
+	|       name:n						{: RESULT = new NameExpr(n); :}//{: RESULT = n; :} 
 	;
 
 // Type: Expression :> AST
 post_increment_expression ::=
-		postfix_expression:e PLUSPLUS:o			{: RESULT = e.append(o); :}
+		postfix_expression:e PLUSPLUS:o		{: RESULT = new UnaryPostExpr(e ,new PostOp(o , PostOp.PLUSPLUS)); :}	//{: RESULT = e.append(o); :}
 	;
 
 // Type: 16
@@ -1168,9 +1173,9 @@ post_decrement_expression ::=
 unary_expression ::=
 		pre_increment_expression:p {: RESULT = p; :}
 	|	pre_decrement_expression:p {: RESULT = p; :}
-	| 	PLUS:o unary_expression:e 		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.PLUS)); :}
+	| 	PLUS:o unary_expression:e 		{: RESULT = new UnaryPreExpr(e,new PreOp(o, PreOp.PLUS)); :} //{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.PLUS)); :}
 
-	|	MINUS:o unary_expression:e 		{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUS)); :}
+	|	MINUS:o unary_expression:e 		{: RESULT = new UnaryPreExpr(e,new PreOp(o, PreOp.MINUS)); :} //{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUS)); :}
 
 	|	unary_expression_not_plus_minus:l  	{: RESULT = l; :}
 
