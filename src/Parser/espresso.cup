@@ -1077,7 +1077,7 @@ return_statement ::=
 // Type:1
 primary ::=
 		primary_no_new_array:p		 {: RESULT = p; :}    
-	|	array_creation_expression:a	     {: RESULT = a; :}
+	|	array_creation_expression:a	     {: RESULT = new ArrayLiteral(a); :}
 	;
 
 // Type: 2 
