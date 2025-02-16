@@ -672,8 +672,9 @@ formal_parameter ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
+//	public StaticInitDecl(Block init) {
 static_initializer ::= 
-		STATIC block:b		{:  RESULT = b; :}
+		STATIC block:b		{:  RESULT = new StaticInitDecl(b); :}
 	;
 
 // -----------------------------------------------------------------------------
