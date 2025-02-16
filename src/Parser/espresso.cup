@@ -902,7 +902,7 @@ statement_without_trailing_substatement ::=
 
 // Type: 5 ************************************************************
 empty_statement ::=
-		SEMICOLON   {: RESULT = NULL; :}           
+		SEMICOLON    
 	;
 
 // Type:6
@@ -1056,12 +1056,12 @@ statement_expression_list ::=
 
 // Type: BreakStat :> AST
 break_statement ::=
-		BREAK:b SEMICOLON						{: RESULT = b; :}
+		BREAK:b SEMICOLON						{: RESULT = new BreakStat(b); :}
 	;
 
 // Type: ContinueStat :> AST
 continue_statement ::=	
-		CONTINUE:c SEMICOLON					{: RESULT = c; :}
+		CONTINUE:c SEMICOLON					{: RESULT = new ContinueStat(c); :}
 	;
 
 // Type: ReturnStat :> AST
@@ -1083,7 +1083,7 @@ primary ::=
 // Type: 2 
 primary_no_new_array ::=	
 		literal:l  		{: RESULT = l; :}	     
-	|	THIS:l 			{: RESULT = new Sequence(l); :}    
+	|	THIS:l 			{: RESULT = new This(l); :}    
 	|	LPAREN expression:l RPAREN {: RESULT = l; :}   
 	|	class_instance_creation_expression:l {: RESULT = l; :}
 	|	field_access:l 			{: RESULT = l; :}     
@@ -1093,8 +1093,10 @@ primary_no_new_array ::=
 
 
 // Type: Sequence :> AST
+//    public CInvocation(Token cl, Sequence /* of Expression */ args) {
+
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new Sequence(t).append(a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(t, a); :}
 	;
 
 // Type: 4
