@@ -475,10 +475,10 @@ modifiers ::=
 // Type: Modifier :> AST
 // public Modifier(Token t, int modifier) {
 modifier ::=
-		PUBLIC:m
-	|	PRIVATE:m
-	|	STATIC:m
-	|	FINAL:m
+		PUBLIC:m   {: RESULT = new Modifier(m, Modifier.Public); :} 
+	|	PRIVATE:m  {: RESULT = new Modifier(m, Modifier.Private); :} 
+	|	STATIC:m   {: RESULT = new Modifier(m, Modifier.Static); :} 
+	|	FINAL:m    {: RESULT = new Modifier(m, Modifier.Final); :} 
 	|	ABSTRACT:m {: RESULT = new Modifier(m, Modifier.Abstract); :} 
 	;
 
@@ -1053,7 +1053,7 @@ continue_statement ::=
 
 // Type: ReturnStat :> AST
 return_statement ::=
-		RETURN:r expression_opt:e SEMICOLON		{: RESULT = r.append(e); :}
+		RETURN:r expression_opt:e SEMICOLON		{: RESULT = new ReturnStat(r,e); :}
 	;
 
 
