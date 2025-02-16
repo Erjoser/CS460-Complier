@@ -196,13 +196,11 @@ non terminal Name name;
 non terminal Compilation compilation_unit;
 non terminal Sequence import_declarations_opt, import_declarations;
 non terminal Name import_declaration;
-//non terminal ClassDecl type_declarations_opt, type_declarations;
-non terminal Sequence type_declarations_opt, type_declarations;
-//non terminal ClassDecl type_declaration;
-non terminal Sequence type_declaration;
+non terminal ClassDecl type_declarations_opt, type_declarations;
+non terminal ClassDecl type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
-non terminal Sequence modifiers_opt, modifiers; 
+non terminal Modifiers modifiers_opt, modifiers; 
 non terminal Modifier modifier;
 
 // 19.8) Classes
@@ -240,7 +238,6 @@ non terminal Invocation explicit_constructor_invocation;
 // 19.9.1) Interface Declarations
 non terminal ClassDecl interface_declaration;
 non terminal ClassType extends_interfaces, extends_interfaces_opt, interface_body;
-//non terminal Sequence extends_interfaces, extends_interfaces_opt, interface_body;
 non terminal ClassType interface_member_declarations_opt;
 non terminal Sequence interface_member_declarations, interface_member_declaration;
 non terminal Literal constant_declaration;
@@ -1023,8 +1020,8 @@ for_init_opt ::=
 
 // Type: ForStat :> AST
 for_init ::=	
-		statement_expression_list:l			{: RESULT = new Sequence(l); :}
-	|	local_variable_declaration:l		{: RESULT = new Sequence(l); :}
+		statement_expression_list:l			{: RESULT = l; :}
+	|	local_variable_declaration:l		{: RESULT = l; :}
 	;
 
 // Type: ForStat :> AST
@@ -1045,15 +1042,13 @@ statement_expression_list ::=
 	;
 
 // Type: BreakStat :> AST
-//    public BreakStat(Token b) {
 break_statement ::=
-		BREAK:b SEMICOLON						{: RESULT = new BreakStat(b); :}
+		BREAK:b SEMICOLON						{: RESULT = b; :}
 	;
 
 // Type: ContinueStat :> AST
-//    public ContinueStat(Token c) {
 continue_statement ::=	
-		CONTINUE:c SEMICOLON					{: RESULT = new ContinueStat(c); :}
+		CONTINUE:c SEMICOLON					{: RESULT = c; :}
 	;
 
 // Type: ReturnStat :> AST
@@ -1069,7 +1064,7 @@ return_statement ::=
 // Type:1
 primary ::=
 		primary_no_new_array:p		 {: RESULT = p; :}    
-	|	array_creation_expression:a	     {: RESULT = new Sequence(a); :}
+	|	array_creation_expression:a	     {: RESULT = a; :}
 	;
 
 // Type: 2 
@@ -1110,7 +1105,7 @@ array_creation_expression ::=
 	;
 	
 // Type: 7
-dim_exprs ::=	dim_expr:d     	{: RESULT = d; :}         	 
+dim_exprs ::=	dim_expr:d     	{: RESULT = new Sequence(d); :}         	 
 	|	dim_exprs:ds dim_expr:d	 {: RESULT = ds.append(d); :}
 	;
 
