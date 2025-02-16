@@ -283,8 +283,10 @@ non terminal Expression primary, primary_no_new_array;
 non terminal Expression class_instance_creation_expression;
 non terminal Sequence argument_list_opt, argument_list;
 non terminal Sequence array_creation_expression;
-non terminal ExprStat dim_expr;
-non terminal ExprStat dim_exprs, dims_opt, dims;
+//non terminal ExprStat dim_expr;
+non terminal Expression dim_expr;
+//non terminal ExprStat dim_exprs, dims_opt, dims;
+non terminal Sequence dim_exprs, dims_opt, dims;
 //non terminal Invocation field_access;
 non terminal FieldRef field_access;
 non terminal Invocation method_invocation;
@@ -1090,7 +1092,7 @@ argument_list_opt ::=
 
 // Type: Sequence :> AST
 argument_list ::=
-		expression:l 						{: RESULT = l; :}
+		expression:l 						{: RESULT = new Sequence(l); :}
 	|	argument_list:ls COMMA expression:l	{: RESULT = ls.append(l); :}
 	;
 
@@ -1126,7 +1128,7 @@ dims ::=	LBRACK RBRACK					//4th time, token only ask in class
 //public FieldRef(Expression target, Name fieldName) {
 field_access ::=
 		primary:e DOT name:n 				{: RESULT = new FieldRef(e,n); :}
-	|	SUPER:s DOT name:n					{: RESULT = s.append(n); :}
+	|	SUPER:s DOT name:n					{: RESULT = new FieldRef(new Super(s),n);; :}
 	|       name:e DOT name:n				{: RESULT = new FieldRef(new NameExpr(e),n); :}
 	;
 
@@ -1136,7 +1138,7 @@ field_access ::=
 method_invocation ::=
 		name:n LPAREN argument_list_opt:a RPAREN					{: RESULT = new Invocation(n, a); :}
         |	primary:t DOT name:f LPAREN argument_list_opt:a RPAREN	{: RESULT = new Invocation(t, f, a); :}
-	|	SUPER:s DOT name:f LPAREN argument_list_opt:a RPAREN		{: RESULT = s.append(f.append(a)); :}
+	|	SUPER:s DOT name:f LPAREN argument_list_opt:a RPAREN		{: RESULT = new Invocation(new Super(s), f, a); :}
 	|	name:t DOT name:f LPAREN argument_list_opt:a RPAREN			{: RESULT = new Invocation(new NameExpr(t), f, a); :}
 	;
 
