@@ -182,7 +182,7 @@ non terminal Literal literal;
 
 // 19.4) Types, Values, and Variables
 non terminal Type type;
-non terminal PrimativeType primitive_type;
+non terminal PrimitiveType primitive_type;
 non terminal Type reference_type;
 non terminal ClassType class_or_interface_type;
 non terminal ClassType class_type;
@@ -1085,7 +1085,7 @@ primary_no_new_array ::=
 		literal:l  		{: RESULT = l; :}	     
 	|	THIS:l 			{: RESULT = new Sequence(l); :}    
 	|	LPAREN expression:l RPAREN {: RESULT = l; :}   
-	|	class_instance_creation_expression:l {: RESULT = l; :}
+	|	class_instance_creation_expression:l {: RESULT = new ExprStat(l); :}
 	|	field_access:l 			{: RESULT = l; :}     
 	|	method_invocation:l   	{: RESULT = l; :}	     
 	|	array_access:l			 {: RESULT = l; :}    
@@ -1093,8 +1093,10 @@ primary_no_new_array ::=
 
 
 // Type: Sequence :> AST
+//    public CInvocation(Token cl, Sequence /* of Expression */ args) {
+
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new Sequence(t).append(a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(t , a); :}
 	;
 
 // Type: 4
