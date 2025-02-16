@@ -278,7 +278,8 @@ non terminal ContinueStat continue_statement;
 non terminal ReturnStat return_statement;
 
 // 19.12) Expressions
-non terminal PrimitiveType primary, primary_no_new_array;
+//non terminal PrimitiveType primary, primary_no_new_array;
+non terminal Expression primary, primary_no_new_array;
 non terminal Expression class_instance_creation_expression;
 non terminal Sequence argument_list_opt, argument_list;
 non terminal Sequence array_creation_expression;
@@ -1102,8 +1103,8 @@ array_creation_expression ::=
 	;
 	
 // Type: 7
-dim_exprs ::=	dim_expr:d     	{: RESULT = l; :}         	 
-	|	dim_exprs:ds dim_expr:d	 {: RESULT = ls.append(l); :}
+dim_exprs ::=	dim_expr:d     	{: RESULT = d; :}         	 
+	|	dim_exprs:ds dim_expr:d	 {: RESULT = ds.append(d); :}
 	;
 
 // Type: ExprStat :> AST
