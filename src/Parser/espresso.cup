@@ -269,7 +269,7 @@ non terminal SwitchGroup switch_block_statement_groups;
 non terminal SwitchGroup switch_block_statement_group;
 non terminal SwitchLabel switch_label;
 //non terminal SwitchLabel switch_labels;
-non terminal SwitchLabel switch_labels;
+non terminal Sequence switch_labels;
 non terminal WhileStat while_statement, while_statement_no_short_if;
 non terminal ForStat for_statement, for_statement_no_short_if;
 //non terminal ExprStat for_init_opt, for_init;
@@ -991,7 +991,7 @@ switch_block_statement_group ::=
 // Type: 
 switch_labels ::=
 		switch_label:s						{: RESULT = s; :}
-	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchLabel(ss, s); :}
+	|	switch_labels:ss  switch_label:s	{: RESULT = ss.append(s); :}
 	;
 
 	// Type:  
