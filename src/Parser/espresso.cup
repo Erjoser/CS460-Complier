@@ -272,9 +272,12 @@ non terminal SwitchLabel switch_label;
 non terminal SwitchLabel switch_labels;
 non terminal WhileStat while_statement, while_statement_no_short_if;
 non terminal ForStat for_statement, for_statement_no_short_if;
-non terminal ExprStat for_init_opt, for_init;
-non terminal ExprStat for_update_opt, for_update;
-non terminal ExprStat statement_expression_list;
+//non terminal ExprStat for_init_opt, for_init;
+non terminal Sequence for_init_opt, for_init;
+//non terminal ExprStat for_update_opt, for_update;
+non terminal Sequence for_update_opt, for_update;
+//non terminal ExprStat statement_expression_list;
+non terminal Sequence statement_expression_list;
 non terminal BreakStat break_statement; 
 non terminal ContinueStat continue_statement;
 non terminal ReturnStat return_statement;
@@ -1050,8 +1053,8 @@ for_update ::=
 
 // Type: ExprStat :> AST
 statement_expression_list ::=
-		statement_expression:e 				{: RESULT = e; :}
-	|	statement_expression_list:es COMMA statement_expression:e	{: RESULT = es.append(e); :}
+		statement_expression:e 				{: RESULT = new Sequence(e); :}
+	|	statement_expression_list:es COMMA statement_expression:e	{: RESULT = new Sequence(es).append(e); :}
 	;
 
 // Type: BreakStat :> AST
