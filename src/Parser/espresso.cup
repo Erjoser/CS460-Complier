@@ -1,4 +1,4 @@
-package Parser;
++package Parser;
 
 import Scanner.Scanner;
 import AST.*;
@@ -409,7 +409,7 @@ array_type ::=
 // -----------------------------------------------------------------------------
 
 // Type: 
-name	::=	IDENTIFIER:i {: RESULT = i; :}
+name	::=	IDENTIFIER:i {: RESULT = new Name(i); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -424,7 +424,7 @@ compilation_unit ::=
 
 // Type:  Sequence(ClassDecl :> AST) :> AST
 import_declarations_opt ::= 
-		import_declarations:is        {: RESULT = is; :} 
+		import_declarations:is        {: RESULT = new Sequence(is); :} 
    	|       /* Empty */ 		      {: RESULT = new Sequence(); :}
 	;
 
@@ -442,12 +442,12 @@ import_declaration ::=
 // Type: type :> AST
 type_declarations_opt ::= 
 		type_declarations:e 	{:  RESULT = e; :}
-	|	/* Empty */     	  {: RESULT = new Type(); :}   	
+	|	/* Empty */     		
 	;
 
 // Type: type :> AST
 type_declarations ::=
-		type_declaration:t  {: RESULT = new Type(t); :}	
+		type_declaration:t  {: RESULT = t; :}	
 	|	type_declarations:ts type_declaration:t  {: RESULT = ts.append(t); :}
 	;
 
@@ -478,10 +478,10 @@ modifiers ::=
 // Type: Modifier :> AST
 // public Modifier(Token t, int modifier) {
 modifier ::=
-		PUBLIC:m   {: RESULT = new Modifier(m, Modifier.Public); :} 
-	|	PRIVATE:m  {: RESULT = new Modifier(m, Modifier.Private); :}  
-	|	STATIC:m    {: RESULT = new Modifier(m, Modifier.Static); :}
-	|	FINAL:m   {: RESULT = new Modifier(m, Modifier.Final); :}  
+		PUBLIC:m
+	|	PRIVATE:m
+	|	STATIC:m
+	|	FINAL:m
 	|	ABSTRACT:m {: RESULT = new Modifier(m, Modifier.Abstract); :} 
 	;
 
@@ -624,16 +624,16 @@ variable_initializer ::=
 method_declaration ::=
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b						 {:  RESULT = new MethodDecl(m, r, n, p , b, MethodDecl.IS_NOT_INTERFACE); :}
+		method_body:b						 {:  RESULT = new MethodDecl(m, r, n, p , b); :}
 	|	modifiers_opt:m  VOID:v	 name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b						 {:  RESULT = new MethodDecl(m, v, n, p , b, MethodDecl.IS_NOT_INTERFACE); :}
+		method_body:b						 {:  RESULT = new MethodDecl(m, v, n, p , b); :}
 	;
 
 // Type: 
 method_body ::=
 		block:b		{:  RESULT = b; :}
-	|	SEMICOLON	//Unsure if this needs an action or not, return to this later
+	|	SEMICOLON
 	;
 
 
@@ -724,7 +724,7 @@ interface_declaration ::=
 // Type: Sequence(ClassType) :> AST
 extends_interfaces_opt ::=
 		extends_interfaces:ei							{:  RESULT = ei; :}
-	|	/* Empty */			
+	|	/* Empty */			{: RESULT = new Sequence(); :}
 	;
 
 // Type: Sequence(ClassType) :> AST
@@ -832,7 +832,7 @@ block_statements_opt ::=
 
 // Type:3
 block_statements ::=
-		block_statement:l  		{: RESULT = new Serquence().append(l); :}
+		block_statement:l  		{: RESULT = new Sequence().append(l); :}
 	|	block_statements:ls block_statement:l {: RESULT = ls.append(l); :}
 	;
 
@@ -870,11 +870,11 @@ local_variable_declaration ::=
 
 // Type: e
 statement ::=	
-		statement_without_trailing_substatement:l 
-	|	if_then_statement:l 			  
-	|	if_then_else_statement:l 		  
-	|	while_statement:l 			  
-	|	for_statement:l 			  
+		statement_without_trailing_substatement:l {:  RESULT = l; :}
+	|	if_then_statement:l 					  {:  RESULT = l; :}
+	|	if_then_else_statement:l 				  {:  RESULT = l; :}
+	|	while_statement:l 						  {:  RESULT = l; :}
+	|	for_statement:l 						  {:  RESULT = l; :}
 	;
 
 // Type: Statement :> AST
@@ -983,7 +983,7 @@ switch_block_statement_group ::=
 // Type: 
 switch_labels ::=
 		switch_label:s						{: RESULT = s; :}
-	|	switch_labels:ss  switch_label:s	{: RESULT = ss.append(s); :}
+	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchLabel(e, s); :}
 	;
 
 // Type:  
@@ -994,24 +994,24 @@ switch_label ::=
 
 // Type: WhileStat :> AST
 while_statement ::=
-		WHILE LPAREN expression:e RPAREN statement:s	{: RESULT = e.append(s); :}
+		WHILE LPAREN expression:e RPAREN statement:s	{: RESULT = new WhileStat(e, s); :}
 	;
 
 // Type: WhileStat :> AST
 while_statement_no_short_if ::=
-		WHILE LPAREN expression:e RPAREN statement_no_short_if:s	{: RESULT = e.append(s); :}
+		WHILE LPAREN expression:e RPAREN statement_no_short_if:s	{: RESULT = new WhileStat(e, s); :}
 	;
 
 // Type: ForStat :> AST
 for_statement ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement:s							{: RESULT = i.append(e.append(u.append(s))); :}
+		for_update_opt:u RPAREN statement:s							{: RESULT = new ForStat(i, e, u, s); :}
 	;
 
 // Type: ForStat :> AST
 for_statement_no_short_if ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement_no_short_if:s				{: RESULT = i.append(e.append(u.append(s))); :}
+		for_update_opt:u RPAREN statement_no_short_if:s				{: RESULT = new ForStat(i, e, u, s); :}
 	;
 
 
@@ -1125,7 +1125,7 @@ dims_opt ::=
 	;
 
 // Type: ExprStat :> AST
-dims ::=	LBRACK RBRACK					//4th time, token only ask in class
+dims ::=	LBRACK RBRACK 
      	|	dims:d LBRACK RBRACK			{: RESULT = d; :}
 	;
 
