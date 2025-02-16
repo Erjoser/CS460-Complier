@@ -252,7 +252,8 @@ non terminal Invocation variable_initializers;
 non terminal Block block;
 non terminal Sequence block_statements_opt, block_statements;
 non terminal Statement block_statement;
-non terminal LocalDecl local_variable_declaration;
+//non terminal LocalDecl local_variable_declaration;
+non terminal VarDecl local_variable_declaration;
 non terminal Statement statement, statement_no_short_if;
 non terminal Statement statement_without_trailing_substatement;
 non terminal Statement empty_statement;
@@ -267,7 +268,8 @@ non terminal SwitchStat switch_block_statement_groups_opt;
 non terminal SwitchStat switch_block_statement_groups;
 non terminal SwitchStat switch_block_statement_group;
 non terminal SwitchLabel switch_label;
-non terminal SwitchLabel switch_labels;
+//non terminal SwitchLabel switch_labels;
+non terminal SwitchStat switch_labels;
 non terminal WhileStat while_statement, while_statement_no_short_if;
 non terminal ForStat for_statement, for_statement_no_short_if;
 non terminal ForStat for_init_opt, for_init;
@@ -292,9 +294,11 @@ non terminal FieldRef field_access;
 non terminal Invocation method_invocation;
 non terminal ArrayAccessExpr array_access;
 non terminal Expression postfix_expression;
-non terminal Expression post_increment_expression, post_decrement_expression;
+//non terminal Expression post_increment_expression, post_decrement_expression;
+non terminal UnaryPostExpr post_increment_expression, post_decrement_expression;
 non terminal Expression unary_expression;
-non terminal Expression pre_increment_expression, pre_decrement_expression;
+//non terminal Expression pre_increment_expression, pre_decrement_expression;
+non terminal UnaryPreExpr pre_increment_expression, pre_decrement_expression;
 non terminal Expression unary_expression_not_plus_minus;
 //non terminal Expression cast_expression;
 non terminal CastExpr cast_expression;
@@ -836,7 +840,7 @@ block_statements ::=
 
 // Type: 4
 block_statement ::=
-		local_variable_declaration:l SEMICOLON  {: RESULT = l; :}
+		local_variable_declaration:l SEMICOLON  {: RESULT = new VarDecl(l); :}
 	|	statement:l  {: RESULT = l; :}                           
 	;
 
@@ -974,6 +978,9 @@ switch_block_statement_groups ::=
 	;
 
 // Type: 14
+//	public SwitchGroup(Sequence /* SwitchLabels */ labels, 
+//			Sequence /* Statement */ stmts) {
+
 switch_block_statement_group ::=
 		switch_labels:l block_statements:s   {: RESULT = new SwitchGroup(l,s); :}
 	;
@@ -981,7 +988,7 @@ switch_block_statement_group ::=
 // Type: 
 switch_labels ::=
 		switch_label:s						{: RESULT = s; :}
-	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchLabel(e, s); :}
+	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchStat(ss, s); :}
 	;
 
 // Type:  
@@ -1076,7 +1083,7 @@ primary ::=
 // Type: 2 
 primary_no_new_array ::=	
 		literal:l  		{: RESULT = l; :}	     
-	|	THIS:l 			{: RESULT = l; :}    
+	|	THIS:l 			{: RESULT = new Sequence(l); :}    
 	|	LPAREN expression:l RPAREN {: RESULT = l; :}   
 	|	class_instance_creation_expression:l {: RESULT = l; :}
 	|	field_access:l 			{: RESULT = l; :}     
@@ -1087,7 +1094,7 @@ primary_no_new_array ::=
 
 // Type: Sequence :> AST
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = t.appends(a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = t.append(a); :}
 	;
 
 // Type: 4
@@ -1104,10 +1111,10 @@ argument_list ::=
 
 // Type:  6 
 array_creation_expression ::=
-		NEW primitive_type:t dim_exprs:d1 dims_opt:d2				{: RESULT = t.append(d1.append(d2)); :}
-	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2		{: RESULT = t.append(d1.append(d2)); :}
-	|	NEW primitive_type:t dims:d array_initializer:i				{: RESULT = t.append(d.append(i)); :}
-	|	NEW class_or_interface_type:t dims:d array_initializer:i	{: RESULT = t.append(d.append(i)); :}
+		NEW primitive_type:t dim_exprs:d1 dims_opt:d2				{: RESULT = new Sequence(t).append(d1).append(d2); :}
+	|	NEW class_or_interface_type:t dim_exprs:d1 dims_opt:d2		{: RESULT = new Sequence(t).append(d1).append(d2); :}
+	|	NEW primitive_type:t dims:d array_initializer:i				{: RESULT = new Sequence(t).append(d).append(i); :}
+	|	NEW class_or_interface_type:t dims:d array_initializer:i	{: RESULT = new Sequence(t).append(d).append(i); :}
 	;
 	
 // Type: 7
