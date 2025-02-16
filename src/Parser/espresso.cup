@@ -200,7 +200,7 @@ non terminal ClassDecl type_declarations_opt, type_declarations;
 non terminal ClassDecl type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
-non terminal Modifiers modifiers_opt, modifiers; 
+non terminal Sequence modifiers_opt, modifiers; 
 non terminal Modifier modifier;
 
 // 19.8) Classes
@@ -213,7 +213,7 @@ non terminal Sequence class_body_declarations, class_body_declarations_opt;
 non terminal Sequence class_body_declaration;
 
 // 19.8.2) Field Declarations
-non terminal FieldDecl field_declaration;
+non terminal Sequence field_declaration;
 non terminal VarDecl variable_declarators;
 non terminal VarDecl variable_declarator;
 non terminal VarDecl variable_declarator_id;
@@ -240,7 +240,7 @@ non terminal ClassDecl interface_declaration;
 non terminal ClassType extends_interfaces, extends_interfaces_opt, interface_body;
 non terminal ClassType interface_member_declarations_opt;
 non terminal Sequence interface_member_declarations, interface_member_declaration;
-non terminal Literal constant_declaration;
+non terminal Sequence constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
@@ -253,7 +253,7 @@ non terminal Block block;
 non terminal Sequence block_statements_opt, block_statements;
 non terminal Statement block_statement;
 //non terminal LocalDecl local_variable_declaration;
-non terminal VarDecl local_variable_declaration;
+non terminal Sequence local_variable_declaration;
 non terminal Statement statement, statement_no_short_if;
 non terminal Statement statement_without_trailing_substatement;
 non terminal Statement empty_statement;
@@ -970,7 +970,7 @@ switch_block ::=
 // Type: 12
 switch_block_statement_groups_opt ::=
 		switch_block_statement_groups:ss {: RESULT = ss; :}  
-	|	/* Empty */			  {: RESULT = new Sequence(); :}
+	|	/* Empty */			  
 	;
 	
 // Type: 13
@@ -994,9 +994,9 @@ switch_labels ::=
 	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchLabel(ss, s); :}
 	;
 
-// Type:  
+	// Type:  
 switch_label ::=
-		CASE constant_expression:e COLON	{: RESULT = e; :}
+		CASE constant_expression:e COLON	{: RESULT = new SwitchLabel(e , true); :}
 	|	DEFAULT COLON                      
 	;
 
