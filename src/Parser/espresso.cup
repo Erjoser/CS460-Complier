@@ -1001,15 +1001,20 @@ while_statement_no_short_if ::=
 	;
 
 // Type: ForStat :> AST
+//    public ForStat(Token t, Sequence /* of ExprStat */ init, 
+//		   Expression expr, 
+//		   Sequence /* of ExprStat */ incr , 
+//		   Statement stat) {
+
 for_statement ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement:s							{: RESULT = new ForStat(i, e, u, s); :}
+		for_update_opt:u RPAREN statement:s							{: RESULT = new ForStat(f, new Sequence(i), e,new Sequence(u), s); :}
 	;
 
 // Type: ForStat :> AST
 for_statement_no_short_if ::=
 		FOR:f LPAREN for_init_opt:i SEMICOLON expression_opt:e SEMICOLON
-		for_update_opt:u RPAREN statement_no_short_if:s				{: RESULT = new ForStat(i, e, u, s); :}
+		for_update_opt:u RPAREN statement_no_short_if:s				{: RESULT = new ForStat(f, new Sequence(i), e,new Sequence(u), s); :}
 	;
 
 
