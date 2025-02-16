@@ -264,12 +264,12 @@ non terminal IfStat if_then_else_statement, if_then_else_statement_no_short_if;
 non terminal DoStat do_statement;
 non terminal SwitchStat switch_statement;
 non terminal SwitchGroup  switch_block;
-non terminal SwitchStat switch_block_statement_groups_opt;
-non terminal SwitchStat switch_block_statement_groups;
-non terminal SwitchStat switch_block_statement_group;
+non terminal SwitchGroup switch_block_statement_groups_opt;
+non terminal SwitchGroup switch_block_statement_groups;
+non terminal SwitchGroup switch_block_statement_group;
 non terminal SwitchLabel switch_label;
 //non terminal SwitchLabel switch_labels;
-non terminal SwitchStat switch_labels;
+non terminal SwitchLabel switch_labels;
 non terminal WhileStat while_statement, while_statement_no_short_if;
 non terminal ForStat for_statement, for_statement_no_short_if;
 non terminal ForStat for_init_opt, for_init;
@@ -988,7 +988,7 @@ switch_block_statement_group ::=
 // Type: 
 switch_labels ::=
 		switch_label:s						{: RESULT = s; :}
-	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchStat(ss, s); :}
+	|	switch_labels:ss  switch_label:s	{: RESULT = new SwitchLabel(ss, s); :}
 	;
 
 // Type:  
@@ -1085,7 +1085,7 @@ primary_no_new_array ::=
 		literal:l  		{: RESULT = l; :}	     
 	|	THIS:l 			{: RESULT = new Sequence(l); :}    
 	|	LPAREN expression:l RPAREN {: RESULT = l; :}   
-	|	class_instance_creation_expression:l {: RESULT = new ExprStat(l); :}
+	|	class_instance_creation_expression:l {: RESULT = l; :}
 	|	field_access:l 			{: RESULT = l; :}     
 	|	method_invocation:l   	{: RESULT = l; :}	     
 	|	array_access:l			 {: RESULT = l; :}    
@@ -1093,10 +1093,8 @@ primary_no_new_array ::=
 
 
 // Type: Sequence :> AST
-//    public CInvocation(Token cl, Sequence /* of Expression */ args) {
-
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(t , a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new Sequence(t).append(a); :}
 	;
 
 // Type: 4
