@@ -752,8 +752,8 @@ interface_member_declarations ::=
 
 // Type: 
 interface_member_declaration ::=
-		constant_declaration:cd   {: RESULT = cd; :}       
-	|	abstract_method_declaration:md  {: RESULT = md; :}
+		constant_declaration:cd   {: RESULT = new Sequence(cd); :}       
+	|	abstract_method_declaration:md  {: RESULT = new Sequence(md); :}
 	;
 	
 // Type: Sequence(FieldDecl) :> AST
