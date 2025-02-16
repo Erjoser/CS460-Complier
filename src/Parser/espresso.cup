@@ -970,7 +970,7 @@ switch_block ::=
 // Type: 12
 switch_block_statement_groups_opt ::=
 		switch_block_statement_groups:ss {: RESULT = ss; :}  
-	|	/* Empty */			  {: RESULT = new Sequence(); :}
+	|	/* Empty */			  
 	;
 	
 // Type: 13
