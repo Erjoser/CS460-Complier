@@ -1094,7 +1094,7 @@ primary_no_new_array ::=
 
 // Type: Sequence :> AST
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = t.append(a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new Sequence(t).append(a); :}
 	;
 
 // Type: 4
@@ -1219,12 +1219,12 @@ unary_expression ::=
 
 // Type: 18
 pre_increment_expression ::=
-		PLUSPLUS:o unary_expression:e	{: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.PLUSPLUS)); :}
+		PLUSPLUS:o unary_expression:e	{: RESULT = new UnaryPreExpr(e,new PreOp(o, PreOp.PLUSPLUS)); :}
 	;
 
 // Type:  19
 pre_decrement_expression ::=
-		MINUSMINUS:o unary_expression:e	 {: RESULT = new UnaryPostExpr(e,new PostOp(o, PostOp.MINUSMINUS)); :}
+		MINUSMINUS:o unary_expression:e	 {: RESULT = new UnaryPreExpr(e,new PreOp(o, PreOp.MINUSMINUS)); :}
 	;
 
 // Type: 20
