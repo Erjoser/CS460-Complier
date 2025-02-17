@@ -617,7 +617,7 @@ variable_declarator_id ::=
 // Type: Var :> AST
 variable_initializer ::=
 		expression:l 			{:  RESULT = l; :}
-	|	array_initializer:a		{:  RESULT = new Var(a); :}
+	|	array_initializer:a		//{:  RESULT = new Var(a); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -721,21 +721,21 @@ explicit_constructor_invocation ::=
 
 // Type: Sequence(ClassDecl) :> AST
 interface_declaration ::=
-		modifiers_opt:m INTERFACE name:n				{:  RESULT = m.append(n); :}
-		extends_interfaces_opt:e interface_body:i		{:  RESULT = e.append(i); :}
+		modifiers_opt:m INTERFACE name:n				//{:  RESULT = m.append(n); :}
+		extends_interfaces_opt:e interface_body:i		//{:  RESULT = e.append(i); :}
 	;
 
 
 // Type: Sequence(ClassType) :> AST
 extends_interfaces_opt ::=
-		extends_interfaces:ei							{:  RESULT = ei; :}
-	|	/* Empty */			{: RESULT = new Sequence(); :}
+		extends_interfaces:ei							//{:  RESULT = ei; :}
+	|	/* Empty */			//{: RESULT = new Sequence(); :}
 	;
 
 // Type: Sequence(ClassType) :> AST
 extends_interfaces ::=
-		EXTENDS interface_type:it						{:  RESULT = it; :}
-	|	extends_interfaces:ei COMMA interface_type:it	{:  RESULT = ei.appends(it); :}
+		EXTENDS interface_type:it						//{:  RESULT = it; :}
+	|	extends_interfaces:ei COMMA interface_type:it	//{:  RESULT = ei.appends(it); :}
 	;
 
 
@@ -746,8 +746,8 @@ interface_body ::=
 	
 // Type: 
 interface_member_declarations_opt ::=
-		interface_member_declarations:id {: RESULT = id; :}
-	|	/* Empty */	             {: RESULT = new Sequence(); :}    
+		interface_member_declarations:id //{: RESULT = id; :}
+	|	/* Empty */	            // {: RESULT = new Sequence(); :}    
 	;
 
 // Type: 
@@ -787,10 +787,10 @@ constant_declaration ::=
 abstract_method_declaration ::= 
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
-		{:  RESULT = new MethodDecl(m, r, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
+		//{:  RESULT = new MethodDecl(m, r, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
 	|	modifiers_opt:m  VOID:v	 name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN SEMICOLON
-		{:  RESULT = new MethodDecl(m, v, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
+		//{:  RESULT = new MethodDecl(m, v, n, p ,null , MethodDecl.IS_NOT_INTERFACE); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -801,21 +801,21 @@ abstract_method_declaration ::=
 //public ArrayLiteral(Sequence /* Expression */ seq) {
 array_initializer ::=
 		LBRACE variable_initializers_opt:v RBRACE 
-		{: RESULT = new ArrayLiteral(v); :}
+		//{: RESULT = new ArrayLiteral(v); :}
 	;
 
 // Type:
 // 	public Var(Name name) {
 variable_initializers_opt ::=
-	        variable_initializers:v	{: RESULT = new ArrayLiteral(v); :}
-	|	/* Epsilon */	{: RESULT = new Sequence(); :}		
+	        variable_initializers:v	//{: RESULT = new ArrayLiteral(v); :}
+	|	/* Epsilon */	//{: RESULT = new Sequence(); :}		
 	;
 
 	
 // Type: Var :> AST
 variable_initializers ::=
-		variable_initializer:v										{:  RESULT = v; :}
-	|	variable_initializers:vs COMMA variable_initializer:v		{:  RESULT = vs.append(v); :}
+		variable_initializer:v										//{:  RESULT = v; :}
+	|	variable_initializers:vs COMMA variable_initializer:v		//{:  RESULT = vs.append(v); :}
 	;
 
 // -----------------------------------------------------------------------------
@@ -952,13 +952,13 @@ if_then_else_statement_no_short_if ::=
 //    public DoStat(Statement stat, Expression expr) {
 do_statement ::=
 		DO statement:s WHILE LPAREN expression:e RPAREN SEMICOLON
-				 {: RESULT = new IfStat(s,e); :}
+				 {: RESULT = new DoStat(s,e); :}
 	;
 
 // Type SwitchStat :> Statement :> AST
 switch_statement ::=
 		SWITCH LPAREN expression:e RPAREN switch_block:s
-			{: RESULT = new SwitchStat(e, s); :}
+			//{: RESULT = new SwitchStat(e, s); :}
 	;
 
 // Type:11
@@ -969,34 +969,34 @@ switch_block ::=
 
 // Type: 12
 switch_block_statement_groups_opt ::=
-		switch_block_statement_groups:ss {: RESULT = ss; :}  
+		switch_block_statement_groups:ss// {: RESULT = ss; :}  
 	|	/* Empty */			  
 	;
 	
 // Type: 13
 //	public SwitchGroup(Sequence /* SwitchLabels */ labels, Sequence /* Statement */ stmts) {
 switch_block_statement_groups ::=
-		switch_block_statement_group:s	{: RESULT = s; :}
-	|	switch_block_statement_groups:ss switch_block_statement_group:s {: RESULT = new SwitchGroup(ss,s); :}
+		switch_block_statement_group:s	//{: RESULT = s; :}
+	|	switch_block_statement_groups:ss switch_block_statement_group:s //{: RESULT = new SwitchGroup(ss,s); :}
 	;
 
-// Type: 14
+// Type: 14*********************************************************************************
 //	public SwitchGroup(Sequence /* SwitchLabels */ labels, 
 //			Sequence /* Statement */ stmts) {
 
 switch_block_statement_group ::=
-		switch_labels:l block_statements:s   {: RESULT = new SwitchGroup(l,s); :}
+		switch_labels:l block_statements:s   //{: RESULT = new SwitchGroup(l,s); :}
 	;
 
-// Type: 
+// Type: ****************************************************************************************
 switch_labels ::=
-		switch_label:s						{: RESULT = s; :}
-	|	switch_labels:ss  switch_label:s	{: RESULT = ss.append(s); :}
+		switch_label:s						//{: RESULT = new SwitchLabel(s , true); :}
+	|	switch_labels:ss  switch_label:s	//{: RESULT = ss.append(s); :}
 	;
 
-	// Type:  
+	// Type:  ********************************************************************************************
 switch_label ::=
-		CASE constant_expression:e COLON	{: RESULT = new SwitchLabel(e , true); :}
+		CASE constant_expression:e COLON	//{: RESULT = new SwitchLabel(e , true); :}
 	|	DEFAULT COLON                      
 	;
 
