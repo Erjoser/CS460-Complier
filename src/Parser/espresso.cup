@@ -451,7 +451,7 @@ type_declarations_opt ::=
 
 // Type: type :> AST
 type_declarations ::=
-		type_declaration:t  {: RESULT = t; :}	
+		type_declaration:t  {: RESULT = new Sequence (t); :}
 	|	type_declarations:ts type_declaration:t  {: RESULT = new Sequence(ts).append(t); :}
 	;
 
@@ -536,7 +536,7 @@ interface_type_list ::=
 // Type: Sequence(ClassBodyDecl) :> AST
 class_body ::=	
 		LBRACE class_body_declarations_opt:l RBRACE 
-					   {: RESULT = l; :}
+					   {: RESULT = new Sequence(l); :}	
 	;
 
 // Type: Sequence(ClassBodyDecl) :> AST
@@ -554,7 +554,7 @@ class_body_declarations ::=
 
 // Type: Sequence(ClassBodyDecl) :> AST
 class_body_declaration ::=
-		field_declaration:l			{: RESULT = l; :}
+		field_declaration:l			{: RESULT = new Sequence(l); :}	
 	|	method_declaration:l		{: RESULT = new Sequence(l); :}		
 	|   static_initializer:l		{: RESULT = new Sequence(l); :}
 	|	constructor_declaration:l	{: RESULT = new Sequence(l); :}
