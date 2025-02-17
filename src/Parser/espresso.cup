@@ -216,9 +216,9 @@ non terminal Sequence class_body_declaration;
 non terminal FieldDecl field_declaration;
 non terminal Sequence variable_declarators;
 non terminal VarDecl variable_declarator;
-non terminal VarDecl variable_declarator_id;
+non terminal Name variable_declarator_id;
 non terminal Sequence variable_initializers_opt;
-non terminal Var variable_initializer;
+non terminal Expression variable_initializer;
 
 // 19.8.3) Method Declarations
 non terminal MethodDecl method_declaration;
@@ -451,7 +451,7 @@ type_declarations_opt ::=
 
 // Type: type :> AST
 type_declarations ::=
-		type_declaration:t  {: RESULT = new Sequence (t); :}	
+		type_declaration:t  {: RESULT = t; :}	
 	|	type_declarations:ts type_declaration:t  {: RESULT = new Sequence(ts).append(t); :}
 	;
 
@@ -536,7 +536,7 @@ interface_type_list ::=
 // Type: Sequence(ClassBodyDecl) :> AST
 class_body ::=	
 		LBRACE class_body_declarations_opt:l RBRACE 
-					   {: RESULT = new Sequence(l); :}
+					   {: RESULT = l; :}
 	;
 
 // Type: Sequence(ClassBodyDecl) :> AST
@@ -554,7 +554,7 @@ class_body_declarations ::=
 
 // Type: Sequence(ClassBodyDecl) :> AST
 class_body_declaration ::=
-		field_declaration:l			{: RESULT = new Sequence(l); :}	
+		field_declaration:l			{: RESULT = l; :}
 	|	method_declaration:l		{: RESULT = new Sequence(l); :}		
 	|   static_initializer:l		{: RESULT = new Sequence(l); :}
 	|	constructor_declaration:l	{: RESULT = new Sequence(l); :}
@@ -628,10 +628,10 @@ variable_initializer ::=
 method_declaration ::=
 		modifiers_opt:m  type:r  name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b						 {:  RESULT = new MethodDecl(m, r, n, p , b); :}
+		method_body:b						 {:  RESULT = new MethodDecl(m, r, n, p, b, this.isInterfaceMember()); :}
 	|	modifiers_opt:m  VOID:v	 name:n 
 		LPAREN  formal_parameter_list_opt:p  RPAREN
-		method_body:b						 {:  RESULT = new MethodDecl(m, v, n, p , b); :}
+		method_body:b						 {:  RESULT = new MethodDecl(m, v, n, p, b, this.isInterfaceMember()); :}
 	;
 
 // Type: 
