@@ -240,7 +240,7 @@ non terminal ClassDecl interface_declaration;
 non terminal ClassType extends_interfaces, extends_interfaces_opt, interface_body;
 non terminal ClassType interface_member_declarations_opt;
 non terminal Sequence interface_member_declarations, interface_member_declaration;
-non terminal Sequence constant_declaration;
+non terminal FieldDecl constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
@@ -251,7 +251,7 @@ non terminal Invocation variable_initializers;
 // 19.11) Blocks and Statements
 non terminal Block block;
 non terminal Sequence block_statements_opt, block_statements;
-non terminal Statement block_statement;
+non terminal Sequence block_statement;
 //non terminal LocalDecl local_variable_declaration;
 non terminal Sequence local_variable_declaration;
 non terminal Statement statement, statement_no_short_if;
@@ -694,7 +694,7 @@ static_initializer ::=
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
-		{: RESULT = new ConstructorDecl(new Sequence(m), n, null, new Sequence(b)); :}
+		{: RESULT = new ConstructorDecl( m, n, p,null,new Sequence(b)); :}
 	;
 
 // Type: ConstructorBody :> AST
@@ -843,7 +843,7 @@ block_statements ::=
 
 // Type: 4
 block_statement ::=
-		local_variable_declaration:l SEMICOLON  {: RESULT = new VarDecl(l); :}
+		local_variable_declaration:l SEMICOLON  {: RESULT = l; :}
 	|	statement:l  {: RESULT = l; :}                           
 	;
 
@@ -1099,7 +1099,7 @@ primary_no_new_array ::=
 //    public CInvocation(Token cl, Sequence /* of Expression */ args) {
 
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(t, a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(new NameExpr(t), a); :}
 	;
 
 // Type: 4
