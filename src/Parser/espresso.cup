@@ -222,9 +222,9 @@ non terminal Var variable_initializer;
 
 // 19.8.3) Method Declarations
 non terminal MethodDecl method_declaration;
-non terminal Name method_body;
+non terminal Block method_body;
 non terminal Sequence formal_parameter_list_opt, formal_parameter_list;
-non terminal Type formal_parameter;
+non terminal ParamDecl formal_parameter;
 
 // 19.8.4) Static Initializers
 non terminal StaticInitDecl static_initializer;   
