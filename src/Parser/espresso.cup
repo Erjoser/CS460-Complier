@@ -451,7 +451,7 @@ type_declarations_opt ::=
 
 // Type: type :> AST
 type_declarations ::=
-		type_declaration:t  {: RESULT = t; :}	
+		type_declaration:t  {: RESULT = new Sequence (t); :}	
 	|	type_declarations:ts type_declaration:t  {: RESULT = new Sequence(ts).append(t); :}
 	;
 
