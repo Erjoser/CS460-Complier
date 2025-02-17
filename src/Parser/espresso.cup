@@ -694,13 +694,13 @@ static_initializer ::=
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
-		{: RESULT = new ConstructorDecl(m, n, p, null, new Sequence(b)); :}
+		{: RESULT = new ConstructorDecl(m, n, p, null, null); :}
 	;
 
 // Type: ConstructorBody :> AST
 constructor_body ::=
 		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = new ConstructorBody(e, new Sequence(b)); :}
-	|	LBRACE explicit_constructor_invocation:e	RBRACE					{:  RESULT = new ConstructorBody(e,null); :}
+	|	LBRACE explicit_constructor_invocation:e	RBRACE					{:  RESULT = new ConstructorBody(e, null); :}
 	|	LBRACE block_statements:b RBRACE									{:  RESULT = new ConstructorBody(null, new Sequence(b)); :}
 	|       LBRACE RBRACE
 	;
