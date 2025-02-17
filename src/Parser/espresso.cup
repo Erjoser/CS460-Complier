@@ -1101,7 +1101,7 @@ primary_no_new_array ::=
 //    public CInvocation(Token cl, Sequence /* of Expression */ args) {
 
 class_instance_creation_expression ::=
-		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new CInvocation(new NameExpr(t), a); :}
+		NEW class_type:t LPAREN argument_list_opt:a RPAREN	{: RESULT = new New(t, a); :}
 	;
 
 // Type: 4
