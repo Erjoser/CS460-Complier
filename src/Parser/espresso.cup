@@ -213,8 +213,8 @@ non terminal Sequence class_body_declarations, class_body_declarations_opt;
 non terminal Sequence class_body_declaration;
 
 // 19.8.2) Field Declarations
-non terminal Sequence field_declaration;
-non terminal VarDecl variable_declarators;
+non terminal FieldDecl field_declaration;
+non terminal Sequence variable_declarators;
 non terminal VarDecl variable_declarator;
 non terminal VarDecl variable_declarator_id;
 non terminal Sequence variable_initializers_opt;
@@ -597,7 +597,7 @@ field_declaration ::=
 // Type: VarDecl ***************
 variable_declarators ::= 
 		variable_declarator:v 	{: RESULT = v; :}
-	|	variable_declarators:vs COMMA variable_declarator:v
+	|	variable_declarators:vs COMMA variable_declarator:v {: RESULT = vs.append(v); :}
 	;
 
 // Type: VarDecl ***************************
