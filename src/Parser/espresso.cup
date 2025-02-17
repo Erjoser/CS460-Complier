@@ -215,7 +215,7 @@ non terminal Sequence class_body_declaration;
 // 19.8.2) Field Declarations
 non terminal Sequence field_declaration;
 non terminal Sequence variable_declarators;
-non terminal VarDecl variable_declarator;
+non terminal Sequence variable_declarator;
 non terminal Name variable_declarator_id;
 non terminal Sequence variable_initializers_opt;
 non terminal Expression variable_initializer;
