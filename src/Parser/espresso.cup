@@ -701,7 +701,7 @@ constructor_declaration ::=
 constructor_body ::=
 		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = e.append(b); :}
 	|	LBRACE explicit_constructor_invocation:e	RBRACE					{:  RESULT = e; :}
-	|	LBRACE block_statements:b RBRACE									{:  RESULT = b; :}
+	|	LBRACE block_statements:b RBRACE									{:  RESULT = new ConstructorBody(null, new Sequence(b)); :}
 	|       LBRACE RBRACE
 	;
 	
