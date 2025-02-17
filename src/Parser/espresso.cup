@@ -196,7 +196,7 @@ non terminal Name name;
 non terminal Compilation compilation_unit;
 non terminal Sequence import_declarations_opt, import_declarations;
 non terminal Name import_declaration;
-non terminal ClassDecl type_declarations_opt, type_declarations;
+non terminal Sequence type_declarations_opt, type_declarations;
 non terminal ClassDecl type_declaration;
  
 // 19.7) Productions used only in the LALR(1) grammar
@@ -452,7 +452,7 @@ type_declarations_opt ::=
 // Type: type :> AST
 type_declarations ::=
 		type_declaration:t  {: RESULT = t; :}	
-	|	type_declarations:ts type_declaration:t  {: RESULT = ts.append(t); :}
+	|	type_declarations:ts type_declaration:t  {: RESULT = new Sequence(ts).append(t); :}
 	;
 
 // Type: Sequence :> AST
