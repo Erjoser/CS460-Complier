@@ -603,8 +603,8 @@ variable_declarators ::=
 // Type: VarDecl ***************************
 //	public Var(Name name, Expression init) {
 variable_declarator ::=
-		variable_declarator_id:n {: RESULT = n; :}					
-	|	variable_declarator_id:n EQ variable_initializer:i  {: RESULT = new Var(n , i); :}
+		variable_declarator_id:n {: RESULT =new Sequence(n); :}					
+	|	variable_declarator_id:n EQ variable_initializer:i  {: RESULT = new Sequence(n).append(i) ; :}
 	;
 
 
