@@ -594,7 +594,7 @@ field_declaration ::=
 			:}
 	;
 
-// Type: VarDecl ***************
+// Type: Sequence ***************
 variable_declarators ::= 
 		variable_declarator:v 	{: RESULT = v; :}
 	|	variable_declarators:vs COMMA variable_declarator:v {: RESULT = vs.append(v); :}
@@ -694,7 +694,7 @@ static_initializer ::=
 constructor_declaration ::=
 		modifiers_opt:m name:n LPAREN formal_parameter_list_opt:p RPAREN 
 		constructor_body:b 
-		{: RESULT = new ConstructorDecl( m, n, p,null,new Sequence(b)); :}
+		{: RESULT = new ConstructorDecl(m, n, p, null, b); :}
 	;
 
 // Type: ConstructorBody :> AST
@@ -846,7 +846,7 @@ block_statements ::=
 // Type: 4
 block_statement ::=
 		local_variable_declaration:l SEMICOLON  {: RESULT = l; :}
-	|	statement:l  {: RESULT = l; :}                           
+	|	statement:l  {: RESULT = new Sequence(l); :}                          
 	;
 
 // Type: Sequence(LocalDecl) :> AST
