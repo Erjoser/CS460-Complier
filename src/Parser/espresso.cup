@@ -706,9 +706,11 @@ constructor_body ::=
 	;
 	
 // Type: 
+//    public Invocation(Expression target, Name name, 
+//		      Sequence /* of Expressions*/ params) {
 explicit_constructor_invocation ::=
-		SUPER:s LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = a; :}
-	|	THIS:t LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = a; :}
+		SUPER:s LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new Invocation(new Super(s),null,a); :}
+	|	THIS:t LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new Invocation(new This(t),null,a); :}
 	;
 
 // -----------------------------------------------------------------------------
