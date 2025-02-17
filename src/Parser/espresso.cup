@@ -232,7 +232,7 @@ non terminal StaticInitDecl static_initializer;
 // 19.8.5) Constructor Declarations
 non terminal ConstructorDecl constructor_declaration;
 non terminal ConstructorBody constructor_body;
-non terminal Invocation explicit_constructor_invocation;
+non terminal CInvocation explicit_constructor_invocation;
 
 // 19.9) Interfaces
 // 19.9.1) Interface Declarations
@@ -699,7 +699,7 @@ constructor_declaration ::=
 
 // Type: ConstructorBody :> AST
 constructor_body ::=
-		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = new Sequence(e).append(b); :}
+		LBRACE explicit_constructor_invocation:e block_statements:b RBRACE	{:  RESULT = new ConstructorBody(e, new Sequence(b)); :}
 	|	LBRACE explicit_constructor_invocation:e	RBRACE					{:  RESULT = new ConstructorBody(null, new Sequence(e)); :}
 	|	LBRACE block_statements:b RBRACE									{:  RESULT = new ConstructorBody(null, new Sequence(b)); :}
 	|       LBRACE RBRACE
@@ -709,8 +709,8 @@ constructor_body ::=
 //    public Invocation(Expression target, Name name, 
 //		      Sequence /* of Expressions*/ params) {
 explicit_constructor_invocation ::=
-		SUPER:s LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new Invocation(new Super(s),null,a); :}
-	|	THIS:t LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new Invocation(new This(t),null,a); :}
+		SUPER:s LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new CInvocation(s, a); :}
+	|	THIS:t LPAREN argument_list_opt:a RPAREN SEMICOLON {:  RESULT = new CInvocation(t, a); :}
 	;
 
 // -----------------------------------------------------------------------------
