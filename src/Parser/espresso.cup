@@ -213,7 +213,7 @@ non terminal Sequence class_body_declarations, class_body_declarations_opt;
 non terminal Sequence class_body_declaration;
 
 // 19.8.2) Field Declarations
-non terminal FieldDecl field_declaration;
+non terminal Sequence field_declaration;
 non terminal Sequence variable_declarators;
 non terminal VarDecl variable_declarator;
 non terminal Name variable_declarator_id;
@@ -240,7 +240,7 @@ non terminal ClassDecl interface_declaration;
 non terminal ClassType extends_interfaces, extends_interfaces_opt, interface_body;
 non terminal ClassType interface_member_declarations_opt;
 non terminal Sequence interface_member_declarations, interface_member_declaration;
-non terminal FieldDecl constant_declaration;
+non terminal Sequence constant_declaration;
 non terminal MethodDecl abstract_method_declaration;
 
 // 19.10) Arrays
