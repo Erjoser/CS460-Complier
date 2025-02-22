@@ -230,6 +230,10 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
 	// YOUR CODE HERE	
+	String name = md.getname()
+	String sig = md.paramSignature()
+//    private void addMethod(ClassDecl cd, AST md, String name, String sig) {
+	addMethod(currentClass, md, name, sig);
 	return null;
     }
     

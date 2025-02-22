@@ -267,6 +267,19 @@ public class NameChecker extends Visitor {
     public Object visitClassType(ClassType ct) {
 	println(ct.line + ":\tVisiting a ClassType.");
 	// YOUR CODE HERE
+	//A class that can be found in the global class table. (classTable.get())
+	//ClassDecl superClass = (ClassDecl)classTable.get(cd.superClass().typeName());
+	//Error.error(cd,"Class '" + cd.name() + "' cannot implement class '" + ct.name() + "'.");
+	String name = ct.getname();
+	ClassDecl classcheck = (ClassDecl)classTable.get(name);
+	if (classcheck == null){
+	Error.error(ct,"Class '" + name + "not found"); //such class exists an error is signalled
+	}
+	else
+	{
+	ct.myDecl = classcheck; //Set the myDecl of ct
+	}
+
 	return null;
     }
     
