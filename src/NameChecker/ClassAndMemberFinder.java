@@ -216,6 +216,9 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitFieldDecl(FieldDecl fd) {
 	println(fd.line + ":\tVisiting a FieldDecl.");
 	// YOUR CODE HERE
+	addField(currentClass, fd, fd.name())
+	fd.myDecl = fd.Var.myDecl
+
 	return null;
     }
     
@@ -230,10 +233,6 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
 	// YOUR CODE HERE	
-	String name = md.getname()
-	String sig = md.paramSignature()
-//    private void addMethod(ClassDecl cd, AST md, String name, String sig) {
-	addMethod(currentClass, md, name, sig);
 	return null;
     }
     
