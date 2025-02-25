@@ -33,7 +33,7 @@ public class NameChecker extends Visitor {
      * method.
      * @return A symbol table with all methods called 'methodName' or null.
      */    
-    public static SymbolTable getMethod(String methodName, ClassDecl cd) {	
+    public static SymbolTable getMethod(String methodName, ClassDecl cd) {	//eroc
 	// YOUR CODE HERE
 	return null;
     }
@@ -47,7 +47,7 @@ public class NameChecker extends Visitor {
      * @param cd The class where the search starts.
      * @return A FieldDecl if the find was found, null otherwise.
      */
-    public static FieldDecl getField(String fieldName, ClassDecl cd) {	
+    public static FieldDecl getField(String fieldName, ClassDecl cd) {	//eric
 	// YOUR CODE HERE
 	return null;
     }
@@ -72,7 +72,7 @@ public class NameChecker extends Visitor {
      *               illegal.  Before we leave the method we remove
      *               the name of cd again.
      */
-    public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
+    public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {//e
 	// YOUR CODE HERE
     }
     
@@ -87,7 +87,7 @@ public class NameChecker extends Visitor {
      * name+signature as the key and the return type signature of the
      * method as the value.
     */
-    public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
+    public void checkReturnTypesOfIdenticalMethods(Sequence lst) {//e
 	// YOUR CODE HERE
     }
 
@@ -104,7 +104,7 @@ public class NameChecker extends Visitor {
      * class again as this would indicate a circular inheritance situation, and we already checked
      * for that.
      */
-    public  void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
+    public  void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {//e
 	// YOUR CODE HERE
     }
     
@@ -294,7 +294,7 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitFieldRef(FieldRef fr) {
+    public Object visitFieldRef(FieldRef fr) {//e
 	println(fr.line + ":\tVisiting a FieldRef.");
 	// YOUR CODE HERE
 	return null;
@@ -310,7 +310,7 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitForStat(ForStat fs) {
+    public Object visitForStat(ForStat fs) {//e
 	println(fs.line + ":\tVisiting a ForStat.");
 	// YOUR CODE HERE
 	return null;
@@ -324,7 +324,7 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitLocalDecl(LocalDecl ld) {
+    public Object visitLocalDecl(LocalDecl ld) {//e
 	println(ld.line + ":\tVisiting a LocalDecl.");
 	// YOUR CODE HERE
 	return null;    

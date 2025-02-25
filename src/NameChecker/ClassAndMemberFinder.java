@@ -198,7 +198,7 @@ public class ClassAndMemberFinder extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitConstructorDecl(ConstructorDecl cd) {
+    public Object visitConstructorDecl(ConstructorDecl cd) { //nick
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
 	// YOUR CODE HERE
 	return null;
