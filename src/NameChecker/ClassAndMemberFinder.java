@@ -201,6 +201,19 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitConstructorDecl(ConstructorDecl cd) { //nick
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
 	// YOUR CODE HERE
+	string whatis = cd.getname();
+	string whatshould = currentClass.name();
+	String sig = cd.paramSignature();
+
+	// A constructor must have the same name as the clas in which it lives (test file: CMF2.java)
+	if( whatis == whatshould){
+	//Insert the constructor into the class' method table with the name <init>
+	addMethod(currentClass, cd,"<init>", sig);
+	}
+	else{
+	 Error.error(" Not the same name as the class in which it lives.");
+	}
+	
 	return null;
     }
     
@@ -216,8 +229,8 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitFieldDecl(FieldDecl fd) {
 	println(fd.line + ":\tVisiting a FieldDecl.");
 	// YOUR CODE HERE
-	addField(currentClass, fd, fd.name())
-	fd.myDecl = fd.Var.myDecl
+	addField(currentClass, fd, fd.name());
+	fd.myDecl = fd.Var.myDecl;
 
 	return null;
     }
@@ -233,8 +246,8 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
 	// YOUR CODE HERE	
-	String name = md.getname()
-	String sig = md.paramSignature()
+	String name = md.getname();
+	String sig = md.paramSignature();
 //    private void addMethod(ClassDecl cd, AST md, String name, String sig) {
 	addMethod(currentClass, md, name, sig);
 	return null;

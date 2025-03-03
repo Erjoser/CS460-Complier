@@ -351,6 +351,13 @@ public class NameChecker extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
 	// YOUR CODE HERE
+	//Open a new scope
+	currentScope = currentScope.newScope();
+	//Visit the children (the parameters will be visted first and inserted into the newly created scope).
+	super.visitMethodDecl(md);
+	//Close the scope
+	currentScope = currentScope.closeScope();
+	
 	return null;
     }
     
@@ -374,6 +381,28 @@ public class NameChecker extends Visitor {
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
 	// YOUR CODE HERE
+	//Open a new scope
+	currentScope = currentScope.newScope();
+	//<li> Visit the parameters.</li>
+	super.visitConstructorDecl(cd);
+	// <li> Open a scope (for the locals).</li>
+	currentScope = currentScope.newScope();
+	// <li> Visit the explicite constructe invocation (if not null) and the body.</li>
+	if(cd.cinvocation() != null){
+		cd.cinvocation().visit(this);
+	}
+	cd.body().visit(this);
+	//<li> Close the scope twice.</li>
+	currentScope = currentScope.closeScope();
+	currentScope = currentScope.closeScope();
+
+	//If the explicite constructor invocation is null and 'cd' has a superclass
+	if(cd.cinvocation() == null && cd.superClass() != null){
+	//create a new {@link CInvocation} for the call 'super()' and place it in cd.children[3]	
+	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
+		cd.children[3] = new CInvocation( SUPER ,new Sequence());
+	}
+	
 	return null;
     }
     
@@ -394,7 +423,33 @@ public class NameChecker extends Visitor {
      */
     public Object visitNameExpr(NameExpr ne) {
 	println(ne.line + ":\tVisiting NameExpr.");
-	// YOUR CODE HERE
+		// YOUR CODE HERE
+
+	
+	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
+	if(currentScope.get(ne.getname()) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = currentScope.get(ne.getname());
+	}
+	
+	//<li> A field that that can be found in the class hierarchy (getField()).</li>
+	if else(getField.get(ne.getname()) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = getField(ne.getname());
+	}
+	
+	// <li> A class that can be found in the global class table. (classTable.get()).</li>
+	if else(getField.get(ne.getname()) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = classTable.get(ne.getname());
+	}
+	
+	else{
+	// <li> If the name expression is not found in either of the three places an error should be signalled (test file:NC11.java).</li>
+	Error.error("name expression is not found in either of the three places.");
+		}
+	
+	
 	return null;
     }
     
@@ -411,6 +466,32 @@ public class NameChecker extends Visitor {
     public Object visitInvocation(Invocation in) {
 	println(in.line + ":\tVisiting an Invocation.");
 	// YOUR CODE HERE
+	
+	String name = in.getname();
+	//For null and this targets, call getMethod with the current class.
+	if(in.target() == null || in.target == THIS){
+		if(getMethod(name, currentClass)==null){
+	// If no method of the appropriate name is found signal an error (test file: NC12.java).
+	Error.error("no method of the appropriate name is found");
+		}
+	}
+
+	// For a super target, call getMethod with the current class's superclass's myDecl.
+	// if no method if the appropriate name is found signal an error (test file: NC13.java).</li>
+
+	if(in.target() == SUPER){
+		if(getMethod(name, currentClass.superClass())==null){
+	// If no method of the appropriate name is found signal an error (test file: NC12.java).
+	Error.error("no method of the appropriate name is found");
+		}
+	}
+	
+	
+	// If the target is anything but null, this, or super, simply move on.</li>
+
+	
+	
+	
 	return null;
     }
     
@@ -425,6 +506,11 @@ public class NameChecker extends Visitor {
     public Object visitParamDecl(ParamDecl pd) {
 	println(pd.line + ":\tVisiting a ParamDecl.");
 	// YOUR CODE HERE
+	string name = pd.getName();
+	//<li> Inserts the param decl (pd) into the current scope.</li>
+	//	put(java.lang.String name, java.lang.Object entry)
+	currentScope.put(name, pd);
+
 	return null;
     }
 
@@ -441,6 +527,14 @@ public class NameChecker extends Visitor {
     public Object visitSwitchStat(SwitchStat st) {
 	println(st.line + ":\tVisiting a SwitchStat.");
 	// YOUR CODE HERE
+	//Open a new scope
+	currentScope = currentScope.newScope();
+	//Visit the children
+	super.visitSwitchStat(st);
+	//Close the scope
+	currentScope = currentScope.closeScope();
+	
+	
 	return null;
     }
     
