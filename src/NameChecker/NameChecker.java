@@ -33,9 +33,13 @@ public class NameChecker extends Visitor {
      * method.
      * @return A symbol table with all methods called 'methodName' or null.
      */    
-    public static SymbolTable getMethod(String methodName, ClassDecl cd) {	//eroc
-	// YOUR CODE HERE
-	return null;
+    public static SymbolTable getMethod(String methodName, ClassDecl cd) {	
+	// YOUR CODE 
+    //in the SymbolTable class, the get function recurses to get parents
+        if(cd.methodTable.get(methodName) != null){     
+            return cd.methodTable;
+        }
+	    return null;
     }
     
     /** 
@@ -47,9 +51,12 @@ public class NameChecker extends Visitor {
      * @param cd The class where the search starts.
      * @return A FieldDecl if the find was found, null otherwise.
      */
-    public static FieldDecl getField(String fieldName, ClassDecl cd) {	//eric
+    public static FieldDecl getField(String fieldName, ClassDecl cd) {	
 	// YOUR CODE HERE
-	return null;
+        if(cd.fieldTable.get(fieldName) != null){     
+            return cd.fieldTable.get(fieldName);
+        }
+	    return null;
     }
     
     /** 
@@ -72,8 +79,13 @@ public class NameChecker extends Visitor {
      *               illegal.  Before we leave the method we remove
      *               the name of cd again.
      */
-    public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {//e
+    public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
+        for(i = 0; i < len(cd.body); i++){
+            if(cd.body[i] != seenClasses){
+                lst.append(cd.body[i])
+            }
+        }
     }
     
     /**
@@ -87,8 +99,15 @@ public class NameChecker extends Visitor {
      * name+signature as the key and the return type signature of the
      * method as the value.
     */
-    public void checkReturnTypesOfIdenticalMethods(Sequence lst) {//e
+    public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
 	// YOUR CODE HERE
+        for(i = 0; i < len(lst) - 1; i++){
+            for(j = i + 1; j < len(lst) - 1; j++{
+                if(lst[i] == lst[j]){
+                    Error.error(lst[i] + " matches with " + lst[j]);
+                }
+            }
+        }
     }
 
     /**
@@ -104,8 +123,11 @@ public class NameChecker extends Visitor {
      * class again as this would indicate a circular inheritance situation, and we already checked
      * for that.
      */
-    public  void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {//e
+    public void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
+        fields = cd.fieldTable.entries
+        seenClasses.extend(fields)
+        checkUniqueFields(fields, cd.children, seenClasses)
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,7 +289,7 @@ public class NameChecker extends Visitor {
     public Object visitClassType(ClassType ct) {
 	println(ct.line + ":\tVisiting a ClassType.");
 	// YOUR CODE HERE
-	//A class that can be found in the global class table. (classTable.get())
+    //A class that can be found in the global class table. (classTable.get())
 	//ClassDecl superClass = (ClassDecl)classTable.get(cd.superClass().typeName());
 	//Error.error(cd,"Class '" + cd.name() + "' cannot implement class '" + ct.name() + "'.");
 	String name = ct.getname();
@@ -279,7 +301,6 @@ public class NameChecker extends Visitor {
 	{
 	ct.myDecl = classcheck; //Set the myDecl of ct
 	}
-
 	return null;
     }
     
@@ -294,10 +315,18 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitFieldRef(FieldRef fr) {//e
+    public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a FieldRef.");
 	// YOUR CODE HERE
-	return null;
+	    String name = fr.getname();
+	    ClassDecl class = (ClassDecl)classTable.get(name); // check for null
+	    if (fr == null || fr == This){
+            if(class == null){
+                Error.error(fr,"Class '" + name + "not found");
+            }
+            return getField(name, class)                               //(String fieldName, ClassDecl cd)
+	    }
+	    return null;
     }
 
     /**
@@ -310,9 +339,12 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitForStat(ForStat fs) {//e
+    public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
 	// YOUR CODE HERE
+	currentScope = currentScope.newScope();
+	super.visitForStat(fs);
+	currentScope = currentScope.closeScope();
 	return null;
     }
 
@@ -324,9 +356,11 @@ public class NameChecker extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitLocalDecl(LocalDecl ld) {//e
+    public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ":\tVisiting a LocalDecl.");
 	// YOUR CODE HERE
+	string name = ld.getName();
+	currentScope.put(name, ld);
 	return null;    
     }
     
@@ -402,9 +436,6 @@ public class NameChecker extends Visitor {
 	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
 		cd.children[3] = new CInvocation( SUPER ,new Sequence());
 	}
-	
-	return null;
-    }
     
     /**
      * Visits a {@link NameExpr}.
@@ -423,8 +454,7 @@ public class NameChecker extends Visitor {
      */
     public Object visitNameExpr(NameExpr ne) {
 	println(ne.line + ":\tVisiting NameExpr.");
-		// YOUR CODE HERE
-
+	// YOUR CODE HERE
 	
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
 	if(currentScope.get(ne.getname()) != null){
@@ -448,8 +478,6 @@ public class NameChecker extends Visitor {
 	// <li> If the name expression is not found in either of the three places an error should be signalled (test file:NC11.java).</li>
 	Error.error("name expression is not found in either of the three places.");
 		}
-	
-	
 	return null;
     }
     
@@ -486,12 +514,7 @@ public class NameChecker extends Visitor {
 		}
 	}
 	
-	
 	// If the target is anything but null, this, or super, simply move on.</li>
-
-	
-	
-	
 	return null;
     }
     
@@ -533,7 +556,6 @@ public class NameChecker extends Visitor {
 	super.visitSwitchStat(st);
 	//Close the scope
 	currentScope = currentScope.closeScope();
-	
 	
 	return null;
     }
