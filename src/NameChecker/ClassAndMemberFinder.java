@@ -201,14 +201,15 @@ public class ClassAndMemberFinder extends Visitor {
     public Object visitConstructorDecl(ConstructorDecl cd) { //nick
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
 	// YOUR CODE HERE
-	string whatis = cd.getname();
-	string whatshould = currentClass.name();
-	String sig = cd.paramSignature();
+	//new Var(whatis); //here is where i learned that i cant create variabels ;-;
+	//whatis.name() = cd.getname();
+	//string whatshould = currentClass.name();
+	//String sig = cd.paramSignature();
 
 	// A constructor must have the same name as the clas in which it lives (test file: CMF2.java)
-	if( whatis == whatshould){
+	if( cd.getname() == currentClass.name()){
 	//Insert the constructor into the class' method table with the name <init>
-	addMethod(currentClass, cd,"<init>", sig);
+	addMethod(currentClass, cd,"<init>", cd.paramSignature());
 	}
 	else{
 	 Error.error(" Not the same name as the class in which it lives.");
