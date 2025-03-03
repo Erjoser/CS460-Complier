@@ -83,7 +83,7 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
         for(i = 0; i < len(cd.body); i++){
             if(cd.body[i] != seenClasses){
-                lst.append(cd.body[i])
+                lst.append(cd.body[i]);
             }
         }
     }
@@ -102,7 +102,7 @@ public class NameChecker extends Visitor {
     public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
 	// YOUR CODE HERE
         for(i = 0; i < len(lst) - 1; i++){
-            for(j = i + 1; j < len(lst) - 1; j++{
+            for(j = i + 1; j < len(lst) - 1; j++){
                 if(lst[i] == lst[j]){
                     Error.error(lst[i] + " matches with " + lst[j]);
                 }
@@ -125,9 +125,9 @@ public class NameChecker extends Visitor {
      */
     public void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
-        fields = cd.fieldTable.entries
-        seenClasses.extend(fields)
-        checkUniqueFields(fields, cd.children, seenClasses)
+        fields = cd.fieldTable.entries;
+        seenClasses.extend(fields);
+        checkUniqueFields(fields, cd.children, seenClasses);
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,12 +319,12 @@ public class NameChecker extends Visitor {
 	println(fr.line + ":\tVisiting a FieldRef.");
 	// YOUR CODE HERE
 	    String name = fr.getname();
-	    ClassDecl class = (ClassDecl)classTable.get(name); // check for null
+	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
 	    if (fr == null || fr == This){
-            if(class == null){
+            if(class1 == null){
                 Error.error(fr,"Class '" + name + "not found");
             }
-            return getField(name, class)                               //(String fieldName, ClassDecl cd)
+            return getField(name, class1);                               //(String fieldName, ClassDecl cd)
 	    }
 	    return null;
     }
@@ -436,6 +436,7 @@ public class NameChecker extends Visitor {
 	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
 		cd.children[3] = new CInvocation( SUPER ,new Sequence());
 	}
+}
     
     /**
      * Visits a {@link NameExpr}.
@@ -463,13 +464,13 @@ public class NameChecker extends Visitor {
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
-	if else(getField.get(ne.getname()) != null){
+	else if(getField.get(ne.getname()) != null){
 	//Set the myDecl of ne to what was looked up.
 	ne.myDecl = getField(ne.getname());
 	}
 	
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
-	if else(getField.get(ne.getname()) != null){
+	else if(getField.get(ne.getname()) != null){
 	//Set the myDecl of ne to what was looked up.
 	ne.myDecl = classTable.get(ne.getname());
 	}
