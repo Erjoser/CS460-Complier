@@ -104,7 +104,8 @@ public class NameChecker extends Visitor {
         for(int i = 0; i < len(lst) - 1; i++){
             for(int j = i + 1; j < len(lst) - 1; j++){
                 if(lst[i] == lst[j]){
-                    Error.error(lst[i] + " matches with " + lst[j]);
+                    //Error.error(lst[i] + " matches with " + lst[j]);
+                Error.error("match found");
                 }
             }
         }
@@ -322,7 +323,7 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
 	    String name = fr.getname();
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
-	    if (fr == null || fr == This){
+	    if (fr == null || fr == this){
             if(class1 == null){
                 Error.error(fr,"Class '" + name + "not found");
             }
