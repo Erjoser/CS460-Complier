@@ -437,7 +437,7 @@ public class NameChecker extends Visitor {
 	if(cd.cinvocation() == null && cd.superClass() != null){
 	//create a new {@link CInvocation} for the call 'super()' and place it in cd.children[3]	
 	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
-		cd.children[3] = new CInvocation( SUPER ,new Sequence());
+		cd.children[3] = new CInvocation( cd.superClass() ,new Sequence());
 	}
 }
     
@@ -463,19 +463,19 @@ public class NameChecker extends Visitor {
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
 	if(currentScope.get(ne.getname()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = currentScope.get(ne.getname());
+	ne.myDecl = (AST)currentScope.get(ne.getname());
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
-	else if(getField.get(ne.getname()) != null){
+	else if(getField(ne.getname(),currentClass) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = getField(ne.getname());
+	ne.myDecl = getField(ne.getname(), currentClass);
 	}
 	
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
-	else if(getField.get(ne.getname()) != null){
+	else if(classTable.get(ne.getname()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = classTable.get(ne.getname());
+	ne.myDecl = (AST)classTable.get(ne.getname());
 	}
 	
 	else{
