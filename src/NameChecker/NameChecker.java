@@ -362,7 +362,7 @@ public class NameChecker extends Visitor {
     public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ":\tVisiting a LocalDecl.");
 	// YOUR CODE HERE
-	string name = ld.getName();
+	string name = ld.name();
 	currentScope.put(name, ld);
 	return null;    
     }
@@ -434,10 +434,12 @@ public class NameChecker extends Visitor {
 	currentScope = currentScope.closeScope();
 
 	//If the explicite constructor invocation is null and 'cd' has a superclass
-	if(cd.cinvocation() == null && cd.superClass() != null){
+	if(cd.cinvocation() == null && currentClass.superClass() != null){
 	//create a new {@link CInvocation} for the call 'super()' and place it in cd.children[3]	
 	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
-		cd.children[3] = new CInvocation( cd.superClass() ,new Sequence());
+	// public Token (int p_kind, String p_lexeme, int p_line, int p_charBegin, int p_charEnd) {
+
+		cd.children[3] = new CInvocation( new Token(sym.SUPER, "super", 0,0,0 ),new Sequence());
 	}
 }
     
