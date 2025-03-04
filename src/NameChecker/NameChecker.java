@@ -54,7 +54,7 @@ public class NameChecker extends Visitor {
     public static FieldDecl getField(String fieldName, ClassDecl cd) {	
 	// YOUR CODE HERE
         if(cd.fieldTable.get(fieldName) != null){     
-            return cd.fieldTable.get(fieldName);
+            return cd.fieldTable.entries;
         }
 	    return null;
     }
@@ -81,7 +81,7 @@ public class NameChecker extends Visitor {
      */
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
-        for(i = 0; i < len(cd.body); i++){
+        for(int i = 0; i < len(cd.body); i++){
             if(cd.body[i] != seenClasses){
                 lst.append(cd.body[i]);
             }
@@ -101,8 +101,8 @@ public class NameChecker extends Visitor {
     */
     public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
 	// YOUR CODE HERE
-        for(i = 0; i < len(lst) - 1; i++){
-            for(j = i + 1; j < len(lst) - 1; j++){
+        for(int i = 0; i < len(lst) - 1; i++){
+            for(int j = i + 1; j < len(lst) - 1; j++){
                 if(lst[i] == lst[j]){
                     Error.error(lst[i] + " matches with " + lst[j]);
                 }

@@ -231,7 +231,7 @@ public class ClassAndMemberFinder extends Visitor {
 	println(fd.line + ":\tVisiting a FieldDecl.");
 	// YOUR CODE HERE
 	addField(currentClass, fd, fd.name());
-	fd.myDecl = fd.Var.myDecl;
+	((Var)fd.children[2]).myDecl = fd;
 
 	return null;
     }
