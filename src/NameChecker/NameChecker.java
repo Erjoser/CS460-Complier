@@ -323,7 +323,7 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
 	    String name = fr.getname();
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
-	    if (fr == null || fr == this){
+	    if (fr == null || fr.target() instanceof This){
             if(class1 == null){
                 Error.error(fr,"Class '" + name + "not found");
             }
@@ -362,8 +362,8 @@ public class NameChecker extends Visitor {
     public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ":\tVisiting a LocalDecl.");
 	// YOUR CODE HERE
-	string name = ld.name();
-	currentScope.put(name, ld);
+//	string name = ld.name();
+	currentScope.put(ld.name(), ld);
 	return null;    
     }
     
