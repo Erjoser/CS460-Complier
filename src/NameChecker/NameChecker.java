@@ -499,10 +499,10 @@ public class NameChecker extends Visitor {
 	println(in.line + ":\tVisiting an Invocation.");
 	// YOUR CODE HERE
 	
-	String name = in.getname();
+	//String name = in.getname();
 	//For null and this targets, call getMethod with the current class.
-	if(in.target() == null || in.target == THIS){
-		if(getMethod(name, currentClass)==null){
+	if(in.target() == null || in.target() instanceof This){
+		if(getMethod(in.getname(), currentClass)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
@@ -511,8 +511,8 @@ public class NameChecker extends Visitor {
 	// For a super target, call getMethod with the current class's superclass's myDecl.
 	// if no method if the appropriate name is found signal an error (test file: NC13.java).</li>
 
-	if(in.target() == SUPER){
-		if(getMethod(name, currentClass.superClass())==null){
+	if(in.target() instanceof Super){
+		if(getMethod(in.getname(), currentClass.superClass().myDecl)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
@@ -536,7 +536,7 @@ public class NameChecker extends Visitor {
 	//string name = pd.getName();
 	//<li> Inserts the param decl (pd) into the current scope.</li>
 	//	put(java.lang.String name, java.lang.Object entry)
-	currentScope.put(pd.getName(), pd);
+	currentScope.put(pd.name(), pd);
 
 	return null;
     }
