@@ -54,7 +54,7 @@ public class NameChecker extends Visitor {
     public static FieldDecl getField(String fieldName, ClassDecl cd) {	
 	// YOUR CODE HERE
         if(cd.fieldTable.get(fieldName) != null){     
-            return cd.fieldTable.entries;
+            return (FieldDecl)cd.fieldTable.get(fieldName);
         }
 	    return null;
     }
@@ -81,7 +81,7 @@ public class NameChecker extends Visitor {
      */
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
-        for(int i = 0; i < len(cd.body); i++){
+        for(int i = 0; i < cd.body().nchildren; i++){
             if(cd.body[i] != seenClasses){
                 lst.append(cd.body[i]);
             }
