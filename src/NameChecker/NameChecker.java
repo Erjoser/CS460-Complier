@@ -533,10 +533,10 @@ public class NameChecker extends Visitor {
     public Object visitParamDecl(ParamDecl pd) {
 	println(pd.line + ":\tVisiting a ParamDecl.");
 	// YOUR CODE HERE
-	string name = pd.getName();
+	//string name = pd.getName();
 	//<li> Inserts the param decl (pd) into the current scope.</li>
 	//	put(java.lang.String name, java.lang.Object entry)
-	currentScope.put(name, pd);
+	currentScope.put(pd.getName(), pd);
 
 	return null;
     }
