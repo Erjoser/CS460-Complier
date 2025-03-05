@@ -344,7 +344,7 @@ public class NameChecker extends Visitor {
      */
     public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
-	// YOUR CODE HERE
+	// YOUR CODE  HERE
 	currentScope = currentScope.newScope();
 	super.visitForStat(fs);
 	currentScope = currentScope.closeScope();
