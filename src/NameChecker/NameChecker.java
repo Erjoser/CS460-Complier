@@ -127,9 +127,9 @@ public class NameChecker extends Visitor {
      */
     public void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
-        fields = cd.fieldTable.entries;
-        seenClasses.extend(fields);
-        checkUniqueFields(fields, cd.children, seenClasses);
+        fields.add(cd.fieldTable.entries.toString());
+        seenClasses.addAll(fields);
+        checkUniqueFields(fields, cd.children[3], seenClasses);
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
