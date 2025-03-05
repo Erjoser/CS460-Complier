@@ -82,8 +82,8 @@ public class NameChecker extends Visitor {
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
         for(int i = 0; i < cd.body().nchildren; i++){
-            if(cd.body[i] != seenClasses){
-                lst.append(cd.body[i]);
+            if(cd.body().children[i] != seenClasses){
+                lst.append(cd.body().children[i]);
             }
         }
     }
@@ -103,7 +103,7 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
         for(int i = 0; i < lst.nchildren - 1; i++){
             for(int j = i + 1; j < lst.nchildren - 1; j++){
-                if(lst[i] == lst[j]){
+                if(lst.children[i] == lst.children[j]){
                     //Error.error(lst[i] + " matches with " + lst[j]);
                 Error.error("match found");
                 }
