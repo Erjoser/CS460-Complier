@@ -82,7 +82,8 @@ public class NameChecker extends Visitor {
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
         for(int i = 0; i < cd.body().nchildren; i++){
-            if(cd.body().children[i] != seenClasses){
+            if(!seenClasses.contains(cd.body().children[i].toString())){
+                seenClasses.add(cd.body().children[i].toString());
                 lst.append(cd.body().children[i]);
             }
         }
