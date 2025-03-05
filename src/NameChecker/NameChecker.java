@@ -127,9 +127,14 @@ public class NameChecker extends Visitor {
      */
     public void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
-        fields.add(cd.fieldTable.entries.toString());
-        seenClasses.addAll(fields);
-        checkUniqueFields(fields, cd.children[3], seenClasses);
+        if(!seenClasses.contains(cd.name())){
+            if(!fields.contains(cd.fieldTable.entries.toString())){
+                fields.add(cd.fieldTable.entries.toString());
+                seenClasses.add(cd.name());
+                //figuring out how to recurse with its children still, builds but will cause problems
+                checkUniqueFields(fields, cd, seenClasses);
+            }
+        }
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -442,6 +447,7 @@ public class NameChecker extends Visitor {
 
 		cd.children[3] = new CInvocation( new Token(sym.SUPER, "super", 0,0,0 ),new Sequence());
 	}
+    return null;
 }
     
     /**
