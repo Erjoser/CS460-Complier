@@ -305,10 +305,10 @@ public class NameChecker extends Visitor {
 
 
 	//ct.name = list of name, send sucker to name.java, name has getname to convert to string!!!
-	String name = ct.name().getname();
+	String name = ct.toString();
 	ClassDecl classcheck = (ClassDecl)classTable.get(name);
 	if (classcheck == null){
-	Error.error(ct,"Class '" + ct.name() + "not found"); //such class exists an error is signalled
+	Error.error(ct,"Class '" + name + "not found"); //such class exists an error is signalled
 	}
 	else
 	{
@@ -331,7 +331,7 @@ public class NameChecker extends Visitor {
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a FieldRef.");
 	// YOUR CODE HERE
-	    String name = fr.fieldName();
+	    String name = fr.fieldName().toString();
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
 	    if (fr == null || fr.target() instanceof This){
             if(class1 == null){
@@ -474,21 +474,21 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
 	
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
-	if(currentScope.get(ne.name()) != null){
+	if(currentScope.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)currentScope.get(ne.name());
+	ne.myDecl = (AST)currentScope.get(ne.name().toString());
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
-	else if(getField(ne.name(),currentClass) != null){
+	else if(getField(ne.name().toString(),currentClass) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = getField(ne.name(), currentClass);
+	ne.myDecl = getField(ne.name().toString(), currentClass);
 	}
 	
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
-	else if(classTable.get(ne.name()) != null){
+	else if(classTable.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)classTable.get(ne.name());
+	ne.myDecl = (AST)classTable.get(ne.name().toString());
 	}
 	
 	else{
@@ -515,7 +515,7 @@ public class NameChecker extends Visitor {
 	//String name = in.getname();
 	//For null and this targets, call getMethod with the current class.
 	if(in.target() == null || in.target() instanceof This){
-		if(getMethod(in.methodName(), currentClass)==null){
+		if(getMethod(in.methodName().toString(), currentClass)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
@@ -525,7 +525,7 @@ public class NameChecker extends Visitor {
 	// if no method if the appropriate name is found signal an error (test file: NC13.java).</li>
 
 	if(in.target() instanceof Super){
-		if(getMethod(in.methodName(), currentClass.superClass().myDecl)==null){
+		if(getMethod(in.methodName().toString(), currentClass.superClass().myDecl)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
