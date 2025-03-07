@@ -13,6 +13,7 @@ import Parser.*;;
  * parameters in symbol tables as well.
  */
 public class NameChecker extends Visitor {
+	//println(bl.line + ":\ttest.");
 
     /**
      * Traverses the class hierarchy to look for a method of name
@@ -177,6 +178,7 @@ public class NameChecker extends Visitor {
     public Object visitBlock(Block bl) {
 	println(bl.line + ":\tVisiting a Block.");
 	println(bl.line + ":\tCreating new scope for Block.");
+	
 	currentScope = currentScope.newScope();
 	bl.mySymbolTable = currentScope; // Save the symboltable for producing .var lines
 	super.visitBlock(bl);
@@ -301,10 +303,12 @@ public class NameChecker extends Visitor {
 	//Error.error(cd,"Class '" + cd.name() + "' cannot implement class '" + ct.name() + "'.");
 	// HashSet<String> seenClasses = new HashSet<String>();
 
-	String name = ct.getname();
+
+	//ct.name = list of name, send sucker to name.java, name has getname to convert to string!!!
+	String name = ct.name().getname();
 	ClassDecl classcheck = (ClassDecl)classTable.get(name);
 	if (classcheck == null){
-	Error.error(ct,"Class '" + name + "not found"); //such class exists an error is signalled
+	Error.error(ct,"Class '" + ct.name() + "not found"); //such class exists an error is signalled
 	}
 	else
 	{
