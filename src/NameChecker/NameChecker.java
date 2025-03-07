@@ -470,13 +470,13 @@ public class NameChecker extends Visitor {
      * @return null
      */
     public Object visitNameExpr(NameExpr ne) {
-	println(ne.line + ":\tVisiting NameExpr.");
+	println(ne.line + ":\tVisiting NameExpr. | " + (ne.name().toString()));
 	// YOUR CODE HERE
 	
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
 	if(currentScope.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)currentScope.get(ne.name().toString());
+	ne.myDecl = (NameExpr)currentScope.get(ne.name().toString());
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
@@ -488,7 +488,7 @@ public class NameChecker extends Visitor {
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
 	else if(classTable.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)classTable.get(ne.name().toString());
+	ne.myDecl = (NameExpr)classTable.get(ne.name().toString());
 	}
 	
 	else{
