@@ -331,7 +331,7 @@ public class NameChecker extends Visitor {
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a FieldRef.");
 	// YOUR CODE HERE
-	    String name = fr.getname();
+	    String name = fr.fieldName();
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
 	    if (fr == null || fr.target() instanceof This){
             if(class1 == null){
@@ -474,21 +474,21 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
 	
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
-	if(currentScope.get(ne.getname()) != null){
+	if(currentScope.get(ne.name()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)currentScope.get(ne.getname());
+	ne.myDecl = (AST)currentScope.get(ne.name());
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
-	else if(getField(ne.getname(),currentClass) != null){
+	else if(getField(ne.name(),currentClass) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = getField(ne.getname(), currentClass);
+	ne.myDecl = getField(ne.name(), currentClass);
 	}
 	
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
-	else if(classTable.get(ne.getname()) != null){
+	else if(classTable.get(ne.name()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (AST)classTable.get(ne.getname());
+	ne.myDecl = (AST)classTable.get(ne.name());
 	}
 	
 	else{
@@ -515,7 +515,7 @@ public class NameChecker extends Visitor {
 	//String name = in.getname();
 	//For null and this targets, call getMethod with the current class.
 	if(in.target() == null || in.target() instanceof This){
-		if(getMethod(in.getname(), currentClass)==null){
+		if(getMethod(in.methodName(), currentClass)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
@@ -525,7 +525,7 @@ public class NameChecker extends Visitor {
 	// if no method if the appropriate name is found signal an error (test file: NC13.java).</li>
 
 	if(in.target() instanceof Super){
-		if(getMethod(in.getname(), currentClass.superClass().myDecl)==null){
+		if(getMethod(in.methodName(), currentClass.superClass().myDecl)==null){
 	// If no method of the appropriate name is found signal an error (test file: NC12.java).
 	Error.error("no method of the appropriate name is found");
 		}
