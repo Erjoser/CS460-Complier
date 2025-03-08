@@ -13,7 +13,6 @@ import Parser.*;;
  * parameters in symbol tables as well.
  */
 public class NameChecker extends Visitor {
-	//println(bl.line + ":\ttest.");
 
     /**
      * Traverses the class hierarchy to look for a method of name
@@ -54,9 +53,11 @@ public class NameChecker extends Visitor {
      */
     public static FieldDecl getField(String fieldName, ClassDecl cd) {	
 	// YOUR CODE HERE
-        if(cd.fieldTable.get(fieldName) != null){     
+        if(cd.fieldTable.get(fieldName) != null){  
+			//A FieldDecl if the find was found   
             return (FieldDecl)cd.fieldTable.get(fieldName);
         }
+        //null otherwise.
 	    return null;
     }
     
@@ -82,7 +83,9 @@ public class NameChecker extends Visitor {
      */
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
 	// YOUR CODE HERE
+	//The easiest approach is simply to for-loop through the body of cd 
         for(int i = 0; i < cd.body().nchildren; i++){
+			//add all the ClassBodyDecls that are instanceof of MethodDecl.
             if(!seenClasses.contains(cd.body().children[i].toString())){
                 seenClasses.add(cd.body().children[i].toString());
                 lst.append(cd.body().children[i]);
@@ -103,6 +106,8 @@ public class NameChecker extends Visitor {
     */
     public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
 	// YOUR CODE HERE
+	//double-for loop though lst.
+	
         for(int i = 0; i < lst.nchildren - 1; i++){
             for(int j = i + 1; j < lst.nchildren - 1; j++){
                 if(lst.children[i] == lst.children[j]){
@@ -333,12 +338,15 @@ public class NameChecker extends Visitor {
 	// YOUR CODE HERE
 	    String name = fr.fieldName().toString();
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
+	    //For null and this targets
 	    if (fr == null || fr.target() instanceof This){
             if(class1 == null){
-                Error.error(fr,"Class '" + name + "' not found");
+                Error.error(fr,"Class '" + name + "' not found"); //If no field of the appropriate name is found signal an error
             }
+            //For null and this targets, call getField with the current class.
             return getField(name, class1);                               //(String fieldName, ClassDecl cd)
 	    }
+	    //If the target is anything but null or this, simply move on
 	    return null;
     }
 
@@ -355,8 +363,11 @@ public class NameChecker extends Visitor {
     public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
 	// YOUR CODE  HERE
+	//A for statement opens a scope that any variable declared in the init part lives in.
 	currentScope = currentScope.newScope();
+	//Visit the children
 	super.visitForStat(fs);
+	//Close the scope
 	currentScope = currentScope.closeScope();
 	return null;
     }
@@ -373,6 +384,7 @@ public class NameChecker extends Visitor {
 	println(ld.line + ":\tVisiting a LocalDecl.");
 	// YOUR CODE HERE
 //	string name = ld.name();
+	//Inserts the local decl (ld) into the current scope
 	currentScope.put(ld.name(), ld);
 	return null;    
     }
