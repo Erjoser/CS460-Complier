@@ -335,7 +335,7 @@ public class NameChecker extends Visitor {
 	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
 	    if (fr == null || fr.target() instanceof This){
             if(class1 == null){
-                Error.error(fr,"Class '" + name + "not found");
+                Error.error(fr,"Class '" + name + "' not found");
             }
             return getField(name, class1);                               //(String fieldName, ClassDecl cd)
 	    }
@@ -476,7 +476,7 @@ public class NameChecker extends Visitor {
 	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
 	if(currentScope.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (NameExpr)currentScope.get(ne.name().toString());
+	ne.myDecl = (AST)currentScope.get(ne.name().toString());
 	}
 	
 	//<li> A field that that can be found in the class hierarchy (getField()).</li>
@@ -488,7 +488,7 @@ public class NameChecker extends Visitor {
 	// <li> A class that can be found in the global class table. (classTable.get()).</li>
 	else if(classTable.get(ne.name().toString()) != null){
 	//Set the myDecl of ne to what was looked up.
-	ne.myDecl = (NameExpr)classTable.get(ne.name().toString());
+	ne.myDecl = (AST)classTable.get(ne.name().toString());
 	}
 	
 	else{
