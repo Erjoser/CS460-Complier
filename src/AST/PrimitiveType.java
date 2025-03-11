@@ -54,13 +54,6 @@ public class PrimitiveType extends Type {
 		return names[kind];
 	}
 
-    public String typeNameCodeGenerator() {
-	if (kind == StringKind)
-	    return "Ljava/lang/String;";
-	else
-	    return typeName();
-    }
-
 	public int getKind() {
 		return kind;
 	}

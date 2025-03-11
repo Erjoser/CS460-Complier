@@ -1,0 +1,2 @@
+#!/bin/sh
+java -classpath src/Utilities/Espresso.jar Espressoc -I Include/ -P:3 -Tsymbol $@
