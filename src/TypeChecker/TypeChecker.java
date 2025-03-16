@@ -336,7 +336,7 @@ public class TypeChecker extends Visitor {
 	    }
 	    return b;
 	} else if (t instanceof ArrayType && !(e instanceof ArrayLiteral)) {
-	    Type t1 = (Tcase AssignmentOp.EQ :{ype)e.visit(this);
+	    Type t1 = (Type)e.visit(this);
 	    if (t1 instanceof ArrayType)
 		if (!Type.assignmentCompatible(t,t1))
 		    Error.error("Incompatible type in array assignment.");
@@ -613,6 +613,8 @@ public class TypeChecker extends Visitor {
 	currentContext = md;
 
 	// YOUR CODE HERE 12 NICK AND DOWN
+//that one line there should just be somthing that visits the children
+super.visitMethodDecl(md);
 
 	return null;
     }
@@ -622,6 +624,7 @@ public class TypeChecker extends Visitor {
 	println(ne.line + ":\tVisiting a NameExpr.");
 
 	// YOUR CODE HERE 13
+super.visitNameExpr(ne); //guessing for now will need to be changed
 
 	println(ne.line + ":\tName Expression has type: " + ne.type);
 	return ne.type;
@@ -632,6 +635,14 @@ public class TypeChecker extends Visitor {
 	println(ne.line + ":\tVisiting a New.");
 
 	// YOUR CODE HERE 14
+//same as invocation
+//target.name(p,a,r,a,m,s)
+//if null target class = current class
+//if not null ->  visit it ;  must be of class type, its mydecle is the target class 
+// visit params in.params().visit(..)
+//call findmethod(target class.allmethods, method name, in.params(),true)
+// if we get null back then no meathod found
+
 
 	println(ne.line + ":\tNew has type: " + ne.type);
 	return ne.type;
@@ -686,6 +697,10 @@ public class TypeChecker extends Visitor {
 	println(si.line + ":\tVisiting a StaticInitDecl.");
 
 	// YOUR CODE HERE 15
+//set current context and vidit the children
+	currentContext = si;
+super.visitStaticInitDecl(si);
+
 
 	return null;
     }
@@ -695,14 +710,17 @@ public class TypeChecker extends Visitor {
 	println(su.line + ":\tVisiting a Super.");
 
 	// YOUR CODE HERE 16
-
+//get super class of current class, if no super class give error
+if (su.superClass() == null){
+Error.error(su,"no superclass found");
+}
 	return su.type;
     }
 
     /** SWITCH STATEMENT */
     public Object visitSwitchStat(SwitchStat ss) {
 	println(ss.line + ":\tVisiting a SwitchStat.");
-
+//espresso+
 	// YOUR CODE HERE 17
 
 	return null;
@@ -711,7 +729,7 @@ public class TypeChecker extends Visitor {
     /** TERNARY EXPRESSION */
     public Object visitTernary(Ternary te) {
 	println(te.line + ":\tVisiting a Ternary.");
-
+//espresso+
 	// YOUR CODE HERE 19
 	println(te.line + ":\tTernary has type: " + te.type);
 	return te.type;
@@ -731,6 +749,9 @@ public class TypeChecker extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ":\tVisiting a UnaryPostExpr.");
 	// YOUR CODE HERE 20
+// exp++ / exp--
+//be,type = type of expression
+//type of expression must be numeric
 
 	println(up.line + ":\tUnary Post Expression has type: " + up.type);
 	return up.type;
@@ -739,7 +760,11 @@ public class TypeChecker extends Visitor {
     /** UNARY PRE EXPRESSION */
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a UnaryPreExpr.");
-
+// ++/-- same as ubove
+//+ / - : numeric
+// ! : bool
+//~ : intigral
+// byte,char,short => int
 	// YOUR CODE HERE 21
 
 	println(up.line + ":\tUnary Pre Expression has type: " + up.type);
@@ -749,6 +774,9 @@ public class TypeChecker extends Visitor {
     /** VAR */
     public Object visitVar(Var va) {
 	println(va.line + ":\tVisiting a Var.");
+// get type of declaration, mute be comapibelt with initializer. can be obtailed iwth visit.
+//type x = expr 
+//the type "type" must be able to hold the value in expr
 
 	// YOUR CODE HERE 22
 
@@ -765,3 +793,4 @@ public class TypeChecker extends Visitor {
     }
 
 }
+
