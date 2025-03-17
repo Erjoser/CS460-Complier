@@ -279,6 +279,8 @@ public class TypeChecker extends Visitor {
     public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
 	println(ae.line + ":\tVisiting ArrayAccessExpr.");
 	// YOUR CODE HERE 1
+	super.visitArrayAccessExpr(ae)
+
 	return ae.type;
     }
 
@@ -301,7 +303,10 @@ public class TypeChecker extends Visitor {
      */
     public Object visitNewArray(NewArray ne) {
 	println(ne.line + ":\tVisiting a NewArray.");
+
 	// YOUR CODE HERE 2
+	super.visitNewArray(ne)
+
 	println(ne.line + ":\tNewArray type is: " + ne.type);
 	return ne.type;
     }
@@ -407,7 +412,194 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 
-	    // YOUR CODE HERE
+	// YOUR CODE HERE
+	case AssignmentOp.MULTEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.DIVEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.MODEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.PLUSEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.MINUSEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.LSHIFTEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.RSHIFTEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.RRSHIFTEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.ANDEQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.OREQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
+	case AssignmentOp.XOREQ :{
+		// Check if the right hand side is a constant.	    
+	    // if we don't do this the following is illegal: byte b; b = 4; because 4 is an int!
+	    if (as.right().isConstant()) {
+		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;		
+		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
+		    break;
+	    }
+		     
+	    // Now just check for assignment compatability
+	    if (!Type.assignmentCompatible(vType,eType))
+		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+	    break;
+	}
 
 	}
 	// The overall type is always that of the LHS.
@@ -422,6 +614,7 @@ public class TypeChecker extends Visitor {
 	println(be.line + ":\tVisiting a Binary Expression.");
 
 	// YOUR CODE HERE 3
+	super.visitBinaryExpr(be)
 
 	println(be.line + ":\tBinary Expression has type: " + be.type);
 	return be.type;
@@ -468,6 +661,7 @@ public class TypeChecker extends Visitor {
 
 	// YOUR CODE HERE 4
 
+
 	return null;
     }
 
@@ -478,6 +672,7 @@ public class TypeChecker extends Visitor {
 	// Update the current class.
 	currentClass = cd;
 	// YOUR CODE HERE 5
+	super.visitClassDecl(cd)
 
 	return null;
     }
@@ -490,6 +685,7 @@ public class TypeChecker extends Visitor {
 	currentContext = cd;
 
 	// YOUR CODE HERE 6
+	super.visitConstructorDecl(cd)
 
 	return null;
     }
@@ -499,6 +695,7 @@ public class TypeChecker extends Visitor {
 	println(ds.line + ":\tVisiting a DoStat.");
 
 	// YOUR CODE HERE 7
+	super.visitDoStat(ds)
 
 	return null;
     }
@@ -574,6 +771,7 @@ public class TypeChecker extends Visitor {
 	println(fs.line + ":\tVisiting a ForStat.");
 
 	// YOUR CODE HERE 8
+	super.visitForStat(fs)
 
 	return null;
     }
@@ -583,6 +781,7 @@ public class TypeChecker extends Visitor {
 	println(is.line + ":\tVisiting an IfStat");
 
 	// YOUR CODE HERE 9
+	super.visitIfStat(is)
 
 	return null;
     }
@@ -592,6 +791,7 @@ public class TypeChecker extends Visitor {
 	println(in.line + ":\tVisiting an Invocation.");
 
 	// YOUR CODE HERE 10
+	super.visitInvocation(in)
 
 	println(in.line + ":\tInvocation has type: " + in.type);
 	return in.type;
@@ -602,6 +802,7 @@ public class TypeChecker extends Visitor {
 	println(li.line + ":\tVisiting a literal (" + li.getText() + ").");
 
 	// YOUR CODE HERE 11 ERIC HERE AND UP
+	super.visitLiteral(li)
 
 	println(li.line + ":\tLiteral has type: " + li.type);
 	return li.type;
