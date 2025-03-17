@@ -711,7 +711,7 @@ super.visitStaticInitDecl(si);
 
 	// YOUR CODE HERE 16
 //get super class of current class, if no super class give error
-if (su.superClass() == null){
+if (su == null){
 Error.error(su,"no superclass found");
 }
 	return su.type;
@@ -753,19 +753,62 @@ Error.error(su,"no superclass found");
 //be,type = type of expression
 //type of expression must be numeric
 
-	println(up.line + ":\tUnary Post Expression has type: " + up.type);
-	return up.type;
+//check if exp is numberic, if not we dont care about ++/--
+if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+	Error.error(up, " UNARY POST EXPRESSION expression is not a number");
+	}
+
+//now to check if what the front was
+if((up.op().getKind()) == 1){} //plus plus
+	else if(up.op().getKind() == 2){} //minusminus
+		else if(up.op().getKind() == 3){	println(up.line + "HOW DID YOU GET A 3???????") ;} //efficency is for the poor!!!!!
+			else{Error.error(up, "UNARY POST EXPRESSION was not ++ or --");} //error is here
+			
+			
+			
+	println(up.line + ":\tUnary Post Expression has type: " + up.type); // this line was here bore me so it stays
+	return up.type; // \*-*/
     }
 
     /** UNARY PRE EXPRESSION */
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a UnaryPreExpr.");
+	int Donne = 0;
 // ++/-- same as ubove
 //+ / - : numeric
 // ! : bool
 //~ : intigral
 // byte,char,short => int
 	// YOUR CODE HERE 21
+
+/*
+ * 
+ 	public static final int PLUSPLUS   = 1; // ++
+	public static final int MINUSMINUS = 2; // --
+	public static final int PLUS       = 3; // +
+	public static final int MINUS      = 4; // -
+	public static final int COMP       = 5; // ~
+	public static final int NOT        = 6; // !
+ */
+
+
+//++ /-- stolen from above
+
+//check if exp is numberic, if not we dont care about ++/--
+if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+	Error.error(up, " UNARY PRE EXPRESSION expression is not a number");
+	}
+
+//now to check if what the back  was
+if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
+	else if(up.op().getKind() == 2){} //minusminus
+		else if(up.op().getKind() == 3){}//plus
+			else if(up.op().getKind() == 4){} //minus
+				else if(up.op().getKind() == 5){} //comp
+					else if(up.op().getKind() == 6){} //not
+						else{Error.error(up, "UNARY PRE EXPRESSION was not accepted");} //error is here
+
+
 
 	println(up.line + ":\tUnary Pre Expression has type: " + up.type);
 	return up.type;
@@ -774,10 +817,11 @@ Error.error(su,"no superclass found");
     /** VAR */
     public Object visitVar(Var va) {
 	println(va.line + ":\tVisiting a Var.");
-// get type of declaration, mute be comapibelt with initializer. can be obtailed iwth visit.
 //type x = expr 
 //the type "type" must be able to hold the value in expr
+//    public static boolean assignmentCompatible(Type var, Type val) {
 
+ if(Type.assignmentCompatible((Type)va.myDecl.type() , (Type)(AST)va.init()) == false){}
 	// YOUR CODE HERE 22
 
 	return null;
@@ -786,7 +830,9 @@ Error.error(su,"no superclass found");
     /** WHILE STATEMENT */
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ":\tVisiting a WhileStat."); 
-
+	if(((Type)(AST)ws.expr()).isBooleanType() == true){}
+	else{Error.error(ws, "UNARY PRE EXPRESSION was not accepted");}
+	
 	// YOUR CODE HERE 23
 
 	return null;
