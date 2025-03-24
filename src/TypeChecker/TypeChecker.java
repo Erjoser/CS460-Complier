@@ -922,6 +922,7 @@ Error.error(su,"no superclass found");
     public Object visitSwitchStat(SwitchStat ss) {
 	println(ss.line + ":\tVisiting a SwitchStat.");
 //espresso+
+super.visitSwitchStat(ss);
 	// YOUR CODE HERE 17
 
 	return null;
@@ -930,6 +931,7 @@ Error.error(su,"no superclass found");
     /** TERNARY EXPRESSION */
     public Object visitTernary(Ternary te) {
 	println(te.line + ":\tVisiting a Ternary.");
+	super.visitTernary(te);
 //espresso+
 	// YOUR CODE HERE 19
 	println(te.line + ":\tTernary has type: " + te.type);

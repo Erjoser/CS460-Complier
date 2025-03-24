@@ -16,6 +16,16 @@ public class Phase3 extends Phase2 {
 	if (traceNameChecker) {
 	    System.out.println("** Defining Classes, Members and Fields. ** DONE!");
 	    System.out.println("---------------------------------------------------------");
+	    System.out.println("** MyDeclSet: Setting myDecls for ClassTypes. **");
+	}
+
+	if ((runLevel & 0x0004) == 0x0004) {	  
+	    ((Compilation)root).visit(new MyDeclSet(Phase.classTable, traceNameChecker));   
+	}
+
+	if (traceNameChecker) {
+	    System.out.println("** MyDeclSet: Setting myDecls for ClassTypes. ** DONE!");
+	    System.out.println("---------------------------------------------------------");
 	    System.out.println("** Resolving symbols and defining locals. **");
 	}
 	if ((runLevel & 0x0004) == 0x0004) {

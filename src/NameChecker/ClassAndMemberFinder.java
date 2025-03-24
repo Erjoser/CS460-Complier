@@ -198,22 +198,22 @@ public class ClassAndMemberFinder extends Visitor {
      * </ul>
      * @return null
      */
-    public Object visitConstructorDecl(ConstructorDecl cd) {
+    public Object visitConstructorDecl(ConstructorDecl cd) { //nick
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
-	//<--
-	String methodName = cd.name().getname();
-	String s = cd.paramSignature();
-	
-	if (!methodName.equals(currentClass.name())) 
-	    //CMF2.java
-	    Error.error(cd,"Constructor must be named the same as the class.");
-	else {
-	    println(cd.line + ":\tInserting constructor '<init>' with signature '" + s + 
-		    "' into method table for class '" + 
-		    currentClass.name() + "'.");
-	    addMethod(currentClass, cd, "<init>", s);
-	}
-	//-->
+		// YOUR CODE HERE
+		//new Var(whatis); //here is where i learned that i cant create variabels ;-;
+		//whatis.name() = cd.getname();
+		//string whatshould = currentClass.name();
+		//String sig = cd.paramSignature();
+
+		// A constructor must have the same name as the clas in which it lives (test file: CMF2.java)
+		if(cd.getname().equals(currentClass.name())){
+			//Insert the constructor into the class' method table with the name <init>
+			addMethod(currentClass, cd,"<init>", cd.paramSignature());
+		}
+		else{
+			Error.error("Not the same name as the class in which it lives.");
+		}
 	return null;
     }
     
@@ -228,13 +228,10 @@ public class ClassAndMemberFinder extends Visitor {
      */
     public Object visitFieldDecl(FieldDecl fd) {
 	println(fd.line + ":\tVisiting a FieldDecl.");
-	//<--
-	println(fd.line + ":\tInserting field '" + fd.name() + 
-		"' into field table of class '" + currentClass.name() + "'.");
-	// Set var's myDecl to point to this FieldDecl so we can type check its initializer later.
-	fd.var().myDecl = fd;
+	// YOUR CODE HERE
 	addField(currentClass, fd, fd.name());
-	//-->
+	((Var)fd.children[2]).myDecl = fd;
+
 	return null;
     }
     
@@ -248,16 +245,11 @@ public class ClassAndMemberFinder extends Visitor {
      */
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
-	//<--
-	String methodName = md.name().getname();
-	String s = md.paramSignature();
-	md.setMyClass(currentClass);
-	
-	println(md.line + ":\tInserting method '" + methodName + 
-		"' with signature '" + s + "' into method table for class '" + 
-		currentClass.name() + "'.");
-	addMethod(currentClass, md, methodName, s);
-	//-->	
+	// YOUR CODE HERE	
+	String name = md.getname();
+	String sig = md.paramSignature();
+//    private void addMethod(ClassDecl cd, AST md, String name, String sig) {
+	addMethod(currentClass, md, name, sig);
 	return null;
     }
     

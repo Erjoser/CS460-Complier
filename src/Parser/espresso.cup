@@ -62,7 +62,7 @@ parser code  {:
         System.out.println("File not found : "+Utilities.Settings.includeDir+"/"+name+".java");
         System.exit(1);			      			       
       } catch (Exception e) {
-        System.out.println("Something went wrong while trying to parse "+Utilities.Settings.includeDir+"/"+name+".java\nThe exception thrown is as follows: " + e); 
+        System.out.println("Something went wrong while trying to parse "+Utilities.Settings.includeDir+"/"+name+".java"); 
         System.exit(1);
       }
     }		    	   

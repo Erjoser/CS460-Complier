@@ -34,32 +34,12 @@ public class NameChecker extends Visitor {
      * @return A symbol table with all methods called 'methodName' or null.
      */    
     public static SymbolTable getMethod(String methodName, ClassDecl cd) {	
-	//<--
-	// Look in the class' methodTable
-	SymbolTable lookup = (SymbolTable)cd.methodTable.get(methodName);
-	if (lookup != null)
-	    return lookup;
-	
-	// No method found, if there is a super class look there.
-	if (cd.superClass() != null) 
-	    lookup = getMethod(methodName, cd.superClass().myDecl);
-	
-	if (lookup != null)
-	    return lookup;
-	
-	// no method found, if there are interfaces look there.
-	Sequence interfaces = cd.interfaces();
-	if (interfaces.nchildren > 0) {
-	    for (int i=0; i<interfaces.nchildren; i++) {
-		lookup = getMethod(methodName, ((ClassType)interfaces.children[i]).myDecl);
-		if (lookup != null)
-		    // We found one
-		    return lookup;
-	    }
-	}
-	// no method found in the class/interface hierarchy, so return null.
-	//-->
-	return null;
+	// YOUR CODE 
+    //in the SymbolTable class, the get function recurses to get parents
+        if(cd.methodTable.get(methodName) != null){     
+            return cd.methodTable;
+        }
+	    return null;
     }
     
     /** 
@@ -72,32 +52,13 @@ public class NameChecker extends Visitor {
      * @return A FieldDecl if the find was found, null otherwise.
      */
     public static FieldDecl getField(String fieldName, ClassDecl cd) {	
-	//<--
-	// Look in the class' fieldTable
-	FieldDecl lookup = (FieldDecl)cd.fieldTable.get(fieldName);
-	if (lookup != null)
-	    return lookup;
-	
-	// No field found, if there is a super class look there.
-	if (cd.superClass() != null) 
-	    lookup = getField(fieldName, cd.superClass().myDecl);
-	
-	if (lookup != null)
-	    return lookup;
-	
-	// no field found, if there are interfaces look there.
-	Sequence interfaces = cd.interfaces();
-	if (interfaces.nchildren > 0) {
-	    for (int i=0; i<interfaces.nchildren; i++) {
-		lookup = getField(fieldName, ((ClassType)interfaces.children[i]).myDecl);
-		if (lookup != null)
-		    // We found it.
-		    return lookup;
-	    }
-	}
-	// no field found in the class/interface hierarchy, so return null.
-	//-->
-	return null;
+	// YOUR CODE HERE
+        if(cd.fieldTable.get(fieldName) != null){  
+			//A FieldDecl if the find was found   
+            return (FieldDecl)cd.fieldTable.get(fieldName);
+        }
+        //null otherwise.
+	    return null;
     }
     
     /** 
@@ -121,30 +82,15 @@ public class NameChecker extends Visitor {
      *               the name of cd again.
      */
     public void getClassHierarchyMethods(ClassDecl cd, Sequence lst, HashSet<String> seenClasses) {
-	//<--
-	String className = cd.name();
-	
-	// if we reach object the just skip it - there is nothing there to look up!
-	if (className.equals("Object"))
-	    return;
-	// have we visited this class or interface before?
-	if (seenClasses.contains(className))
-	    // NC1.java
-	    Error.error(cd,"Cyclic inheritance involving " + className);
-	else 
-	    seenClasses.add(className);
-	
-	for (int i=0 ;i< cd.body().nchildren; i++) 
-	    if (cd.body().children[i] instanceof MethodDecl)
-		lst.append(cd.body().children[i]);
-	
-	if (cd.superClass() != null)
-	    getClassHierarchyMethods(cd.superClass().myDecl, lst, seenClasses);
-	if (cd.interfaces().nchildren > 0) 
-	    for (int i=0; i<cd.interfaces().nchildren; i++) 
-		getClassHierarchyMethods(((ClassType)cd.interfaces().children[i]).myDecl, lst, seenClasses);
-	seenClasses.remove(className);
-	//-->
+	// YOUR CODE HERE
+	//The easiest approach is simply to for-loop through the body of cd 
+        for(int i = 0; i < cd.body().nchildren; i++){
+			//add all the ClassBodyDecls that are instanceof of MethodDecl.
+            if(!seenClasses.contains(cd.body().children[i].toString())){
+                seenClasses.add(cd.body().children[i].toString());
+                lst.append(cd.body().children[i]);
+            }
+        }
     }
     
     /**
@@ -159,29 +105,17 @@ public class NameChecker extends Visitor {
      * method as the value.
     */
     public void checkReturnTypesOfIdenticalMethods(Sequence lst) {
-	//<--
-	MethodDecl md, md2;
-	Hashtable<String,MethodDecl> methods = new Hashtable<String,MethodDecl>();
-
-	for (int i=0; i<lst.nchildren; i++) {                                                                   
-            md = (MethodDecl)lst.children[i];
-	    String key = md.getname() + "/(" + md.paramSignature() + ")";
-	    md2 = methods.get(key);
-	    if (md2 != null) {		
-		// A method with this name and signature already exists.
-		// Check if it has the same return type.
-		if (!(""+md2.returnType()).equals(""+md.returnType())) {
-		    // NC2.java
-		    Error.error("Method '" + md.getname() + "' has been declared with two different return types:", false);
-		    Error.error(md, Type.parseSignature(md.returnType().signature()) + " " +
-				md.getname() + "(" + Type.parseSignature(md.paramSignature()) + " )", false);
-		    Error.error(md2,Type.parseSignature(md2.returnType().signature()) + " " +
-				md2.getname() + "(" + Type.parseSignature(md2.paramSignature()) + " )");
-		}
-	    }
-	    methods.put(key, md);
-	}	
-	//-->
+	// YOUR CODE HERE
+	//double-for loop though lst.
+	
+        for(int i = 0; i < lst.nchildren - 1; i++){
+            for(int j = i + 1; j < lst.nchildren - 1; j++){
+                if(lst.children[i] == lst.children[j]){
+                    //Error.error(lst[i] + " matches with " + lst[j]);
+                Error.error("match found");
+                }
+            }
+        }
     }
 
     /**
@@ -197,30 +131,16 @@ public class NameChecker extends Visitor {
      * class again as this would indicate a circular inheritance situation, and we already checked
      * for that.
      */
-    public  void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
-	//<--	
-	String className = cd.name();
-
-	if (seenClasses.contains(className))
-	    return;
-	seenClasses.add(className);
-
-	for (int j=0; j<cd.body().nchildren; j++) {
-	    if (cd.body().children[j] instanceof FieldDecl) {
-		FieldDecl fd = (FieldDecl)cd.body().children[j];
-		if (fields.contains(fd.name()))
-		    // NC4.java
-		    Error.error(fd,"Field '" + fd.name() +"' already defined.");
-		// Field wasn't already defined, so insert it.
-		fields.add(fd.name());
-	    }
-	}
-	if (cd.superClass() != null)
-	    checkUniqueFields(fields, cd.superClass().myDecl, seenClasses);
-	for (int j=0; j<cd.interfaces().nchildren; j++) {
-	    checkUniqueFields(fields, ((ClassType)cd.interfaces().children[j]).myDecl, seenClasses);
-	}
-	//-->
+    public void checkUniqueFields(HashSet<String> fields, ClassDecl cd, HashSet<String> seenClasses) {
+	// YOUR CODE HERE
+        if(!seenClasses.contains(cd.name())){
+            if(!fields.contains(cd.fieldTable.entries.toString())){
+                fields.add(cd.fieldTable.entries.toString());
+                seenClasses.add(cd.name());
+                //figuring out how to recurse with its children still, builds but will cause problems
+                checkUniqueFields(fields, cd, seenClasses);
+            }
+        }
     }
     
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,6 +183,7 @@ public class NameChecker extends Visitor {
     public Object visitBlock(Block bl) {
 	println(bl.line + ":\tVisiting a Block.");
 	println(bl.line + ":\tCreating new scope for Block.");
+	
 	currentScope = currentScope.newScope();
 	bl.mySymbolTable = currentScope; // Save the symboltable for producing .var lines
 	super.visitBlock(bl);
@@ -301,19 +222,32 @@ public class NameChecker extends Visitor {
 	currentClass = cd;
 	
 	HashSet<String> seenClasses = new HashSet<String>();
-
-	// Visit the children - this must happen before anything that
-	// uses myDecls for classTypes to avoid an error.	
-	super.visitClassDecl(cd);
 	
 	// Check that the superclass is a class.
 	if (cd.superClass() != null)  {
 	    if (cd.superClass().myDecl.isInterface())
 		// NC5.java
 		Error.error(cd,"Class '" + cd.name() + "' cannot inherit from interface '" +
-			    cd.superClass().myDecl.name() + "'.");	    
+			    cd.superClass().myDecl.name() + "'.");
+	    
 	}
 
+	/* This should be moved to Modifier Checker.
+	if (cd.superClass() != null) {
+	    if (cd.name().equals(cd.superClass().typeName()))
+		// NC6.java
+		Error.error(cd, "Class '" + cd.name() + "' cannot extend itself.");
+	    // If a superclass has a private default constructor, the 
+	    // class cannot be extended.
+	    ClassDecl superClass = (ClassDecl)classTable.get(cd.superClass().typeName());
+	    SymbolTable st = (SymbolTable)superClass.methodTable.get("<init>");
+	    ConstructorDecl ccd = (ConstructorDecl)st.get("");
+	    if (ccd != null && ccd.getModifiers().isPrivate())
+		// NC7.java
+		Error.error(cd, "Class '" + superClass.className().getname() + "' cannot be extended because it has a private default constructor.");
+	}
+	*/
+	
 	// Check that the interfaces implemented are interfaces.
 	for (int i=0; i<cd.interfaces().nchildren; i++) {
 	    ClassType ct = (ClassType)cd.interfaces().children[i];
@@ -322,6 +256,8 @@ public class NameChecker extends Visitor {
 		Error.error(cd,"Class '" + cd.name() + "' cannot implement class '" + ct.name() + "'.");
 	}
 
+	// Visit the children
+	super.visitClassDecl(cd);
 	
 	currentScope = null;
 	Sequence methods = new Sequence();
@@ -363,18 +299,26 @@ public class NameChecker extends Visitor {
      * <li> Set the myDecl of ct.</li>
      * </ul>
      * @return null
-     */    
+     */
     public Object visitClassType(ClassType ct) {
 	println(ct.line + ":\tVisiting a ClassType.");
-	//<--
-	String n = ct.name().getname();
-	println(ct.line + ":\tLooking up class/interface '" + n + "' in class table.");
-	ClassDecl cl = (ClassDecl)classTable.get(n);
-	if (cl == null)
-	    // NC9.java
-	    Error.error(ct," Class '" + n + "' not found."); 
-	ct.myDecl = cl;
-	//-->
+	// YOUR CODE HERE
+    //A class that can be found in the global class table. (classTable.get())
+	//ClassDecl superClass = (ClassDecl)classTable.get(cd.superClass().typeName());
+	//Error.error(cd,"Class '" + cd.name() + "' cannot implement class '" + ct.name() + "'.");
+	// HashSet<String> seenClasses = new HashSet<String>();
+
+
+	//ct.name = list of name, send sucker to name.java, name has getname to convert to string!!!
+	String name = ct.toString();
+	ClassDecl classcheck = (ClassDecl)classTable.get(name);
+	if (classcheck == null){
+	Error.error(ct,"Class '" + name + "not found"); //such class exists an error is signalled
+	}
+	else
+	{
+	ct.myDecl = classcheck; //Set the myDecl of ct
+	}
 	return null;
     }
     
@@ -391,22 +335,19 @@ public class NameChecker extends Visitor {
      */
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a FieldRef.");
-	//<--
-	if (fr.target() instanceof This) {
-	    String n = fr.fieldName().getname();
-	    
-	    println(fr.line + "\tLooking up field '" + n + "'.");
-	    AST lookup = getField(n, currentClass);
-	    if (lookup == null) 
-		// NC10.java
-		Error.error(fr,"Field '" + n + "' not found.");
-	}
-	else 
-	    println(fr.line + ":\tTarget too complicated for now!");
-
-	super.visitFieldRef(fr);
-	//-->
-	return null;
+	// YOUR CODE HERE
+	    String name = fr.fieldName().toString();
+	    ClassDecl class1 = (ClassDecl)classTable.get(name); // check for null
+	    //For null and this targets
+	    if (fr == null || fr.target() instanceof This){
+            if(class1 == null){
+                Error.error(fr,"Class '" + name + "' not found"); //If no field of the appropriate name is found signal an error
+            }
+            //For null and this targets, call getField with the current class.
+            return getField(name, class1);                               //(String fieldName, ClassDecl cd)
+	    }
+	    //If the target is anything but null or this, simply move on
+	    return null;
     }
 
     /**
@@ -421,13 +362,13 @@ public class NameChecker extends Visitor {
      */
     public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
-	//<--
-	println(fs.line + ":\tCreating new scope for For Statement.");
+	// YOUR CODE  HERE
+	//A for statement opens a scope that any variable declared in the init part lives in.
 	currentScope = currentScope.newScope();
-	fs.mySymbolTable = currentScope; // Save the symboltable for producing .var lines
+	//Visit the children
 	super.visitForStat(fs);
+	//Close the scope
 	currentScope = currentScope.closeScope();
-	//-->
 	return null;
     }
 
@@ -441,14 +382,10 @@ public class NameChecker extends Visitor {
      */
     public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ":\tVisiting a LocalDecl.");
-	//<--
-	println(ld.line + ":\tDeclaring local symbol '" + 
-		ld.name() + "'.");
-	// Set var's myDecl to point to this LocalDecl so we can type check its initializer.
-	ld.var().myDecl = ld;
-	super.visitLocalDecl(ld);
+	// YOUR CODE HERE
+//	string name = ld.name();
+	//Inserts the local decl (ld) into the current scope
 	currentScope.put(ld.name(), ld);
-	//-->
 	return null;    
     }
     
@@ -472,14 +409,14 @@ public class NameChecker extends Visitor {
      */
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a MethodDecl.");
-	//<--
-	println(md.line + ":\tCreating new scope for Method '" + md.getname() + "' with signature '" +
-		md.paramSignature() + "' (Parameters and Locals).");
+	// YOUR CODE HERE
+	//Open a new scope
 	currentScope = currentScope.newScope();
-	md.mySymbolTable = currentScope; // Save the symboltable for producing .var lines
+	//Visit the children (the parameters will be visted first and inserted into the newly created scope).
 	super.visitMethodDecl(md);
+	//Close the scope
 	currentScope = currentScope.closeScope();
-	//-->
+	
 	return null;
     }
     
@@ -502,30 +439,32 @@ public class NameChecker extends Visitor {
      */
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
-	//<--
-	println(cd.line + ":\tCreating new scope for constructor <init> with signature '" + 
-		cd.paramSignature()+ "' (Parameters and Locals).");
+	// YOUR CODE HERE
+	//Open a new scope
 	currentScope = currentScope.newScope();
-	cd.mySymbolTableParams = currentScope; // Save the symboltable for producing .var lines
-	if (currentClass.superClass() != null && 
-	    cd.cinvocation() == null &&
-	    !currentClass.superClass().myDecl.isInterface()) {
-	    println(cd.line + ":\tCreating default 'super' explicit constructor invocation.");
-	    cd.children[3] = new CInvocation(new Token(sym.SUPER, "super", 0, 0 ,0), new Sequence()); 
+	//<li> Visit the parameters.</li>
+	super.visitConstructorDecl(cd);
+	// <li> Open a scope (for the locals).</li>
+	currentScope = currentScope.newScope();
+	// <li> Visit the explicite constructe invocation (if not null) and the body.</li>
+	if(cd.cinvocation() != null){
+		cd.cinvocation().visit(this);
 	}
-	
-	cd.params().visit(this);
-	currentScope = currentScope.newScope();
-	cd.mySymbolTableBody = currentScope; // Save the symboltable for producing .var lines
-	if (cd.cinvocation() != null) 
-	    cd.cinvocation().visit(this);
 	cd.body().visit(this);
-	
+	//<li> Close the scope twice.</li>
 	currentScope = currentScope.closeScope();
 	currentScope = currentScope.closeScope();
-	//-->
-	return null;
-    }
+
+	//If the explicite constructor invocation is null and 'cd' has a superclass
+	if(cd.cinvocation() == null && currentClass.superClass() != null){
+	//create a new {@link CInvocation} for the call 'super()' and place it in cd.children[3]	
+	// public CInvocation(Token cl, Sequence /* of Expression */ args)	
+	// public Token (int p_kind, String p_lexeme, int p_line, int p_charBegin, int p_charEnd) {
+
+		cd.children[3] = new CInvocation( new Token(sym.SUPER, "super", 0,0,0 ),new Sequence());
+	}
+    return null;
+}
     
     /**
      * Visits a {@link NameExpr}.
@@ -543,33 +482,31 @@ public class NameChecker extends Visitor {
      * @return null
      */
     public Object visitNameExpr(NameExpr ne) {
-	println(ne.line + ":\tVisiting NameExpr.");
-	//<--
-	println(ne.line + ":\tLooking up symbol '" + ne.name() + "'.");
+	println(ne.line + ":\tVisiting NameExpr. | " + (ne.name().toString()));
+	// YOUR CODE HERE
 	
-	// Look to see if it is in the current scope?
-	AST lookup = (AST)currentScope.get(ne.name().getname());    
-	if (lookup == null)
-	    // now look to see if it is a field in the class hierarchy
-	    lookup = getField(ne.name().getname(), currentClass);
+	//A local or parameter that lives in the scope chan (currentScope.get()).</li>
+	if(currentScope.get(ne.name().toString()) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = (AST)currentScope.get(ne.name().toString());
+	}
 	
-	if (lookup == null) {
-	    // could be a class name ?
-	    lookup = (AST)classTable.get(ne.name().getname());
-	    if (lookup == null)
-		// NC11.java
-		Error.error(ne,"Symbol '" + ne.name().getname() + "' not declared.");
-	} 
-	if (lookup instanceof ClassDecl) 
-	    println("\t  Found Class");
-	else if (lookup instanceof LocalDecl)
-	    println("\t  Found Local Variable");
-	else if (lookup instanceof ParamDecl)
-	    println("\t  Found Parameter");
-	else if (lookup instanceof FieldDecl)
-	    println("\t  Found Field");
-	ne.myDecl = lookup;
-	//-->
+	//<li> A field that that can be found in the class hierarchy (getField()).</li>
+	else if(getField(ne.name().toString(),currentClass) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = getField(ne.name().toString(), currentClass);
+	}
+	
+	// <li> A class that can be found in the global class table. (classTable.get()).</li>
+	else if(classTable.get(ne.name().toString()) != null){
+	//Set the myDecl of ne to what was looked up.
+	ne.myDecl = (AST)classTable.get(ne.name().toString());
+	}
+	
+	else{
+	// <li> If the name expression is not found in either of the three places an error should be signalled (test file:NC11.java).</li>
+	Error.error("name expression is not found in either of the three places.");
+		}
 	return null;
     }
     
@@ -585,39 +522,28 @@ public class NameChecker extends Visitor {
      */
     public Object visitInvocation(Invocation in) {
 	println(in.line + ":\tVisiting an Invocation.");
-	//<--
-	String n = in.methodName().getname();
+	// YOUR CODE HERE
 	
-	/* We will only do checking if target is null or This */
-	/** NULL or THIS */
-	if (in.target() == null || (in.target() instanceof This)) {
-	    println(in.line +":\tLooking up method '" + n + "'.");
-	    
-	    // Search through the class/interface hierarchy for a method 
-	    // with the correct name.
-	    if (getMethod(n, currentClass) == null)
-		// NC12.java
-		Error.error(in,"Method '" + n + "' not found.");
-	    
-	    // Some method was found, but we don't know if the signatures match.
-	    // This check will be left until type checking
-	} else if (in.target() instanceof Super) {
-    	    println(in.line + ":\tLooking up method '" + n + "'.");
-	    // added 10/13/14 
-	    if (currentClass.superClass() != null)
-		if (getMethod(n, currentClass.superClass().myDecl) == null)
-		    // NC13.java
-		    Error.error(in,"Method '" + n + "' not found.");
-		else
-		    ;
-	    else
-		// this is never executed cause there is always a superclass Object.
-		Error.error(in,"No super class.");
-	} else
-	    println(in.line + ":\tTarget too complicated for now!");
+	//String name = in.getname();
+	//For null and this targets, call getMethod with the current class.
+	if(in.target() == null || in.target() instanceof This){
+		if(getMethod(in.methodName().toString(), currentClass)==null){
+	// If no method of the appropriate name is found signal an error (test file: NC12.java).
+	Error.error("no method of the appropriate name is found");
+		}
+	}
 
-	super.visitInvocation(in);
-	//-->
+	// For a super target, call getMethod with the current class's superclass's myDecl.
+	// if no method if the appropriate name is found signal an error (test file: NC13.java).</li>
+
+	if(in.target() instanceof Super){
+		if(getMethod(in.methodName().toString(), currentClass.superClass().myDecl)==null){
+	// If no method of the appropriate name is found signal an error (test file: NC12.java).
+	Error.error("no method of the appropriate name is found");
+		}
+	}
+	
+	// If the target is anything but null, this, or super, simply move on.</li>
 	return null;
     }
     
@@ -631,11 +557,12 @@ public class NameChecker extends Visitor {
      */
     public Object visitParamDecl(ParamDecl pd) {
 	println(pd.line + ":\tVisiting a ParamDecl.");
-	//<--
-	println(pd.line + ":\tDeclaring parameter '" + pd.name() + "'.");
-	super.visitParamDecl(pd);
+	// YOUR CODE HERE
+	//string name = pd.getName();
+	//<li> Inserts the param decl (pd) into the current scope.</li>
+	//	put(java.lang.String name, java.lang.Object entry)
 	currentScope.put(pd.name(), pd);
-	//-->
+
 	return null;
     }
 
@@ -651,12 +578,14 @@ public class NameChecker extends Visitor {
      */
     public Object visitSwitchStat(SwitchStat st) {
 	println(st.line + ":\tVisiting a SwitchStat.");
-	//<--
+	// YOUR CODE HERE
+	//Open a new scope
 	currentScope = currentScope.newScope();
-	st.mySymbolTable = currentScope; // Save the symboltable for producing .var lines
+	//Visit the children
 	super.visitSwitchStat(st);
+	//Close the scope
 	currentScope = currentScope.closeScope();
-	//-->
+	
 	return null;
     }
     
