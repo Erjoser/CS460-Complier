@@ -660,7 +660,7 @@ public class TypeChecker extends Visitor {
 	// super ( ... ) -- this calls a constructor in the super class (of currentClass)
 
 	// YOUR CODE HERE 4
-	super.visitCInvocation(ci);
+
 
 	return null;
     }
