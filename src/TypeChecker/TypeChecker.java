@@ -279,7 +279,7 @@ public class TypeChecker extends Visitor {
     public Object visitArrayAccessExpr(ArrayAccessExpr ae) {
 	println(ae.line + ":\tVisiting ArrayAccessExpr.");
 	// YOUR CODE HERE 1
-	super.visitArrayAccessExpr(ae)
+	super.visitArrayAccessExpr(ae);
 
 	return ae.type;
     }
@@ -305,7 +305,7 @@ public class TypeChecker extends Visitor {
 	println(ne.line + ":\tVisiting a NewArray.");
 
 	// YOUR CODE HERE 2
-	super.visitNewArray(ne)
+	super.visitNewArray(ne);
 
 	println(ne.line + ":\tNewArray type is: " + ne.type);
 	return ne.type;
@@ -614,7 +614,7 @@ public class TypeChecker extends Visitor {
 	println(be.line + ":\tVisiting a Binary Expression.");
 
 	// YOUR CODE HERE 3
-	super.visitBinaryExpr(be)
+	super.visitBinaryExpr(be);
 
 	println(be.line + ":\tBinary Expression has type: " + be.type);
 	return be.type;
@@ -660,7 +660,7 @@ public class TypeChecker extends Visitor {
 	// super ( ... ) -- this calls a constructor in the super class (of currentClass)
 
 	// YOUR CODE HERE 4
-
+	super.visitCInvocation(ci);
 
 	return null;
     }
@@ -672,7 +672,7 @@ public class TypeChecker extends Visitor {
 	// Update the current class.
 	currentClass = cd;
 	// YOUR CODE HERE 5
-	super.visitClassDecl(cd)
+	super.visitClassDecl(cd);
 
 	return null;
     }
@@ -685,7 +685,7 @@ public class TypeChecker extends Visitor {
 	currentContext = cd;
 
 	// YOUR CODE HERE 6
-	super.visitConstructorDecl(cd)
+	super.visitConstructorDecl(cd);
 
 	return null;
     }
@@ -695,7 +695,7 @@ public class TypeChecker extends Visitor {
 	println(ds.line + ":\tVisiting a DoStat.");
 
 	// YOUR CODE HERE 7
-	super.visitDoStat(ds)
+	super.visitDoStat(ds);
 
 	return null;
     }
@@ -771,7 +771,7 @@ public class TypeChecker extends Visitor {
 	println(fs.line + ":\tVisiting a ForStat.");
 
 	// YOUR CODE HERE 8
-	super.visitForStat(fs)
+	super.visitForStat(fs);
 
 	return null;
     }
@@ -781,7 +781,7 @@ public class TypeChecker extends Visitor {
 	println(is.line + ":\tVisiting an IfStat");
 
 	// YOUR CODE HERE 9
-	super.visitIfStat(is)
+	super.visitIfStat(is);
 
 	return null;
     }
@@ -791,7 +791,7 @@ public class TypeChecker extends Visitor {
 	println(in.line + ":\tVisiting an Invocation.");
 
 	// YOUR CODE HERE 10
-	super.visitInvocation(in)
+	super.visitInvocation(in);
 
 	println(in.line + ":\tInvocation has type: " + in.type);
 	return in.type;
@@ -802,7 +802,7 @@ public class TypeChecker extends Visitor {
 	println(li.line + ":\tVisiting a literal (" + li.getText() + ").");
 
 	// YOUR CODE HERE 11 ERIC HERE AND UP
-	super.visitLiteral(li)
+	super.visitLiteral(li);
 
 	println(li.line + ":\tLiteral has type: " + li.type);
 	return li.type;
