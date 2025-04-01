@@ -825,7 +825,22 @@ super.visitMethodDecl(md);
 	println(ne.line + ":\tVisiting a NameExpr.");
 
 	// YOUR CODE HERE 13
-super.visitNameExpr(ne); //guessing for now will need to be changed
+//super.visitNameExpr(ne); //guessing for now will need to be changed
+//check what kind of expression it is, local, param, or class
+//set type of ne.type from vardecl
+//check local
+if(ne.myDecl instanceof LocalDecl){
+	ne.type =((VarDecl)ne.myDecl).type();
+}
+else if(ne.myDecl instanceof LocalDecl){
+	ne.type =((VarDecl)ne.myDecl).type();
+}
+else if(ne.myDecl instanceof LocalDecl){
+	ne.type =((VarDecl)ne.myDecl).type();
+}
+else{
+	Error.error(ne, "Name Expression failed");
+}
 
 	println(ne.line + ":\tName Expression has type: " + ne.type);
 	return ne.type;
