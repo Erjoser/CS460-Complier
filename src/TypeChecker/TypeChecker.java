@@ -1023,19 +1023,23 @@ if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
 //type x = expr 
 //the type "type" must be able to hold the value in expr
 //    public static boolean assignmentCompatible(Type var, Type val) {
-
- if(Type.assignmentCompatible((Type)va.myDecl.type() , (Type)(AST)va.init()) == false){}
+if(va.init() != null){
+ if(Type.assignmentCompatible((Type)va.myDecl.type() , (Type)va.init().visit(this)) == false){
+	 Error.error(va, "type mismatch");
+	 }
 	// YOUR CODE HERE 22
+	//return null;
 
-	return null;
     }
+    	return null;
+
+}
 
     /** WHILE STATEMENT */
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ":\tVisiting a WhileStat."); 
 	if(((Type)(AST)ws.expr()).isBooleanType() == true){}
 	else{Error.error(ws, "UNARY PRE EXPRESSION was not accepted");}
-	
 	// YOUR CODE HERE 23
 
 	return null;
