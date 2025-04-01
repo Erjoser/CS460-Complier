@@ -832,10 +832,10 @@ super.visitMethodDecl(md);
 if(ne.myDecl instanceof LocalDecl){
 	ne.type =((VarDecl)ne.myDecl).type();
 }
-else if(ne.myDecl instanceof LocalDecl){
+else if(ne.myDecl instanceof ParamDecl){
 	ne.type =((VarDecl)ne.myDecl).type();
 }
-else if(ne.myDecl instanceof LocalDecl){
+else if(ne.myDecl instanceof ClassDecl){
 	ne.type =((VarDecl)ne.myDecl).type();
 }
 else{
