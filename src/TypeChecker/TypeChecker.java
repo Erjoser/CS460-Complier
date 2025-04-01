@@ -639,6 +639,42 @@ public class TypeChecker extends Visitor {
 
 	// The overall type of a cast expression is always the cast type.
 
+//Numeric: any numeric type can be cast to any other numeric type.
+//println(ce.line + ":\tCast Expression has type: " + ce.type);
+//println(ce.line + ":\tCast Expression has type(): " + ce.type());
+
+if(((Type)ce.expr().visit(this)).isNumericType() && ce.type().isNumericType()){
+	ce.type = ce.type(); //readability is for chumps XD
+	return ce.type();
+}
+//if not a name then must be class, check for one small caveat 
+if(ce.expr() instanceof NameExpr){
+	Error.error(ce, "NameExpr found in class");
+		}
+//chech if both are actually classes
+if(((Type)ce.expr().visit(this)).isClassType() && ce.type().isClassType()){
+//check if (A)e, where Type(e) is B. This is legal ONLY if A :> B or B :> A
+	//        that is either A has to be above B in the class hierarchy or 
+	//        B has to be above A.
+	
+	//public static boolean isSuper(ClassType sup, ClassType sub) {
+//A :> B
+if(Type.isSuper((ClassType)ce.expr().visit(this),(ClassType)ce.type())){
+	ce.type = ce.type(); //readability is for chumps XD
+	return ce.type();
+	}
+	
+//B :> A
+if(Type.isSuper((ClassType)ce.type() ,(ClassType)ce.expr().visit(this))){
+	ce.type = ce.type(); //readability is for chumps XD
+	return ce.type();
+	}
+
+}
+if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
+	Error.error(ce, "cant put a into b");
+}
+
 	println(ce.line + ":\tCast Expression has type: " + ce.type);
 	return ce.type;
     }
