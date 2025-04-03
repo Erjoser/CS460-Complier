@@ -571,36 +571,85 @@ public class TypeChecker extends Visitor {
 	println(be.line + ":\tVisiting a Binary Expression.");
 
 	// YOUR CODE HERE 3
-	Type leftType = (Type) be.left().visit(this);
-	Type rightType = (Type) be.right().visit(this);
-
-	//DEBUG
-	println(":\tLeftType has type: " + leftType);
-	println(":\tRightType has type: " + rightType);
+	PrimitiveType leftType = (PrimitiveType) be.left().visit(this);
+	PrimitiveType rightType = (PrimitiveType) be.right().visit(this);
 
 	// >, <, >=, <=
 	if(be.op().kind >= 9 && be.op().kind <= 12){
 		//numeric
-		if (leftType.isShortType() && Literal.isShortValue(((BigDecimal)be.right().constantValue()).longValue()))
-		    be.type = new PrimitiveType(PrimitiveType.BooleanKind);
-		if (leftType.isByteType() && Literal.isByteValue(((BigDecimal)be.right().constantValue()).longValue()))
-		    be.type = new PrimitiveType(PrimitiveType.BooleanKind);
-		else{
-			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
-		}
-	}
-	// ==, !=
-	else if(be.op().kind >= 14 && be.op().kind <= 15){
-		//matching
-		if(leftType == rightType){
+		if(leftType.isNumericType() && rightType.isNumericType()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
 			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
 		}
 	}
+	// ==, !=
+	else if(be.op().kind == 14 || be.op().kind == 15){
+		//matching (except for void)
+		if(leftType.identical(rightType) && !leftType.isVoidType()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
+	// &&, ||
+	else if(be.op().kind == 19 || be.op().kind == 20){
+		//both must be bool
+		if(leftType.isBooleanType() && rightType.isBooleanType()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
+	// &, |, ^
+	else if(be.op().kind >= 16 && be.op().kind <= 18){
+		//both must be bool or integral
+		if(leftType.isBooleanType() && rightType.isBooleanType()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else if(leftType.isIntegralType() && rightType.isIntegralType()){
+			be.type = new PrimitiveType(PrimitiveType.ceiling(leftType, rightType));
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
+	// +, -, *, /, %
+	else if(be.op().kind >= 1 && be.op().kind <= 5){
+		//both must be numeric
+		if(leftType.isNumericType() && rightType.isNumericType()){
+			be.type = new PrimitiveType(PrimitiveType.ceiling(leftType, rightType));
+		}
+		//unless +, then strings are allowed
+		else if(be.op().kind == 1 && leftType.isStringType() && rightType.isStringType()){
+			be.type = new PrimitiveType(PrimitiveType.StringKind);
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
 	// >>, <<, >>>
+	else if(be.op().kind >= 6 && be.op().kind <= 8){
+		//both intergral
+		if(leftType.isIntegralType() && rightType.isIntegralType()){
+			be.type = new PrimitiveType(leftType.getKind());
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
 	// instanceof
+	else if(be.op().kind == 13){
+		if(leftType.isClassType() && right().isClassName()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else{
+			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+		}
+	}
 
 
 	println(be.line + ":\tBinary Expression has type: " + be.type);
