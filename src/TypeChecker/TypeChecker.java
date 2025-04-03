@@ -1083,7 +1083,8 @@ if((up.op().getKind()) == 1){} //plus plus
 			else{Error.error(up, "UNARY POST EXPRESSION was not ++ or --");} //error is here
 			
 			
-			
+	up.type = ((Type)up.expr().visit(this));
+		
 	println(up.line + ":\tUnary Post Expression has type: " + up.type); // this line was here bore me so it stays
 	return up.type; // \*-*/
     }
@@ -1114,9 +1115,9 @@ if((up.op().getKind()) == 1){} //plus plus
 
 //check if exp is numberic, if not we dont care about ++/--
 //if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
-if(((Type)up.expr().visit(this)).isNumericType() == false ){ 
-	Error.error(up, " UNARY PRE EXPRESSION expression is not a number");
-	}
+//if(((Type)up.expr().visit(this)).isNumericType() == false ){ 
+//	Error.error(up, " UNARY PRE EXPRESSION expression is not a number");
+//	}
 
 //now to check if what the back  was
 if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
@@ -1128,7 +1129,8 @@ if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
 						else{Error.error(up, "UNARY PRE EXPRESSION was not accepted");} //error is here
 
 
-
+//forgot to actually set uptype ;-;
+up.type = ((Type)up.expr().visit(this));
 	println(up.line + ":\tUnary Pre Expression has type: " + up.type);
 	return up.type;
     }
