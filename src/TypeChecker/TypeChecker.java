@@ -893,8 +893,17 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 //	li.type = li.getKind();
 //	li.type = (Type)li.getKind();
 //shove literal into primative get type
+//	public final static int VoidKind = Literal.NullKind; why void?????
+//	public NullType(Literal li) :D thank you for the labeling
+
+
 	li.type = new PrimitiveType(li.getKind());
-	println(li.line + ":\tLiteral has type: " + li.type); 
+	//println(li.line + ":\tLiteral has type: " + li.type); 
+	//println(li.line + ":\tLiteral has type: " + li.getKind()); 
+if(li.getKind() == 10){ //WOOOO 0401_VAR_LITERAL_NULL DEAD
+li.type = new NullType(li);
+}
+
 	return li.type;
     }
 
@@ -1137,6 +1146,10 @@ println(va.line + "past of statement");
 
  if(Type.assignmentCompatible(va.myDecl.type() , (Type)va.init().visit(this)) == false){ 
 //if(Type.assignmentCompatible((Type)va.init().visit(this) , (Type)va.init().visit(this)) == false){ //TEMPORARY TILL ISSUES ARE FIXED
+	 
+println(va.line + ":\t va.init;" +  va.init());
+println(va.line + ":\t va.myDecl.type;" +  va.myDecl.type());
+
 	 Error.error(va, "type mismatch");
 	 }
 		//println(va.line + ":\t past the if.");
