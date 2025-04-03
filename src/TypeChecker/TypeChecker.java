@@ -672,7 +672,7 @@ if(Type.isSuper((ClassType)ce.type() ,(ClassType)ce.expr().visit(this))){
 
 }
 if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
-	Error.error(ce, "cant put a into b");
+	Error.error(ce, "casts dont match");
 }
 
 	println(ce.line + ":\tCast Expression has type: " + ce.type);
@@ -806,7 +806,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
     public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
 
-	// YOUR CODE HERE 8
+	// YOUR CODE HERE 8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 	super.visitForStat(fs);
 
 	return null;
@@ -838,9 +838,13 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(li.line + ":\tVisiting a literal (" + li.getText() + ").");
 
 	// YOUR CODE HERE 11 ERIC HERE AND UP
-	super.visitLiteral(li);
-
-	println(li.line + ":\tLiteral has type: " + li.type);
+	//super.visitLiteral(li); 
+	
+//	li.type = li.getKind();
+//	li.type = (Type)li.getKind();
+//shove literal into primative get type
+	li.type = new PrimitiveType(li.getKind());
+	println(li.line + ":\tLiteral has type: " + li.type); 
 	return li.type;
     }
 
@@ -1075,9 +1079,15 @@ if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
 //the type "type" must be able to hold the value in expr
 //    public static boolean assignmentCompatible(Type var, Type val) {
 if(va.init() != null){
- if(Type.assignmentCompatible((Type)va.myDecl.type() , (Type)va.init().visit(this)) == false){
+		//println(va.line + ":\t not nul;" +  va.init());
+		//println(va.line + ":\t not nul;" +  va.myDecl.type());
+
+// if(Type.assignmentCompatible(va.myDecl.type() , (Type)va.init().visit(this)) == false){ TEMPORARY TILL ISSUES ARE FIXED
+if(Type.assignmentCompatible((Type)va.init().visit(this) , (Type)va.init().visit(this)) == false){
 	 Error.error(va, "type mismatch");
 	 }
+		println(va.line + ":\t past the if.");
+
 	// YOUR CODE HERE 22
 	//return null;
 
@@ -1089,7 +1099,7 @@ if(va.init() != null){
     /** WHILE STATEMENT */
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ":\tVisiting a WhileStat."); 
-	if(((Type)(AST)ws.expr()).isBooleanType() == true){}
+	if(((Type)ws.expr().visit(this)).isBooleanType() == true){}
 	else{Error.error(ws, "UNARY PRE EXPRESSION was not accepted");}
 	// YOUR CODE HERE 23
 
