@@ -643,7 +643,7 @@ public class TypeChecker extends Visitor {
 	}
 	// instanceof
 	else if(be.op().kind == 13){
-		if(leftType.isClassType() && right().isClassName()){
+		if(leftType.isClassType() && be.right().isClassName()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
@@ -1062,7 +1062,8 @@ super.visitSwitchStat(ss);
 //type of expression must be numeric
 
 //check if exp is numberic, if not we dont care about ++/--
-if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+//if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+if(((Type)up.expr().visit(this)).isNumericType() == false ){ 
 	Error.error(up, " UNARY POST EXPRESSION expression is not a number");
 	}
 
@@ -1103,7 +1104,8 @@ if((up.op().getKind()) == 1){} //plus plus
 //++ /-- stolen from above
 
 //check if exp is numberic, if not we dont care about ++/--
-if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+//if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
+if(((Type)up.expr().visit(this)).isNumericType() == false ){ 
 	Error.error(up, " UNARY PRE EXPRESSION expression is not a number");
 	}
 
@@ -1125,21 +1127,22 @@ if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
     /** VAR */
     public Object visitVar(Var va) {
 	println(va.line + ":\tVisiting a Var.");
-	//type x = expr 
-	//the type "type" must be able to hold the value in expr
-	//    public static boolean assignmentCompatible(Type var, Type val) {
-	if(va.init() != null){
-			//println(va.line + ":\t not nul;" +  va.init());
-			//println(va.line + ":\t not nul;" +  va.myDecl.type());
+//type x = expr 
+//the type "type" must be able to hold the value in expr
+//    public static boolean assignmentCompatible(Type var, Type val) {
+if(va.init() != null && va.myDecl != null){
+println(va.line + "past of statement");
+		//println(va.line + ":\t not nul;" +  va.init());
+		//println(va.line + ":\t not nul;" +  va.myDecl.type());
 
-	// if(Type.assignmentCompatible(va.myDecl.type() , (Type)va.init().visit(this)) == false){ TEMPORARY TILL ISSUES ARE FIXED
-	if(Type.assignmentCompatible((Type)va.init().visit(this) , (Type)va.init().visit(this)) == false){
-		 Error.error(va, "type mismatch");
-		 }
-			println(va.line + ":\t past the if.");
+ if(Type.assignmentCompatible(va.myDecl.type() , (Type)va.init().visit(this)) == false){ 
+//if(Type.assignmentCompatible((Type)va.init().visit(this) , (Type)va.init().visit(this)) == false){ //TEMPORARY TILL ISSUES ARE FIXED
+	 Error.error(va, "type mismatch");
+	 }
+		//println(va.line + ":\t past the if.");
 
-		// YOUR CODE HERE 22
-		//return null;
+	// YOUR CODE HERE 22
+	//return null;
 
     }
     	return null;
