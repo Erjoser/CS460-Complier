@@ -579,6 +579,7 @@ public class TypeChecker extends Visitor {
 		if(leftType.identical(rightType) && !leftType.isVoidType()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
+		//if not identical, if both are NameExprs and not a className then it works
 		else if(be.left() instanceof NameExpr && be.right() instanceof NameExpr && !be.left().isClassName()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
@@ -727,8 +728,20 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	// this ( ... )  -- this calls a constructor in the same class (currentClass)
 	// super ( ... ) -- this calls a constructor in the super class (of currentClass)
 
-	// YOUR CODE HERE 4
+	//according to video, very simlair to Invocation
 
+	// YOUR CODE HERE 4
+	if(ci.thisConstructorCall()){
+		ci.targetClass = currentClass;
+	}
+	else if(ci.superConstructorCall()){
+		//if not this call, then targetClass is it's superclass
+		ci.targetClass = currentClass.superClass().myDecl;
+	}
+
+	if(ci.targetClass == null){
+		Error.error("No constructor found.");
+	}
 
 	return null;
     }
@@ -736,10 +749,10 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
     /** CLASS DECLARATION */
     public Object visitClassDecl(ClassDecl cd) {
 	println(cd.line + ":\tVisiting a ClassDecl(" + cd.name() + ")");
-
+	
+	// YOUR CODE HERE 
 	// Update the current class.
 	currentClass = cd;
-	// YOUR CODE HERE 5
 	super.visitClassDecl(cd);
 
 	return null;
@@ -748,11 +761,10 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
     /** CONSTRUCTOR DECLARATION */
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ":\tVisiting a ConstructorDecl.");
-
+	
+	// YOUR CODE HERE 6
 	// Update the current context
 	currentContext = cd;
-
-	// YOUR CODE HERE 6
 	super.visitConstructorDecl(cd);
 
 	return null;
@@ -865,8 +877,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 		targetClass = currentClass;
 	}
 	else{
-		ClassType getType = (ClassType) in.target().visit(this);
-		targetClass = getType.myDecl;
+		targetClass = (ClassDecl) in.target().visit(this).myDecl;
 	}
 	in.params().visit(this);
 	in.targetMethod = (MethodDecl) findMethod(targetClass.allMethods, in.methodName().toString(), in.params(), true);
@@ -1021,10 +1032,10 @@ super.visitStaticInitDecl(si);
 	println(su.line + ":\tVisiting a Super.");
 
 	// YOUR CODE HERE 16
-//get super class of current class, if no super class give error
-if (su == null){
-Error.error(su,"no superclass found");
-}
+	//get super class of current class, if no super class give error
+	if (su == null){
+	Error.error(su,"no superclass found");
+	}
 	return su.type;
     }
 
