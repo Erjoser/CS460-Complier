@@ -485,10 +485,8 @@ public class TypeChecker extends Visitor {
 	}
 	// >>=, <<=, >>>= integral
 	case AssignmentOp.LSHIFTEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
+		if (vType.isIntegralType())
 		    break;
-		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -496,10 +494,8 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.RSHIFTEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
+		if (vType.isIntegralType())
 		    break;
-		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -507,10 +503,8 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.RRSHIFTEQ :{
-	    if (as.right().isConstant()) {
-			if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
+		if (vType.isIntegralType())
 		    break;
-		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
