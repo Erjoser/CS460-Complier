@@ -578,72 +578,10 @@ public class TypeChecker extends Visitor {
 		//matching (except for void)
 		if(leftType.identical(rightType) && !leftType.isVoidType()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
-		}//------------------------------------------------double----------------------------------------------------
-		else if((leftType.getKind() == 7 || leftType.getKind() ==8) && (rightType.getKind() ==7 || rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
 		}
-		else if((leftType.getKind() == 6 || leftType.getKind() ==8) && (rightType.getKind() ==6|| rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
+		else if(be.left() instanceof NameExpr && be.right() instanceof NameExpr && !be.left().isClassName()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
-		else if((leftType.getKind() == 5 || leftType.getKind() ==8) && (rightType.getKind() ==5|| rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
-		}
-		else if((leftType.getKind() == 4 || leftType.getKind() ==8) && (rightType.getKind() ==4|| rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
-		}
-		else if((leftType.getKind() == 3 || leftType.getKind() ==8) && (rightType.getKind() ==3|| rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
-		}
-		else if((leftType.getKind() == 2 || leftType.getKind() ==8) && (rightType.getKind() ==2|| rightType.getKind() ==8)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
-		}//--------------------------------------------float-----------------------------------------------------
-		else if((leftType.getKind() == 7 || leftType.getKind() ==6) && (rightType.getKind() ==7 || rightType.getKind() ==6)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 7 || leftType.getKind() ==5) && (rightType.getKind() ==7 || rightType.getKind() ==5)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 7 || leftType.getKind() ==4) && (rightType.getKind() ==7 || rightType.getKind() ==4)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 7 || leftType.getKind() ==3) && (rightType.getKind() ==7 || rightType.getKind() ==3)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 7 || leftType.getKind() ==2) && (rightType.getKind() ==7 || rightType.getKind() ==2)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}//---------------------------------------LongKind------------------------------------------------------
-		else if((leftType.getKind() == 6 || leftType.getKind() ==5) && (rightType.getKind() ==6 || rightType.getKind() ==5)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 6 || leftType.getKind() ==4) && (rightType.getKind() ==6 || rightType.getKind() ==4)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 6 || leftType.getKind() ==3) && (rightType.getKind() ==6 || rightType.getKind() ==3)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 6 || leftType.getKind() ==2) && (rightType.getKind() ==6 || rightType.getKind() ==2)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}//----------------------------------------------int----------------------------------------
-		
-		else if((leftType.getKind() == 5 || leftType.getKind() ==4) && (rightType.getKind() ==5 || rightType.getKind() ==4)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 5 || leftType.getKind() ==3) && (rightType.getKind() ==5 || rightType.getKind() ==3)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 5 || leftType.getKind() ==2) && (rightType.getKind() ==5 || rightType.getKind() ==2)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		} //------------------------------------------------char-------------------------------------
-		else if((leftType.getKind() == 4 || leftType.getKind() ==3) && (rightType.getKind() ==4 || rightType.getKind() ==3)){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		else if((leftType.getKind() == 4 || leftType.getKind() ==2) && (rightType.getKind() ==4 || rightType.getKind() ==2)){
-		be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}//---------------------------------short---------------------------
-		else if((leftType.getKind() == 3 || leftType.getKind() ==2) && (rightType.getKind() ==3 || rightType.getKind() ==2)){
-		be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
-		}
-		
 		else{
 			//println(be.line + ":\t left" + leftType.getKind()); //8 is double
 				//println(be.line + ":\t right" + rightType.getKind()); //7 is float
