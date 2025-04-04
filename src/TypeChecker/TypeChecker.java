@@ -485,30 +485,24 @@ public class TypeChecker extends Visitor {
 	}
 	// >>=, <<=, >>>= integral
 	case AssignmentOp.LSHIFTEQ :{
-		if (vType.isIntegralType())
-		    break;
-		     
-	    // Now just check for assignment compatability
-	    if (!Type.assignmentCompatible(vType,eType))
-		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+		  if(vType.isIntegralType() == false || eType.isIntegralType()== false ){
+			Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+			}
+		 
 	    break;
 	}
 	case AssignmentOp.RSHIFTEQ :{
-		if (vType.isIntegralType())
-		    break;
-		     
-	    // Now just check for assignment compatability
-	    if (!Type.assignmentCompatible(vType,eType))
-		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+		  if(vType.isIntegralType() == false || eType.isIntegralType()== false ){
+			Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+			}
+		 
 	    break;
 	}
 	case AssignmentOp.RRSHIFTEQ :{
-		if (vType.isIntegralType())
-		    break;
-		     
-	    // Now just check for assignment compatability
-	    if (!Type.assignmentCompatible(vType,eType))
-		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+		  if(vType.isIntegralType() == false || eType.isIntegralType()== false ){
+			Error.error(as,"Cannot assadasdassign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+			}
+		 
 	    break;
 	}
 	// &=, |=, ^= integral and bool (but most be both side)
@@ -575,6 +569,7 @@ public class TypeChecker extends Visitor {
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
+			
 			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
 		}
 	}
@@ -583,11 +578,76 @@ public class TypeChecker extends Visitor {
 		//matching (except for void)
 		if(leftType.identical(rightType) && !leftType.isVoidType()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}//------------------------------------------------double----------------------------------------------------
+		else if((leftType.getKind() == 7 || leftType.getKind() ==8) && (rightType.getKind() ==7 || rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
 		}
-		else if(be.left() instanceof NameExpr && be.right() instanceof NameExpr && !be.left().isClassName()){
-			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		else if((leftType.getKind() == 6 || leftType.getKind() ==8) && (rightType.getKind() ==6|| rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
 		}
+		else if((leftType.getKind() == 5 || leftType.getKind() ==8) && (rightType.getKind() ==5|| rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
+		}
+		else if((leftType.getKind() == 4 || leftType.getKind() ==8) && (rightType.getKind() ==4|| rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
+		}
+		else if((leftType.getKind() == 3 || leftType.getKind() ==8) && (rightType.getKind() ==3|| rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
+		}
+		else if((leftType.getKind() == 2 || leftType.getKind() ==8) && (rightType.getKind() ==2|| rightType.getKind() ==8)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of long double collision
+		}//--------------------------------------------float-----------------------------------------------------
+		else if((leftType.getKind() == 7 || leftType.getKind() ==6) && (rightType.getKind() ==7 || rightType.getKind() ==6)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 7 || leftType.getKind() ==5) && (rightType.getKind() ==7 || rightType.getKind() ==5)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 7 || leftType.getKind() ==4) && (rightType.getKind() ==7 || rightType.getKind() ==4)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 7 || leftType.getKind() ==3) && (rightType.getKind() ==7 || rightType.getKind() ==3)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 7 || leftType.getKind() ==2) && (rightType.getKind() ==7 || rightType.getKind() ==2)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}//---------------------------------------LongKind------------------------------------------------------
+		else if((leftType.getKind() == 6 || leftType.getKind() ==5) && (rightType.getKind() ==6 || rightType.getKind() ==5)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 6 || leftType.getKind() ==4) && (rightType.getKind() ==6 || rightType.getKind() ==4)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 6 || leftType.getKind() ==3) && (rightType.getKind() ==6 || rightType.getKind() ==3)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 6 || leftType.getKind() ==2) && (rightType.getKind() ==6 || rightType.getKind() ==2)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}//----------------------------------------------int----------------------------------------
+		
+		else if((leftType.getKind() == 5 || leftType.getKind() ==4) && (rightType.getKind() ==5 || rightType.getKind() ==4)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 5 || leftType.getKind() ==3) && (rightType.getKind() ==5 || rightType.getKind() ==3)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 5 || leftType.getKind() ==2) && (rightType.getKind() ==5 || rightType.getKind() ==2)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		} //------------------------------------------------char-------------------------------------
+		else if((leftType.getKind() == 4 || leftType.getKind() ==3) && (rightType.getKind() ==4 || rightType.getKind() ==3)){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		else if((leftType.getKind() == 4 || leftType.getKind() ==2) && (rightType.getKind() ==4 || rightType.getKind() ==2)){
+		be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}//---------------------------------short---------------------------
+		else if((leftType.getKind() == 3 || leftType.getKind() ==2) && (rightType.getKind() ==3 || rightType.getKind() ==2)){
+		be.type = new PrimitiveType(PrimitiveType.BooleanKind); // to take care of float double collision
+		}
+		
 		else{
+			//println(be.line + ":\t left" + leftType.getKind()); //8 is double
+				//println(be.line + ":\t right" + rightType.getKind()); //7 is float
+
 			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
 		}
 	}
@@ -624,6 +684,7 @@ public class TypeChecker extends Visitor {
 		else if(be.op().kind == 1 && leftType.isStringType() && rightType.isStringType()){
 			be.type = new PrimitiveType(PrimitiveType.StringKind);
 		}
+		
 		else{
 			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
 		}
@@ -640,7 +701,7 @@ public class TypeChecker extends Visitor {
 	}
 	// instanceof
 	else if(be.op().kind == 13){
-		if(leftType.isClassType() && be.right().isClassName() && be.right() instanceof NameExpr){
+		if(leftType.isClassType() && be.right().isClassName()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
