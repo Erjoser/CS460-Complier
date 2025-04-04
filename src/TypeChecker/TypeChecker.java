@@ -574,6 +574,10 @@ public class TypeChecker extends Visitor {
 	PrimitiveType leftType = (PrimitiveType) be.left().visit(this);
 	PrimitiveType rightType = (PrimitiveType) be.right().visit(this);
 
+	//DEBUG
+	println(":\tleftType has type: " + leftType);
+	println(":\trightType has type: " + rightType);
+
 	// >, <, >=, <=
 	if(be.op().kind >= 9 && be.op().kind <= 12){
 		//numeric
@@ -588,6 +592,9 @@ public class TypeChecker extends Visitor {
 	else if(be.op().kind == 14 || be.op().kind == 15){
 		//matching (except for void)
 		if(leftType.identical(rightType) && !leftType.isVoidType()){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else if(be.left() instanceof NameExpr && be.right() instanceof NameExpr && !be.left().isClassName()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
@@ -643,7 +650,7 @@ public class TypeChecker extends Visitor {
 	}
 	// instanceof
 	else if(be.op().kind == 13){
-		if(leftType.isClassType() && be.right().isClassName()){
+		if(leftType.isClassType() && be.right().isClassName() && be.right() instanceof NameExpr){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
