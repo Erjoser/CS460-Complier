@@ -574,10 +574,6 @@ public class TypeChecker extends Visitor {
 	PrimitiveType leftType = (PrimitiveType) be.left().visit(this);
 	PrimitiveType rightType = (PrimitiveType) be.right().visit(this);
 
-	//DEBUG
-	println(":\tleftType has type: " + leftType);
-	println(":\trightType has type: " + rightType);
-
 	// >, <, >=, <=
 	if(be.op().kind >= 9 && be.op().kind <= 12){
 		//numeric
