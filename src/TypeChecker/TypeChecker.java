@@ -1147,24 +1147,20 @@ if((up.op().getKind()) == 1){} //plus plus
 	public static final int NOT        = 6; // !
  */
 
-
 //++ /-- stolen from above
 
 //check if exp is numberic, if not we dont care about ++/--
 //if(((Type)(AST)up.op()).isNumericType() != true ){ //100% AN ERROR, BUT KEEPS COMPILER HAPPY
-//if(((Type)up.expr().visit(this)).isNumericType() == false ){ 
-//	Error.error(up, " UNARY PRE EXPRESSION expression is not a number");
-//	}
+
 
 //now to check if what the back  was
-if((up.op().getKind()) == 1 && Donne == 0){Donne = 1;} //plus plus
-	else if(up.op().getKind() == 2){} //minusminus
-		else if(up.op().getKind() == 3){}//plus
-			else if(up.op().getKind() == 4){} //minus
-				else if(up.op().getKind() == 5){} //comp
-					else if(up.op().getKind() == 6){} //not
+if((up.op().getKind()) == 1){if(((Type)up.expr().visit(this)).isNumericType() == false){ Error.error(up, "not numeric ");  }} //plus plus
+	else if(up.op().getKind() == 2){if(((Type)up.expr().visit(this)).isNumericType() == false){Error.error(up, "not numeric ");}} //minusminus
+		else if(up.op().getKind() == 3){if(((Type)up.expr().visit(this)).isNumericType() == false){Error.error(up, "not numeric");}}//plus
+			else if(up.op().getKind() == 4){if(((Type)up.expr().visit(this)).isNumericType() == false){Error.error(up, "not numeric");}} //minus
+				else if(up.op().getKind() == 5){if(((Type)up.expr().visit(this)).isIntegralType() == false){Error.error(up, "not integral");}} //comp
+					else if(up.op().getKind() == 6){if(((Type)up.expr().visit(this)).isBooleanType() == false){Error.error(up, "not true or false bool");}} //not
 						else{Error.error(up, "UNARY PRE EXPRESSION was not accepted");} //error is here
-
 
 //forgot to actually set uptype ;-;
 up.type = ((Type)up.expr().visit(this));
