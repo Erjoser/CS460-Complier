@@ -419,7 +419,7 @@ public class TypeChecker extends Visitor {
 			break;
 		}
 		else{
-			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -432,7 +432,7 @@ public class TypeChecker extends Visitor {
 			break;
 		}
 		else{
-			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -445,7 +445,7 @@ public class TypeChecker extends Visitor {
 			break;
 		}
 		else{
-			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -463,7 +463,7 @@ public class TypeChecker extends Visitor {
 			break;
 		}
 		else{
-			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -474,6 +474,9 @@ public class TypeChecker extends Visitor {
 	case AssignmentOp.MINUSEQ :{
 		if(vType.isNumericType() && eType.isNumericType()){
 			break;
+		}
+		else{
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -498,18 +501,18 @@ public class TypeChecker extends Visitor {
 	}
 	case AssignmentOp.RRSHIFTEQ :{
 		  if(vType.isIntegralType() == false || eType.isIntegralType()== false ){
-			Error.error(as,"Cannot assadasdassign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+			Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
 			}
 		 
 	    break;
 	}
 	// &=, |=, ^= integral and bool (but most be both side)
 	case AssignmentOp.ANDEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isBooleanType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
+		if(vType.isIntegralType() && eType.isIntegralType() || vType.isBooleanType() && eType.isBooleanType()){
+			break;
+		}
+		else{
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -518,11 +521,11 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.OREQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isBooleanType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
+		if(vType.isIntegralType() && eType.isIntegralType() || vType.isBooleanType() && eType.isBooleanType()){
+			break;
+		}
+		else{
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
@@ -531,11 +534,11 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.XOREQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isIntegerType() && Literal.isIntValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isBooleanType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
+		if(vType.isIntegralType() && eType.isIntegralType() || vType.isBooleanType() && eType.isBooleanType()){
+			break;
+		}
+		else{
+			Error.error(vType.typeName() + " can not do " + as.op().operator() + " with " + eType.typeName() + ".");
 		}
 		     
 	    // Now just check for assignment compatability
