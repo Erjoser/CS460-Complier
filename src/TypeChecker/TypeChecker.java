@@ -774,6 +774,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 
 	// YOUR CODE HERE 7
 	super.visitDoStat(ds);
+	//super.visitDoStat(ds);
+
+if(((Type) ds.expr().visit(this)).isBooleanType() == false){
+	Error.error(ds, "DO is not bool type");
+}
+
 
 	return null;
     }
@@ -850,6 +856,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 
 	// YOUR CODE HERE 8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 	super.visitForStat(fs);
+	//super.visitForStat(fs);
+
+	if(((Type) fs.expr().visit(this)).isBooleanType() == false){
+		Error.error(fs, "For is not bool type");
+	}
+
 
 	return null;
     }
@@ -860,6 +872,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 
 	// YOUR CODE HERE 9
 	super.visitIfStat(is);
+	//super.visitIfStat(is);
+	//if (this) [then] [else]
+
+	if(((Type) is.expr().visit(this)).isBooleanType() == false){
+		Error.error(is, "if is not bool type");
+	}
 
 	return null;
     }
