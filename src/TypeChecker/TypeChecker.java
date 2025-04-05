@@ -415,12 +415,12 @@ public class TypeChecker extends Visitor {
 	// YOUR CODE HERE
 	//*, /, % , -, +  numeric
 	case AssignmentOp.MULTEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-	    }
+		if(vType.isNumericType() && eType.isNumericType()){
+			break;
+		}
+		else{
+			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -428,12 +428,12 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.DIVEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-	    }
+		if(vType.isNumericType() && eType.isNumericType()){
+			break;
+		}
+		else{
+			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -441,12 +441,12 @@ public class TypeChecker extends Visitor {
 	    break;
 	}
 	case AssignmentOp.MODEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-	    }
+		if(vType.isNumericType() && eType.isNumericType()){
+			break;
+		}
+		else{
+			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -456,27 +456,25 @@ public class TypeChecker extends Visitor {
 	
 	case AssignmentOp.PLUSEQ :{
 		// + strings too
-	    if (as.right().isConstant()) {
-		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isCharType() && Literal.isCharValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-	    }
+		if(vType.isNumericType() && eType.isNumericType()){
+			break;
+		}
+		else if(vType.isStringType() && eType.isStringType()){
+			break;
+		}
+		else{
+			Error.error(eType.typeName() + " can not do " + as.op().operator() + " with " + vType.typeName() + ".");
+		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
-		Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
+			Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
 	    break;
 	}
 	case AssignmentOp.MINUSEQ :{
-	    if (as.right().isConstant()) {
-		if (vType.isShortType() && Literal.isShortValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-		if (vType.isByteType() && Literal.isByteValue(((BigDecimal)as.right().constantValue()).longValue()))
-		    break;
-	    }
+		if(vType.isNumericType() && eType.isNumericType()){
+			break;
+		}
 		     
 	    // Now just check for assignment compatability
 	    if (!Type.assignmentCompatible(vType,eType))
@@ -487,7 +485,7 @@ public class TypeChecker extends Visitor {
 	case AssignmentOp.LSHIFTEQ :{
 		  if(vType.isIntegralType() == false || eType.isIntegralType()== false ){
 			Error.error(as,"Cannot assign value of type " + eType.typeName() + " to variable of type " + vType.typeName() + ".");
-			}
+		  }
 		 
 	    break;
 	}
@@ -775,12 +773,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(ds.line + ":\tVisiting a DoStat.");
 
 	// YOUR CODE HERE 7
-	//super.visitDoStat(ds);
-
-if(((Type) ds.expr().visit(this)).isBooleanType() == false){
-	Error.error(ds, "if not bool type");
-}
-
+	super.visitDoStat(ds);
 
 	return null;
     }
@@ -856,12 +849,7 @@ if(((Type) ds.expr().visit(this)).isBooleanType() == false){
 	println(fs.line + ":\tVisiting a ForStat.");
 
 	// YOUR CODE HERE 8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-	//super.visitForStat(fs);
-
-if(((Type) fs.expr().visit(this)).isBooleanType() == false){
-	Error.error(fs, "if not bool type");
-}
-
+	super.visitForStat(fs);
 
 	return null;
     }
@@ -871,12 +859,7 @@ if(((Type) fs.expr().visit(this)).isBooleanType() == false){
 	println(is.line + ":\tVisiting an IfStat");
 
 	// YOUR CODE HERE 9
-	//super.visitIfStat(is);
-	//if (this) [then] [else]
-
-if(((Type) is.expr().visit(this)).isBooleanType() == false){
-	Error.error(is, "if not bool type");
-}
+	super.visitIfStat(is);
 
 	return null;
     }
@@ -892,7 +875,8 @@ if(((Type) is.expr().visit(this)).isBooleanType() == false){
 		targetClass = currentClass;
 	}
 	else{
-		targetClass = (ClassDecl) in.target().visit(this);
+		ClassType getType = (ClassType) in.target().visit(this);
+		targetClass = getType.myDecl;
 	}
 	in.params().visit(this);
 	in.targetMethod = (MethodDecl) findMethod(targetClass.allMethods, in.methodName().toString(), in.params(), true);
@@ -904,7 +888,7 @@ if(((Type) is.expr().visit(this)).isBooleanType() == false){
 	println(in.line + ":\tInvocation has type: " + in.type);
 	return in.type;
     }
-
+ 
     /** LITERAL */
     public Object visitLiteral(Literal li) {
 	println(li.line + ":\tVisiting a literal (" + li.getText() + ").");
