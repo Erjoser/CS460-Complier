@@ -775,7 +775,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(ds.line + ":\tVisiting a DoStat.");
 
 	// YOUR CODE HERE 7
-	super.visitDoStat(ds);
+	//super.visitDoStat(ds);
+
+if(((Type) ds.expr().visit(this)).isBooleanType() == false){
+	Error.error(ds, "if not bool type");
+}
+
 
 	return null;
     }
@@ -851,7 +856,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(fs.line + ":\tVisiting a ForStat.");
 
 	// YOUR CODE HERE 8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-	super.visitForStat(fs);
+	//super.visitForStat(fs);
+
+if(((Type) fs.expr().visit(this)).isBooleanType() == false){
+	Error.error(fs, "if not bool type");
+}
+
 
 	return null;
     }
@@ -861,7 +871,12 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(is.line + ":\tVisiting an IfStat");
 
 	// YOUR CODE HERE 9
-	super.visitIfStat(is);
+	//super.visitIfStat(is);
+	//if (this) [then] [else]
+
+if(((Type) is.expr().visit(this)).isBooleanType() == false){
+	Error.error(is, "if not bool type");
+}
 
 	return null;
     }
@@ -877,7 +892,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 		targetClass = currentClass;
 	}
 	else{
-		targetClass = (ClassDecl) in.target().visit(this).myDecl;
+		targetClass = (ClassDecl) in.target().visit(this);
 	}
 	in.params().visit(this);
 	in.targetMethod = (MethodDecl) findMethod(targetClass.allMethods, in.methodName().toString(), in.params(), true);
