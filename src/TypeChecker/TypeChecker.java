@@ -778,7 +778,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	//super.visitDoStat(ds);
 
 if(((Type) ds.expr().visit(this)).isBooleanType() == false){
-	Error.error(ds, "if not bool type");
+	Error.error(ds, "DO is not bool type");
 }
 
 
@@ -859,7 +859,7 @@ if(((Type) ds.expr().visit(this)).isBooleanType() == false){
 	//super.visitForStat(fs);
 
 if(((Type) fs.expr().visit(this)).isBooleanType() == false){
-	Error.error(fs, "if not bool type");
+	Error.error(fs, "For is not bool type");
 }
 
 
@@ -875,7 +875,7 @@ if(((Type) fs.expr().visit(this)).isBooleanType() == false){
 	//if (this) [then] [else]
 
 if(((Type) is.expr().visit(this)).isBooleanType() == false){
-	Error.error(is, "if not bool type");
+	Error.error(is, "if is not bool type");
 }
 
 	return null;
