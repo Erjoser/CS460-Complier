@@ -560,6 +560,13 @@ public class TypeChecker extends Visitor {
 	println(be.line + ":\tVisiting a Binary Expression.");
 
 	// YOUR CODE HERE 3
+	Type leftNullCheck = (Type) be.left().visit(this);
+	Type rightNullCheck = (Type) be.right().visit(this);
+
+	if(leftNullCheck.isNullType() || rightNullCheck.isNullType()){
+		Error.error(be,"Operands of " + be.op().operator() + " contains null.");	
+	}
+
 	PrimitiveType leftType = (PrimitiveType) be.left().visit(this);
 	PrimitiveType rightType = (PrimitiveType) be.right().visit(this);
 
@@ -577,18 +584,21 @@ public class TypeChecker extends Visitor {
 	// ==, !=
 	else if(be.op().kind == 14 || be.op().kind == 15){
 		//matching (except for void)
-		if(leftType.identical(rightType) && !leftType.isVoidType()){
+		if(leftType.identical(rightType) && (!leftType.isVoidType() && !rightType.isVoidType())){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		//if not identical, if both are NameExprs and not a className then it works
-		else if(be.left() instanceof NameExpr && be.right() instanceof NameExpr && !be.left().isClassName()){
+		else if((be.left() instanceof NameExpr || be.right() instanceof NameExpr) && (!be.left().isClassName() && !be.right().isClassName())){
+			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
+		}
+		else if(leftType.isNumericType() && rightType.isNumericType()){
 			be.type = new PrimitiveType(PrimitiveType.BooleanKind);
 		}
 		else{
 			//println(be.line + ":\t left" + leftType.getKind()); //8 is double
-				//println(be.line + ":\t right" + rightType.getKind()); //7 is float
+			//println(be.line + ":\t right" + rightType.getKind()); //7 is float
 
-			Error.error(be,"Operator " + be.op().operator() +" requires operands of the same type.");
+			Error.error(be,":\tOperator " + be.op().operator() +" requires operands of the same type.");
 		}
 	}
 	// &&, ||
@@ -779,9 +789,9 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	super.visitDoStat(ds);
 	//super.visitDoStat(ds);
 
-if(((Type) ds.expr().visit(this)).isBooleanType() == false){
-	Error.error(ds, "DO is not bool type");
-}
+	if(((Type) ds.expr().visit(this)).isBooleanType() == false){
+		Error.error(ds, "DO is not bool type");
+	}
 
 
 	return null;
@@ -940,8 +950,8 @@ li.type = new NullType(li);
 	currentContext = md;
 
 	// YOUR CODE HERE 12 NICK AND DOWN
-//that one line there should just be somthing that visits the children
-super.visitMethodDecl(md);
+	//that one line there should just be somthing that visits the children
+	super.visitMethodDecl(md);
 
 	return null;
     }
@@ -951,22 +961,22 @@ super.visitMethodDecl(md);
 	println(ne.line + ":\tVisiting a NameExpr.");
 
 	// YOUR CODE HERE 13
-//super.visitNameExpr(ne); //guessing for now will need to be changed
-//check what kind of expression it is, local, param, or class
-//set type of ne.type from vardecl
-//check local
-if(ne.myDecl instanceof LocalDecl){
-	ne.type =((VarDecl)ne.myDecl).type();
-}
-else if(ne.myDecl instanceof ParamDecl){
-	ne.type =((VarDecl)ne.myDecl).type();
-}
-else if(ne.myDecl instanceof ClassDecl){
-	ne.type =((VarDecl)ne.myDecl).type();
-}
-else{
-	Error.error(ne, "Name Expression failed");
-}
+	//super.visitNameExpr(ne); //guessing for now will need to be changed
+	//check what kind of expression it is, local, param, or class
+	//set type of ne.type from vardecl
+	//check local
+	if(ne.myDecl instanceof LocalDecl){
+		ne.type =((VarDecl)ne.myDecl).type();
+	}
+	else if(ne.myDecl instanceof ParamDecl){
+		ne.type =((VarDecl)ne.myDecl).type();
+	}
+	else if(ne.myDecl instanceof ClassDecl){
+		ne.type =((VarDecl)ne.myDecl).type();
+	}
+	else{
+		Error.error(ne, "Name Expression failed");
+	}
 
 	println(ne.line + ":\tName Expression has type: " + ne.type);
 	return ne.type;
