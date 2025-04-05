@@ -688,7 +688,7 @@ public class TypeChecker extends Visitor {
 //println(ce.line + ":\tCast Expression has type(): " + ce.type());
 
 if(((Type)ce.expr().visit(this)).isNumericType() && ce.type().isNumericType()){
-	ce.type = ce.type(); //readability is for chumps XD
+	ce.type = ce.type(); 
 	return ce.type();
 }
 //if not a name then must be class, check for one small caveat 
@@ -786,7 +786,6 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(ds.line + ":\tVisiting a DoStat.");
 
 	// YOUR CODE HERE 7
-	super.visitDoStat(ds);
 	//super.visitDoStat(ds);
 
 	if(((Type) ds.expr().visit(this)).isBooleanType() == false){
@@ -867,8 +866,7 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
     public Object visitForStat(ForStat fs) {
 	println(fs.line + ":\tVisiting a ForStat.");
 
-	// YOUR CODE HERE 8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-	super.visitForStat(fs);
+	// YOUR CODE HERE 8
 	//super.visitForStat(fs);
 
 	if(((Type) fs.expr().visit(this)).isBooleanType() == false){
@@ -884,7 +882,6 @@ if(ce.type().identical(((Type)ce.expr().visit(this))) == false){
 	println(is.line + ":\tVisiting an IfStat");
 
 	// YOUR CODE HERE 9
-	super.visitIfStat(is);
 	//super.visitIfStat(is);
 	//if (this) [then] [else]
 
@@ -1115,7 +1112,7 @@ if(((Type)up.expr().visit(this)).isNumericType() == false ){
 
 //now to check if what the front was
 if((up.op().getKind()) == 1){} //plus plus
-	else if(up.op().getKind() == 2){} //minusminus
+	else if(up.op().getKind() == 2){ } //minusminus
 		else if(up.op().getKind() == 3){	println(up.line + "HOW DID YOU GET A 3???????") ;} //efficency is for the poor!!!!!
 			else{Error.error(up, "UNARY POST EXPRESSION was not ++ or --");} //error is here
 			
@@ -1180,7 +1177,6 @@ println(va.line + "past of statement");
 		//println(va.line + ":\t not nul;" +  va.myDecl.type());
 
  if(Type.assignmentCompatible(va.myDecl.type() , (Type)va.init().visit(this)) == false){ 
-//if(Type.assignmentCompatible((Type)va.init().visit(this) , (Type)va.init().visit(this)) == false){ //TEMPORARY TILL ISSUES ARE FIXED
 	 
 println(va.line + ":\t va.init;" +  va.init());
 println(va.line + ":\t va.myDecl.type;" +  va.myDecl.type());
