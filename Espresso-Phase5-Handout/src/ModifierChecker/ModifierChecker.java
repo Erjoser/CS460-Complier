@@ -19,7 +19,7 @@ public class ModifierChecker extends Visitor {
 		this.classTable = classTable;
 		this.debug = debug;
 	}
-    // YOUR CODE HERE
+    // YOUR CODE HERE 1
 
     /** 
      * Uses the M algorithm from the Book to check that all abstract classes are 
@@ -29,7 +29,7 @@ public class ModifierChecker extends Visitor {
      * @param methods The sequence of all methods of cd.
      */   
     public void checkImplementationOfAbstractClasses(ClassDecl cd) {
-	// YOUR CODE HERE
+	// YOUR CODE HERE 2
     }
 
 
@@ -61,7 +61,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitCInvocation(CInvocation ci) {
 	    println(ci.line + ":\tVisiting an explicit constructor invocation (" + (ci.superConstructorCall() ? "super" : "this") + ").");
 
-		// YOUR CODE HERE
+		// YOUR CODE HERE 3
 
 		return null;
 	}
@@ -88,7 +88,7 @@ public class ModifierChecker extends Visitor {
 						+ "' cannot inherit from final class '"
 						+ cd.superClass().typeName() + "'.");
 
-		// YOUR CODE HERE
+		// YOUR CODE HERE 4
 	
 		return null;
 		
@@ -103,7 +103,7 @@ public class ModifierChecker extends Visitor {
 		if (!fd.modifiers.isPrivate() && !fd.modifiers.isPublic())
 			fd.modifiers.set(false, false, new Modifier(Modifier.Public));
 
-		// YOUR CODE HERE
+		// YOUR CODE HERE 5
 
 		return null;
 	}
@@ -112,7 +112,7 @@ public class ModifierChecker extends Visitor {
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a field reference '" + fr.fieldName() + "'.");
 	
-	// YOUR CODE HERE
+	// YOUR CODE HERE 6
 	
 	return null;
     }       
@@ -121,7 +121,7 @@ public class ModifierChecker extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ":\tVisiting a method declaration for method '" + md.name() + "'.");
 	
-	// YOUR CODE HERE
+	// YOUR CODE HERE 7
 	
 	return null;
     }
@@ -129,7 +129,7 @@ public class ModifierChecker extends Visitor {
 	/** Invocation */
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ":\tVisiting an invocation of method '" + in.methodName() + "'.");
-	    // YOUR CODE HERE
+	    // YOUR CODE HERE 8
 	    
 	    return null;
 	}
@@ -144,7 +144,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitConstructorDecl(ConstructorDecl cd) {
 	    println(cd.line + ":\tVisiting a constructor declaration for class '" + cd.name() + "'.");
 	      
-		// YOUR CODE HERE
+		// YOUR CODE HERE 9
 
 		return null;
 	}
@@ -153,7 +153,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitNew(New ne) {
 	    println(ne.line + ":\tVisiting a new '" + ne.type().myDecl.name() + "'.");
 
-		// YOUR CODE HERE
+		// YOUR CODE HERE 10
 
 		return null;
 	}
@@ -162,7 +162,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ":\tVisiting a static initializer.");
 
-		// YOUR CODE HERE
+		// YOUR CODE HERE 11
 
 		return null;
 	}
@@ -192,7 +192,7 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ":\tVisiting a unary post expression with operator '" + up.op() + "'.");
 	
-	// YOUR CODE HERE
+	// YOUR CODE HERE 12
 	return null;
     }
     
@@ -200,7 +200,7 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a unary pre expression with operator '" + up.op() + "'.");
 	
-	// YOUR CODE HERE
-	return null;
+	// YOUR CODE HERE 13
+	return null; 
     }
 }
