@@ -1,0 +1,1 @@
+class INVOCATION_METHOD_NOT_FOUND { static { foo(); } }

@@ -1,0 +1,1 @@
+class NAME_EXPR_SYMBOL_NOT_DECLARED { static { a = 0; } }

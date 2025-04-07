@@ -1,0 +1,5 @@
+class CONSTRUCTOR_DECL_EMPTY {
+
+  public CONSTRUCTOR_DECL_EMPTY() {}
+  
+}

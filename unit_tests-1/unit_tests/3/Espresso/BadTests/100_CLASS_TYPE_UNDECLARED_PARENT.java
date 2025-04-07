@@ -1,0 +1,1 @@
+class CLASS_TYPE_UNDECLARED_PARENT extends A {}

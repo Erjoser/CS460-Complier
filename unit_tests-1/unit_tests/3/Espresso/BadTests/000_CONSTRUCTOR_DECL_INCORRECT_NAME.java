@@ -1,0 +1,1 @@
+class CONSTRUCTOR_DECL_INCORRECT_NAME { f(){} }

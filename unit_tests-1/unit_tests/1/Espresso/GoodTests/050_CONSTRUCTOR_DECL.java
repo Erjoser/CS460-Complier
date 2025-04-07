@@ -1,0 +1,3 @@
+class CONSTRUCTOR_DECL {
+  CONSTRUCTOR_DECL() {}
+}

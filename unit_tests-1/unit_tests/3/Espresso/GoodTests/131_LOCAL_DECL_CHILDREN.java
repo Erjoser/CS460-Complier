@@ -1,0 +1,1 @@
+class LOCAL_DECL_EXTRA { void f() { LOCAL_DECL_EXTRA L = this; } }

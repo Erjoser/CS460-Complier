@@ -1,0 +1,1 @@
+class LOCAL_DECL { void f() { int a; } }

@@ -1,0 +1,1 @@
+class FIELD_REF_FIELD_NOT_FOUND { void f() { this.a = 0; } }

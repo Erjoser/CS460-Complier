@@ -1,0 +1,1 @@
+class CONSTRUCTOR_DECLS_PARAMS { CONSTRUCTOR_DECLS_PARAMS(int a, double d){} }

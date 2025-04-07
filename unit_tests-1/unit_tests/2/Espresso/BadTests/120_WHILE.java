@@ -1,0 +1,7 @@
+class WHILE {
+  static {
+    while () {
+      
+    }
+  }
+}

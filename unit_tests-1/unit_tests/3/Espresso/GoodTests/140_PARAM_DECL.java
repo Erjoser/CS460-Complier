@@ -1,0 +1,1 @@
+class PARAM_DECL { void f(int i) {} }

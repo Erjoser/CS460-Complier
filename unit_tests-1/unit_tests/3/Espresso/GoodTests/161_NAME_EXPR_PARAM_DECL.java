@@ -1,0 +1,1 @@
+class NAME_EXPR_LOCAL_DECL { void foo(int a) { a = 0; } }

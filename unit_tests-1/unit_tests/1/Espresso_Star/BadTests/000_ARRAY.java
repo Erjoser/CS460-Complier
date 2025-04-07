@@ -1,0 +1,3 @@
+class ARRAY {
+  int][ a;
+}
