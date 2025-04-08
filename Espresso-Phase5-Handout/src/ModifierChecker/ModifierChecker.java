@@ -30,6 +30,9 @@ public class ModifierChecker extends Visitor {
      */   
     public void checkImplementationOfAbstractClasses(ClassDecl cd) {
 	// YOUR CODE HERE 2
+
+	//Espresso+
+
     }
 
 
@@ -61,8 +64,10 @@ public class ModifierChecker extends Visitor {
 	public Object visitCInvocation(CInvocation ci) {
 	    println(ci.line + ":\tVisiting an explicit constructor invocation (" + (ci.superConstructorCall() ? "super" : "this") + ").");
 
-		// YOUR CODE HERE 3
-
+		// YOUR CODE HERE 3	
+		if(ci.superConstructorCall() && ci.targetClass.getModifiers.isPrivate()){
+			Error.error(ci, "Attempting to access private constructor");
+		}		
 		return null;
 	}
 
@@ -89,7 +94,12 @@ public class ModifierChecker extends Visitor {
 						+ cd.superClass().typeName() + "'.");
 
 		// YOUR CODE HERE 4 //eric
-	
+		if (!cd.modifiers.isPrivate()){
+			Error.error(cd, "Class can't be private");
+		}
+		if (!cd.modifiers.isStatic()){
+			Error.error(cd, "Class can't be static");
+		}
 		return null;
 		
 
@@ -104,6 +114,7 @@ public class ModifierChecker extends Visitor {
 			fd.modifiers.set(false, false, new Modifier(Modifier.Public));
 
 		// YOUR CODE HERE 5 //together
+		// final fields must be initalized
 
 		return null;
 	}
@@ -113,6 +124,13 @@ public class ModifierChecker extends Visitor {
 	println(fr.line + ":\tVisiting a field reference '" + fr.fieldName() + "'.");
 	
 	// YOUR CODE HERE 6
+	if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
+		Error.error(fr, "non-static reference in a static context.");
+	}
+	//private fields can only be accessed in (name).field if name is the class of the ref
+	if(!fr.target().isClassName() && fr.myDecl.modifiers.isPrivate()){
+		Error.error(fr, "private field can only be accessed from the class/object");
+	}
 	
 	return null;
     }       
@@ -122,7 +140,15 @@ public class ModifierChecker extends Visitor {
 	println(md.line + ":\tVisiting a method declaration for method '" + md.name() + "'.");
 	
 	// YOUR CODE HERE 7
-	
+	// re-implement needs to be same context (static and static for example)
+	// re-implementation of a method is only legal if the method is not final
+	if(md.getModifiers().toString() == md.myClass.getModifiers().toString()){
+		Error.error(md, "re-implementation of a method needs to be the same context");
+	}
+	if(md.myClass.getModifiers().isFinal()){
+		Error.error(md, "Can not re-implement a method that is final");
+	}
+
 	return null;
     }
     
@@ -130,7 +156,9 @@ public class ModifierChecker extends Visitor {
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ":\tVisiting an invocation of method '" + in.methodName() + "'.");
 	    // YOUR CODE HERE 8 //eric and above
-	    
+	    if(currentContext.isStatic() && !in.targetMethod.isStatic()){
+			Error.error(in, "non-static method cannot be invoked from a static context.");
+		}
 	    return null;
 	}
     
