@@ -19,7 +19,7 @@ public class ModifierChecker extends Visitor {
 		this.classTable = classTable;
 		this.debug = debug;
 	}
-    // YOUR CODE HERE 1
+    // YOUR CODE HERE 1 //nick
 
     /** 
      * Uses the M algorithm from the Book to check that all abstract classes are 
@@ -88,7 +88,7 @@ public class ModifierChecker extends Visitor {
 						+ "' cannot inherit from final class '"
 						+ cd.superClass().typeName() + "'.");
 
-		// YOUR CODE HERE 4
+		// YOUR CODE HERE 4 //eric
 	
 		return null;
 		
@@ -103,7 +103,7 @@ public class ModifierChecker extends Visitor {
 		if (!fd.modifiers.isPrivate() && !fd.modifiers.isPublic())
 			fd.modifiers.set(false, false, new Modifier(Modifier.Public));
 
-		// YOUR CODE HERE 5
+		// YOUR CODE HERE 5 //together
 
 		return null;
 	}
@@ -129,7 +129,7 @@ public class ModifierChecker extends Visitor {
 	/** Invocation */
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ":\tVisiting an invocation of method '" + in.methodName() + "'.");
-	    // YOUR CODE HERE 8
+	    // YOUR CODE HERE 8 //eric and above
 	    
 	    return null;
 	}
@@ -144,7 +144,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitConstructorDecl(ConstructorDecl cd) {
 	    println(cd.line + ":\tVisiting a constructor declaration for class '" + cd.name() + "'.");
 	      
-		// YOUR CODE HERE 9
+		// YOUR CODE HERE 9 //5 nick down
 
 		return null;
 	}
@@ -153,7 +153,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitNew(New ne) {
 	    println(ne.line + ":\tVisiting a new '" + ne.type().myDecl.name() + "'.");
 
-		// YOUR CODE HERE 10
+		// YOUR CODE HERE 10 //4
 
 		return null;
 	}
@@ -162,7 +162,7 @@ public class ModifierChecker extends Visitor {
 	public Object visitStaticInitDecl(StaticInitDecl si) {
 		println(si.line + ":\tVisiting a static initializer.");
 
-		// YOUR CODE HERE 11
+		// YOUR CODE HERE 11 //3
 
 		return null;
 	}
@@ -192,7 +192,7 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ":\tVisiting a unary post expression with operator '" + up.op() + "'.");
 	
-	// YOUR CODE HERE 12
+	// YOUR CODE HERE 12 // 2
 	return null;
     }
     
@@ -200,7 +200,7 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a unary pre expression with operator '" + up.op() + "'.");
 	
-	// YOUR CODE HERE 13
+	// YOUR CODE HERE 13 //
 	return null; 
     }
 }
