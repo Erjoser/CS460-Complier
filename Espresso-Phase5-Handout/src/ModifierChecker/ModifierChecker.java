@@ -19,7 +19,7 @@ public class ModifierChecker extends Visitor {
 		this.classTable = classTable;
 		this.debug = debug;
 	}
-    // YOUR CODE HERE 1 //nick
+    // YOUR CODE HERE 1 //nick CANT FIND INSTRUCTIONS FOR THIS
 
     /** 
      * Uses the M algorithm from the Book to check that all abstract classes are 
@@ -115,7 +115,16 @@ public class ModifierChecker extends Visitor {
 
 		// YOUR CODE HERE 5 //together
 		// final fields must be initalized
+		//start off easy, cant be abstract.
+		if(fd.modifiers.isAbstract()){
+		Error.error(fd, "abstract in FeildDecl");
+		}
+		//check if final and initialized
+		if(fd.modifiers.isFinal() && fd.var().init() == null){ //if var is null error
+		Error.error(fd, "variable not initalized");
+		}
 
+		
 		return null;
 	}
 
@@ -173,6 +182,11 @@ public class ModifierChecker extends Visitor {
 	    println(cd.line + ":\tVisiting a constructor declaration for class '" + cd.name() + "'.");
 	      
 		// YOUR CODE HERE 9 //5 nick down
+		
+		if (currentContext.isStatic()){
+	    Error.error(cd,	"visitStaticInitDecl IS STATIC.");
+	}
+		
 
 		return null;
 	}
@@ -182,7 +196,10 @@ public class ModifierChecker extends Visitor {
 	    println(ne.line + ":\tVisiting a new '" + ne.type().myDecl.name() + "'.");
 
 		// YOUR CODE HERE 10 //4
-
+	//check if calling abstract class
+	if(ne.type().myDecl.modifiers.isAbstract() == true){
+		Error.error(ne, "new error, abstract found");
+	}
 		return null;
 	}
 
@@ -191,6 +208,10 @@ public class ModifierChecker extends Visitor {
 		println(si.line + ":\tVisiting a static initializer.");
 
 		// YOUR CODE HERE 11 //3
+		
+		if (currentContext.isStatic()){
+	    Error.error(si,	"visitStaticInitDecl IS STATIC.");
+	}
 
 		return null;
 	}
@@ -201,7 +222,7 @@ public class ModifierChecker extends Visitor {
 
 		if (currentContext.isStatic())
 			Error.error(su,
-					"non-static variable super cannot be referenced from a static context.");
+"non-static variable super cannot be referenced from a static context.");
 
 		return null;
 	}
@@ -220,6 +241,10 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ":\tVisiting a unary post expression with operator '" + up.op() + "'.");
 	
+	if(up.expr() instanceof FieldRef && (((FieldRef)up.expr()).myDecl.modifiers.isFinal())){
+		Error.error(up, "unable to edit final");
+	}
+	
 	// YOUR CODE HERE 12 // 2
 	return null;
     }
@@ -227,6 +252,10 @@ public class ModifierChecker extends Visitor {
     /** UnaryPreExpr */
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a unary pre expression with operator '" + up.op() + "'.");
+	
+		if(up.expr() instanceof FieldRef && (((FieldRef)up.expr()).myDecl.modifiers.isFinal())){
+		Error.error(up, "unable to edit final");
+	}
 	
 	// YOUR CODE HERE 13 //
 	return null; 
