@@ -65,7 +65,7 @@ public class ModifierChecker extends Visitor {
 	    println(ci.line + ":\tVisiting an explicit constructor invocation (" + (ci.superConstructorCall() ? "super" : "this") + ").");
 
 		// YOUR CODE HERE 3	
-		if(ci.superConstructorCall() && ci.targetClass.getModifiers.isPrivate()){
+		if(ci.superConstructorCall() && ci.targetClass.getModifiers().isPrivate()){
 			Error.error(ci, "Attempting to access private constructor");
 		}		
 		return null;
@@ -151,10 +151,10 @@ public class ModifierChecker extends Visitor {
 	// YOUR CODE HERE 7
 	// re-implement needs to be same context (static and static for example)
 	// re-implementation of a method is only legal if the method is not final
-	if(md.getModifiers().toString() == md.myClass.getModifiers().toString()){
+	if(md.getModifiers().toString() == md.getMyClass().getModifiers().toString()){
 		Error.error(md, "re-implementation of a method needs to be the same context");
 	}
-	if(md.myClass.getModifiers().isFinal()){
+	if(md.getMyClass().getModifiers().isFinal()){
 		Error.error(md, "Can not re-implement a method that is final");
 	}
 
