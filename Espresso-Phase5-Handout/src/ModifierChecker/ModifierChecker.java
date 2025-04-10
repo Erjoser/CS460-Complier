@@ -67,7 +67,9 @@ public class ModifierChecker extends Visitor {
 		// YOUR CODE HERE 3	
 		if(ci.superConstructorCall() && ci.targetClass.getModifiers().isPrivate()){
 			Error.error(ci, "Attempting to access private constructor");
-		}		
+		}	
+		
+		super.visitCInvocation(ci);	
 		return null;
 	}
 
@@ -94,12 +96,17 @@ public class ModifierChecker extends Visitor {
 						+ cd.superClass().typeName() + "'.");
 
 		// YOUR CODE HERE 4 //eric
+		
 		if (cd.modifiers.isPrivate()){
 			Error.error(cd, "Class can't be private");
 		}
 		if (cd.modifiers.isStatic()){
 			Error.error(cd, "Class can't be static");
 		}
+		
+		super.visitClassDecl(cd);
+
+		
 		return null;
 		
 
@@ -133,9 +140,9 @@ public class ModifierChecker extends Visitor {
 	println(fr.line + ":\tVisiting a field reference '" + fr.fieldName() + "'.");
 	
 	// YOUR CODE HERE 6
-	if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
-		Error.error(fr, "non-static reference in a static context.");
-	}
+	//if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
+		//Error.error(fr, "non-static reference in a static context.");
+	//}
 	//private fields can only be accessed in (name).field if name is the class of the ref
 	if(!fr.target().isClassName() && fr.myDecl.modifiers.isPrivate()){
 		Error.error(fr, "private field can only be accessed from the class/object");
@@ -183,11 +190,15 @@ public class ModifierChecker extends Visitor {
 	      
 		// YOUR CODE HERE 9 //5 nick down
 		
-		if (currentContext.isStatic()){
-	    Error.error(cd,	"visitStaticInitDecl IS STATIC.");
-	}
-		
+		//if (currentContext.isStatic()){
+	   // Error.error(cd,	"visitStaticInitDecl IS STATIC.");
+	//}
 
+	//check for constructor
+		if(cd.cinvocation() != null){
+		cd.cinvocation().visit(this);
+	}
+	cd.body().visit(this); //visit
 		return null;
 	}
 
@@ -209,10 +220,10 @@ public class ModifierChecker extends Visitor {
 
 		// YOUR CODE HERE 11 //3
 		
-		if (currentContext.isStatic()){
-	    Error.error(si,	"visitStaticInitDecl IS STATIC.");
-	}
-
+		//if (currentContext.isStatic()){
+	    //Error.error(si,	"visitStaticInitDecl IS STATIC.");
+	//}
+	super.visitStaticInitDecl(si);
 		return null;
 	}
 
@@ -241,9 +252,17 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ":\tVisiting a unary post expression with operator '" + up.op() + "'.");
 	
+	
+	
 	if(up.expr() instanceof FieldRef && (((FieldRef)up.expr()).myDecl.modifiers.isFinal())){
 		Error.error(up, "unable to edit final");
 	}
+	println(up.line + ":\tVisiting a this.");
+	//0301
+	if(up.expr() instanceof FieldRef && ((FieldRef)up.expr()).myDecl.modifiers.isFinal()){
+	Error.error(up, "cant ++ or -- a final");
+	}
+	
 	
 	// YOUR CODE HERE 12 // 2
 	return null;
