@@ -94,10 +94,10 @@ public class ModifierChecker extends Visitor {
 						+ cd.superClass().typeName() + "'.");
 
 		// YOUR CODE HERE 4 //eric
-		if (!cd.modifiers.isPrivate()){
+		if (cd.modifiers.isPrivate()){
 			Error.error(cd, "Class can't be private");
 		}
-		if (!cd.modifiers.isStatic()){
+		if (cd.modifiers.isStatic()){
 			Error.error(cd, "Class can't be static");
 		}
 		return null;
