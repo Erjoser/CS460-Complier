@@ -131,7 +131,7 @@ public class ModifierChecker extends Visitor {
 		Error.error(fd, "variable not initalized");
 		}
 
-		
+
 		return null;
 	}
 
@@ -211,6 +211,10 @@ public class ModifierChecker extends Visitor {
 	if(ne.type().myDecl.modifiers.isAbstract() == true){
 		Error.error(ne, "new error, abstract found");
 	}
+	if(ne.getConstructorDecl().getModifiers().isPrivate()){
+		Error.error(ne, "new error, private constructor");
+	}
+
 		return null;
 	}
 
@@ -272,10 +276,9 @@ public class ModifierChecker extends Visitor {
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ":\tVisiting a unary pre expression with operator '" + up.op() + "'.");
 	
-		if(up.expr() instanceof FieldRef && (((FieldRef)up.expr()).myDecl.modifiers.isFinal())){
+	if(up.expr() instanceof FieldRef && (((FieldRef)up.expr()).myDecl.modifiers.isFinal())){
 		Error.error(up, "unable to edit final");
 	}
-	
 	// YOUR CODE HERE 13 //
 	return null; 
     }
