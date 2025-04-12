@@ -1,0 +1,7 @@
+class METHOD_DECL_EXTENDED_OVERRIDE_STATIC_AS_NON_STATIC {
+  static void foo() {}
+}
+
+class A extends METHOD_DECL_EXTENDED_OVERRIDE_STATIC_AS_NON_STATIC {
+  void foo() {}
+}
