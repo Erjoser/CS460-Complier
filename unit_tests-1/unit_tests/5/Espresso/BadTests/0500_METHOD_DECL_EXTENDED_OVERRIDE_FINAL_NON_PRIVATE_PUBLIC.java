@@ -1,7 +1,0 @@
-class METHOD_DECL_EXTENDED_OVERRIDE_FINAL_NON_PRIVATE_PUBLIC {
-  public final void foo() {}
-}
-
-class A extends METHOD_DECL_EXTENDED_OVERRIDE_FINAL_NON_PRIVATE_PUBLIC {
-  void foo() {}
-}

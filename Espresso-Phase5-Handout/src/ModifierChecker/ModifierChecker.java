@@ -139,14 +139,20 @@ public class ModifierChecker extends Visitor {
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a field reference '" + fr.fieldName() + "'.");
 	
+	
+	
+	
 	// YOUR CODE HERE 6
 	//if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
 		//Error.error(fr, "non-static reference in a static context.");
 	//}
 	//private fields can only be accessed in (name).field if name is the class of the ref
-	if(!fr.target().isClassName() && fr.myDecl.modifiers.isPrivate()){
+	if( fr.myDecl.modifiers.isPrivate()){
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
+	
+	
+	
 	
 	return null;
     }       
@@ -165,6 +171,38 @@ public class ModifierChecker extends Visitor {
 		Error.error(md, "Can not re-implement a method that is final");
 	}
 
+
+//class hiararchy checks
+if(currentClass.superClass() != null){ //super class detected, gotta check methods
+	
+	//(MethodDecl)TypeChecker.findMethod(currentClass.superClass().mtDecl.allMethods, md.getname(), md.params(), true)
+	if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true) != null) && md.paramSignature() != null){
+	if (md.paramSignature().equals(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).paramSignature())){
+		//methods are the same, aight now we need to check id higher methods are locked down
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isFinal()){
+			Error.error(md, "Higher class has a locked down method"); //501
+		}
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic()){
+					Error.error(md, "Higher class has static method"); //502
+		}
+		if(!((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic() && md.getModifiers().isStatic() ){
+					Error.error(md, "method redefined from static to not static"); //503
+		}
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isPublic() && md.getModifiers().isPrivate() ){
+					Error.error(md, "method redefined from public to private"); //503
+		}
+		
+		
+		
+	}//params check
+}//null check
+}//super check
+
+
+
+
+
+
 	return null;
     }
     
@@ -172,9 +210,23 @@ public class ModifierChecker extends Visitor {
 	public Object visitInvocation(Invocation in) {
 	    println(in.line + ":\tVisiting an invocation of method '" + in.methodName() + "'.");
 	    // YOUR CODE HERE 8 //eric and above
-	    if(currentContext.isStatic() && !in.targetMethod.isStatic()){
+	    //if(currentContext.isStatic() && !in.targetMethod.isStatic()){
+		//	Error.error(in, "non-static method cannot be invoked from a static context.");
+		//}
+		
+		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic() ){
 			Error.error(in, "non-static method cannot be invoked from a static context.");
 		}
+		
+		//check if call is from class
+		if(in.target() instanceof NameExpr && ((NameExpr) in.target()).myDecl instanceof ClassDecl){  
+			//conmfirmed a class call, now check for validity
+			if(!in.targetMethod.getModifiers().isStatic()){
+							Error.error(in, "non-static method cannot be invoked from a static context.");
+			}
+		}
+		
+		
 	    return null;
 	}
     
