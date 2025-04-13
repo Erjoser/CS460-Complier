@@ -213,25 +213,37 @@ super.visitMethodDecl(md);
 		//}
 		
 		//if(currentContext != null){ //lol this didnt get me far
-		if(currentContext.isStatic()){	    println("currentContext.isStatic()");}
+		
+		if(currentContext.isStatic()){	    println("currentContext.isStatic()");}  //cant use the raw line, fine, if statement it is
 		if(in.targetMethod.getModifiers().isStatic()){	    println("in.targetMethod.getModifiers().isStatic()");}
 		if(in.target() == null){	    println("in.target() == null");}
 
 		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic()){
-			if(in.target() != null){}
+			if(in.target() != null){} //== null gave me recverse test results, so i reverse the equation
 			else{
-			Error.error(in, "non-static method cannot be invoked from a static context 1.");
+			Error.error(in, "non-static method cannot be invoked from a static context.");
 		}
 		}
 	
 		//check if call is from class
 		if(in.target() instanceof NameExpr && ((NameExpr) in.target()).myDecl instanceof ClassDecl){  
 			//conmfirmed a class call, now check for validity
-			if(!in.targetMethod.getModifiers().isStatic()){
-							Error.error(in, "non-static method cannot be invoked from a static context. 2");
-			}
+			 //good:  targetMethod currentContext.isStatic 801
+			 //bad:  currentContext.isStatic
+
+			 println("call from class");
+			if(in.targetMethod.getModifiers().isStatic() && currentContext.isStatic()){
+			if(in.target() != null){
+				} //== null gave me recverse test results, so i reverse the equation
+			else{
+			Error.error(in, "non-static method cannot be invoked from a static context.");
 		}
-		
+			}
+		else{			Error.error(in, "non-static method cannot be invoked from a static context.");}
+
+		}
+	in.params().visit(this);
+
 	//}
 	    return null;
 	}
