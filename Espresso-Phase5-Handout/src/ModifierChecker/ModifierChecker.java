@@ -138,17 +138,17 @@ public class ModifierChecker extends Visitor {
     public Object visitFieldRef(FieldRef fr) {
 	println(fr.line + ":\tVisiting a field reference '" + fr.fieldName() + "'.");
 	
-	
-	
-	
 	// YOUR CODE HERE 6
 
 	//private fields can only be accessed in (name).field if name is the class of the ref
-	if( fr.myDecl.modifiers.isPrivate()){
+	if( fr.myDecl.modifiers.isPrivate() && currentClass.name() != fr.myDecl.name() ){
+		//DEBUG
+		println(currentClass.name() + " != " + fr.myDecl.name());
+
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
-	if( fr.myDecl.modifiers.isStatic()){
-		Error.error(fr, "private field can only be accessed from the class/object");
+	if(fr.myDecl.modifiers.isStatic() && fr.targetType.toString() != fr.target().type.typeName()){
+		Error.error(fr, "static field can only be accessed from the class/object");
 	}
 	if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
 		Error.error(fr, "non-static reference in a static context.");
