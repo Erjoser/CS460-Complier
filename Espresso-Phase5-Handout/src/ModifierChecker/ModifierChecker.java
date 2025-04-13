@@ -19,7 +19,6 @@ public class ModifierChecker extends Visitor {
 		this.classTable = classTable;
 		this.debug = debug;
 	}
-    // YOUR CODE HERE 1 //nick CANT FIND INSTRUCTIONS FOR THIS
 
     /** 
      * Uses the M algorithm from the Book to check that all abstract classes are 
@@ -151,7 +150,9 @@ public class ModifierChecker extends Visitor {
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
 	
-	
+		if( fr.myDecl.modifiers.isStatic()){
+		Error.error(fr, "private field can only be accessed from the class/object");
+	}
 	
 	
 	return null;
@@ -196,7 +197,7 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 }//super check
 
 
-
+super.visitMethodDecl(md);
 
 
 
@@ -211,19 +212,27 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 		//	Error.error(in, "non-static method cannot be invoked from a static context.");
 		//}
 		
-		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic() ){
-			Error.error(in, "non-static method cannot be invoked from a static context.");
+		//if(currentContext != null){ //lol this didnt get me far
+		if(currentContext.isStatic()){	    println("currentContext.isStatic()");}
+		if(in.targetMethod.getModifiers().isStatic()){	    println("in.targetMethod.getModifiers().isStatic()");}
+		if(in.target() == null){	    println("in.target() == null");}
+
+		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic()){
+			if(in.target() != null){}
+			else{
+			Error.error(in, "non-static method cannot be invoked from a static context 1.");
 		}
-		
+		}
+	
 		//check if call is from class
 		if(in.target() instanceof NameExpr && ((NameExpr) in.target()).myDecl instanceof ClassDecl){  
 			//conmfirmed a class call, now check for validity
 			if(!in.targetMethod.getModifiers().isStatic()){
-							Error.error(in, "non-static method cannot be invoked from a static context.");
+							Error.error(in, "non-static method cannot be invoked from a static context. 2");
 			}
 		}
 		
-		
+	//}
 	    return null;
 	}
     
@@ -260,14 +269,11 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 	if(ne.type().myDecl.modifiers.isAbstract() == true){
 		Error.error(ne, "new error, abstract found");
 	}
-	//if(ne.getConstructorDecl().getModifiers().isPrivate()){
-	//	Error.error(ne, "new error, private constructor");
-	//}
-	//601
+
 	//	 public static final int i = 1;
 	//    NEW_FINAL_ARGUMENT foo = new NEW_FINAL_ARGUMENT(NEW_FINAL_ARGUMENT.i++);
 	
-	super.visitNew(ne);
+	super.visitNew(ne); //wont visdit ops without it, fix601, 
 
 
 		return null;
@@ -282,7 +288,10 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 		//if (currentContext.isStatic()){
 	    //Error.error(si,	"visitStaticInitDecl IS STATIC.");
 	//}
+	
+	currentContext = si; //800 fails unless context update
 	super.visitStaticInitDecl(si);
+	currentContext = null;
 		return null;
 	}
 
