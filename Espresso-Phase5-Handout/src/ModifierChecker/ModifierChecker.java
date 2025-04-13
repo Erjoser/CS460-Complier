@@ -179,21 +179,18 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 	if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true) != null) && md.paramSignature() != null){
 	if (md.paramSignature().equals(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).paramSignature())){
 		//methods are the same, aight now we need to check id higher methods are locked down
-		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isFinal()){
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isFinal() && !md.getModifiers().isPublic()){
 			Error.error(md, "Higher class has a locked down method"); //501
 		}
-		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic()){
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic() && !md.getModifiers().isStatic() ){
 					Error.error(md, "Higher class has static method"); //502
 		}
 		if(!((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic() && md.getModifiers().isStatic() ){
 					Error.error(md, "method redefined from static to not static"); //503
 		}
 		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isPublic() && md.getModifiers().isPrivate() ){
-					Error.error(md, "method redefined from public to private"); //503
-		}
-		
-		
-		
+					Error.error(md, "method redefined from public to private"); //504
+		}	
 	}//params check
 }//null check
 }//super check
@@ -263,9 +260,15 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 	if(ne.type().myDecl.modifiers.isAbstract() == true){
 		Error.error(ne, "new error, abstract found");
 	}
-	if(ne.getConstructorDecl().getModifiers().isPrivate()){
-		Error.error(ne, "new error, private constructor");
-	}
+	//if(ne.getConstructorDecl().getModifiers().isPrivate()){
+	//	Error.error(ne, "new error, private constructor");
+	//}
+	//601
+	//	 public static final int i = 1;
+	//    NEW_FINAL_ARGUMENT foo = new NEW_FINAL_ARGUMENT(NEW_FINAL_ARGUMENT.i++);
+	
+	super.visitNew(ne);
+
 
 		return null;
 	}
