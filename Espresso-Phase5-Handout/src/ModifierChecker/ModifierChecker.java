@@ -142,18 +142,17 @@ public class ModifierChecker extends Visitor {
 	
 	
 	// YOUR CODE HERE 6
-	//if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
-		//Error.error(fr, "non-static reference in a static context.");
-	//}
+
 	//private fields can only be accessed in (name).field if name is the class of the ref
 	if( fr.myDecl.modifiers.isPrivate()){
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
-	
-		if( fr.myDecl.modifiers.isStatic()){
+	if( fr.myDecl.modifiers.isStatic()){
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
-	
+	if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
+		Error.error(fr, "non-static reference in a static context.");
+	}	
 	
 	return null;
     }       
@@ -217,13 +216,6 @@ super.visitMethodDecl(md);
 		if(currentContext.isStatic()){	    println("currentContext.isStatic()");}  //cant use the raw line, fine, if statement it is
 		if(in.targetMethod.getModifiers().isStatic()){	    println("in.targetMethod.getModifiers().isStatic()");}
 		if(in.target() == null){	    println("in.target() == null");}
-
-		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic()){
-			if(in.target() != null){} //== null gave me recverse test results, so i reverse the equation
-			else{
-			Error.error(in, "non-static method cannot be invoked from a static context.");
-		}
-		}
 	
 		//check if call is from class
 		if(in.target() instanceof NameExpr && ((NameExpr) in.target()).myDecl instanceof ClassDecl){  
@@ -231,20 +223,24 @@ super.visitMethodDecl(md);
 			 //good:  targetMethod currentContext.isStatic 801
 			 //bad:  currentContext.isStatic
 
-			 println("call from class");
+			println("call from class");
 			if(in.targetMethod.getModifiers().isStatic() && currentContext.isStatic()){
-			if(in.target() != null){
-				} //== null gave me recverse test results, so i reverse the equation
-			else{
-			Error.error(in, "non-static method cannot be invoked from a static context.");
-		}
+				if(in.target() != null){} //== null gave me recverse test results, so i reverse the equation
+				else{
+					Error.error(in, "non-static method cannot be invoked from a static context.");
+				}
 			}
-		else{			Error.error(in, "non-static method cannot be invoked from a static context.");}
-
+			if(in.targetMethod.getModifiers().isPrivate()){			
+				Error.error(in, "Attempt to call private method.");
+			}
+		}
+		if(currentContext.isStatic() && !in.targetMethod.getModifiers().isStatic()){
+			if(in.target() != null){} //== null gave me recverse test results, so i reverse the equation
+			else{
+				Error.error(in, "non-static method cannot be invoked from a static context.");
+			}
 		}
 	in.params().visit(this);
-
-	//}
 	    return null;
 	}
     
