@@ -147,9 +147,11 @@ public class ModifierChecker extends Visitor {
 	if(fr.myDecl.modifiers.isStatic() && fr.targetType.toString() != fr.target().type.typeName()){
 		Error.error(fr, "static field can only be accessed from the class/object");
 	}
-	if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
-		Error.error(fr, "non-static reference in a static context.");
-	}	
+	if(currentContext != null){
+		if(currentContext.isStatic() && !fr.myDecl.modifiers.isStatic()){
+			Error.error(fr, "non-static reference in a static context.");
+		}	
+	}
 	
 	return null;
     }       
