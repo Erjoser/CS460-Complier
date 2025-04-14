@@ -212,9 +212,9 @@ super.visitMethodDecl(md);
 		
 		//if(currentContext != null){ //lol this didnt get me far
 		
-		if(currentContext.isStatic()){	    println("currentContext.isStatic()");}  //cant use the raw line, fine, if statement it is
-		if(in.targetMethod.getModifiers().isStatic()){	    println("in.targetMethod.getModifiers().isStatic()");}
-		if(in.target() == null){	    println("in.target() == null");}
+		//if(currentContext.isStatic()){	    println("currentContext.isStatic()");}  //cant use the raw line, fine, if statement it is
+		//if(in.targetMethod.getModifiers().isStatic()){	    println("in.targetMethod.getModifiers().isStatic()");}
+		//if(in.target() == null){	    println("in.target() == null");}
 	
 		//check if call is from class
 		if(in.target() instanceof NameExpr && ((NameExpr) in.target()).myDecl instanceof ClassDecl){  
@@ -272,15 +272,18 @@ super.visitMethodDecl(md);
 	    println(ne.line + ":\tVisiting a new '" + ne.type().myDecl.name() + "'.");
 
 		// YOUR CODE HERE 10 //4
-	//check if calling abstract class
-	if(ne.type().myDecl.modifiers.isAbstract() == true){
-		Error.error(ne, "new error, abstract found");
-	}
+		//check if calling abstract class
+		if(ne.type().myDecl.modifiers.isAbstract() == true){
+			Error.error(ne, "new error, abstract found");
+		}
+		if(ne.getConstructorDecl().getModifiers().isPrivate() == true){
+			Error.error(ne, "new error, private found");
+		}
 
-	//	 public static final int i = 1;
-	//    NEW_FINAL_ARGUMENT foo = new NEW_FINAL_ARGUMENT(NEW_FINAL_ARGUMENT.i++);
+		//	 public static final int i = 1;
+		//    NEW_FINAL_ARGUMENT foo = new NEW_FINAL_ARGUMENT(NEW_FINAL_ARGUMENT.i++);
 	
-	super.visitNew(ne); //wont visdit ops without it, fix601, 
+		super.visitNew(ne); //wont visdit ops without it, fix601, 
 
 
 		return null;
