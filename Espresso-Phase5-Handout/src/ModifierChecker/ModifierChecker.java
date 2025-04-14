@@ -142,9 +142,6 @@ public class ModifierChecker extends Visitor {
 
 	//private fields can only be accessed in (name).field if name is the class of the ref
 	if( fr.myDecl.modifiers.isPrivate() && currentClass.name() != fr.targetType.typeName() ){
-		//DEBUG
-		println(currentClass.name() + " != " + fr.targetType.typeName());
-
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
 	if(fr.myDecl.modifiers.isStatic() && fr.targetType.toString() != fr.target().type.typeName()){
@@ -178,8 +175,8 @@ if(currentClass.superClass() != null){ //super class detected, gotta check metho
 	//(MethodDecl)TypeChecker.findMethod(currentClass.superClass().mtDecl.allMethods, md.getname(), md.params(), true)
 	if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true) != null) && md.paramSignature() != null){
 	if (md.paramSignature().equals(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).paramSignature())){
-		//methods are the same, aight now we need to check id higher methods are locked down
-		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isFinal() && !md.getModifiers().isPublic()){
+		//methods are the same, aight now we need to check id higher methods are locked down	
+		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isFinal() && ((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isPublic()){
 			Error.error(md, "Higher class has a locked down method"); //501
 		}
 		if(((MethodDecl)TypeChecker.findMethod(currentClass.superClass().myDecl.allMethods, md.getname(), md.params(), true)).getModifiers().isStatic() && !md.getModifiers().isStatic() ){
