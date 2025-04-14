@@ -141,9 +141,9 @@ public class ModifierChecker extends Visitor {
 	// YOUR CODE HERE 6
 
 	//private fields can only be accessed in (name).field if name is the class of the ref
-	if( fr.myDecl.modifiers.isPrivate() && currentClass.name() != fr.myDecl.name() ){
+	if( fr.myDecl.modifiers.isPrivate() && currentClass.name() != fr.targetType.typeName() ){
 		//DEBUG
-		println(currentClass.name() + " != " + fr.myDecl.name());
+		println(currentClass.name() + " != " + fr.targetType.typeName());
 
 		Error.error(fr, "private field can only be accessed from the class/object");
 	}
