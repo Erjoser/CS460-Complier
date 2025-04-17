@@ -515,7 +515,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // CONSTRUCTOR DECLARATION
+    // CONSTRUCTOR DECLARATION //tall //eric
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
 
@@ -558,7 +558,7 @@ class GenerateCode extends Visitor {
 	println(ds.line + ": DoStat:\tGenerating code.");
 	classFile.addComment(ds, "Do Statement");
 
-	// YOUR CODE HERE
+	// YOUR CODE HERE 
 
 	classFile.addComment(ds, "End DoStat");
 	return null; 
@@ -651,7 +651,7 @@ class GenerateCode extends Visitor {
 	println(fs.line + ": ForStat:\tGenerating code.");
 	classFile.addComment(fs, "For Statement");
 
-	// YOUR CODE HERE
+	// YOUR CODE HERE  //eric here and up
 	classFile.addComment(fs, "End ForStat");	
 	return null;
     }
@@ -661,7 +661,7 @@ class GenerateCode extends Visitor {
 	println(is.line + ": IfStat:\tGenerating code.");
 	classFile.addComment(is, "If Statement");
 
-	// YOUR CODE HERE
+	// YOUR CODE HERE //nick here and down
 	classFile.addComment(is,  "End IfStat");
 	return null;
     }
@@ -768,7 +768,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // NEW
+    // NEW  //tall //nick
     public Object visitNew(New ne) {
 	println(ne.line + ": New:\tGenerating code");
 	classFile.addComment(ne, "New");
@@ -794,7 +794,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // STATIC INITIALIZER
+    // STATIC INITIALIZER //tall //nick
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
@@ -830,7 +830,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // TERNARY EXPRESSION 
+    // TERNARY EXPRESSION  //tall //eric
     public Object visitTernary(Ternary te) {
 	println(te.line + ": Ternary:\tGenerating code.");
 	classFile.addComment(te, "Ternary Statement");

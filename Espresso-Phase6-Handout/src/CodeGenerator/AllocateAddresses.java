@@ -17,14 +17,14 @@ class AllocateAddresses extends Visitor {
 
     // BLOCK
     public Object visitBlock(Block bl) {
-	// YOUR CODE HERE
+	// YOUR CODE HERE  //eric
 	return null;   
     }
     
     
     // LOCAL VARIABLE DECLARATION
     public Object visitLocalDecl(LocalDecl ld) {
-	// YOUR CODE HERE
+	// YOUR CODE HERE //eric
 	println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
 	return null;
     }
@@ -39,7 +39,7 @@ class AllocateAddresses extends Visitor {
     
     // PARAMETER DECLARATION
     public Object visitParamDecl(ParamDecl pd) {
-	// YOUR CODE HERE
+	// YOUR CODE HERE //nick and down
 	println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
 	return null;
     }
