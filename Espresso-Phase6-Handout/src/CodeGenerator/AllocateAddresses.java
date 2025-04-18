@@ -18,6 +18,10 @@ class AllocateAddresses extends Visitor {
     // BLOCK
     public Object visitBlock(Block bl) {
 	// YOUR CODE HERE  //eric
+	// from the code in video?
+	int tempAddress = gen.getAddress();
+	bl.visitChildren(this);
+	gen.setAddress(tempAddress);
 	return null;   
     }
     
@@ -26,6 +30,16 @@ class AllocateAddresses extends Visitor {
     public Object visitLocalDecl(LocalDecl ld) {
 	// YOUR CODE HERE //eric
 	println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
+	//assign field based on available address
+	ld.address = gen.setAddress(get.getAddress());
+	//increment counter in the generator by 1 (2 if double or long)
+	if(ld.type().isDoubleType() || ld.type().isLongType()){
+		gen.inc2Address();
+	}
+	else(){
+		gen.incAddress();
+	}
+	ld.localsUsed = gen.getLocalsUsed();
 	return null;
     }
 
@@ -38,6 +52,7 @@ class AllocateAddresses extends Visitor {
     }
     
     // PARAMETER DECLARATION
+	// works the same as local
     public Object visitParamDecl(ParamDecl pd) {
 	// YOUR CODE HERE //nick and down
 	println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
@@ -48,6 +63,15 @@ class AllocateAddresses extends Visitor {
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ": MethodDecl:\tResetting address counter for method '" + md.name().getname() + "'.");
 	// YOUR CODE HERE
+	// set this to 0 if static, 1 if not (0 is this)	
+	if(md.getModifiers().isStatic()){
+		md.address = gen.setAddress(0);
+	}
+	else{
+		md.address = gen.setAddress(1);
+	}
+
+	md.localsUsed = gen.getLocalsUsed();
 	println(md.line + ": End MethodDecl");	
 	gen.resetAddress();
 	return null;
