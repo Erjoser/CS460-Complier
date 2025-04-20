@@ -28,20 +28,30 @@ class AllocateAddresses extends Visitor {
     
     // LOCAL VARIABLE DECLARATION
     public Object visitLocalDecl(LocalDecl ld) {
+		
+	
 	// YOUR CODE HERE //eric
 	println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
 	//assign field based on available address
-	ld.address = gen.setAddress(get.getAddress());
+	//ld.address = 
+	gen.setAddress(gen.getAddress());
+		
 	//increment counter in the generator by 1 (2 if double or long)
 	if(ld.type().isDoubleType() || ld.type().isLongType()){
 		gen.inc2Address();
 	}
-	else(){
+	
+	else{
 		gen.incAddress();
 	}
-	ld.localsUsed = gen.getLocalsUsed();
+	
+	//ld.localsUsed = gen.getLocalsUsed();
+	
+	
 	return null;
     }
+
+
 
     // FOR STATEMENT
     public Object visitForStat(ForStat fs) {
@@ -56,6 +66,9 @@ class AllocateAddresses extends Visitor {
     public Object visitParamDecl(ParamDecl pd) {
 	// YOUR CODE HERE //nick and down
 	println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
+	int tempAddress = gen.getAddress();
+	pd.visitChildren(this);
+	gen.setAddress(tempAddress);
 	return null;
     }
     
@@ -65,10 +78,12 @@ class AllocateAddresses extends Visitor {
 	// YOUR CODE HERE
 	// set this to 0 if static, 1 if not (0 is this)	
 	if(md.getModifiers().isStatic()){
-		md.address = gen.setAddress(0);
+		//md.address = gen.setAddress(0);
+		gen.setAddress(0);
 	}
 	else{
-		md.address = gen.setAddress(1);
+		//md.address = gen.setAddress(1);
+		gen.setAddress(1);
 	}
 
 	md.localsUsed = gen.getLocalsUsed();
@@ -92,6 +107,9 @@ class AllocateAddresses extends Visitor {
 	super.visitConstructorDecl(cd);
 	cd.localsUsed = gen.getLocalsUsed();
 	//System.out.println("Locals Used: " + cd.localsUsed);
+	
+	
+	
 	gen.resetAddress();
 	println(cd.line + ": End ConstructorDecl");
 	return null;
@@ -101,9 +119,14 @@ class AllocateAddresses extends Visitor {
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tResetting address counter for static initializer for class '" + currentClass.name() + "'.");
 	// YOUR CODE HERE
+	int tempAddress = gen.getAddress();
+	si.visitChildren(this);
+	gen.setAddress(tempAddress);
 	gen.resetAddress();
 	println(si.line + ": End StaticInit");
 	return null;
     }
 }
+
+
 
