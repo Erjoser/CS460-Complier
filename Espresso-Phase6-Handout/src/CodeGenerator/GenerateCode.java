@@ -1026,6 +1026,87 @@ Local or Parameter
 */
 
 
+	Type eType = null;
+	eType = (Type) up.expr().visit(this);
+if(eType.isShortType()){
+	
+	}
+
+if(eType.isIntegerType()){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
+}
+	}
+
+if(eType.isByteType()){
+	
+	}
+
+if(eType.isCharType()){
+	
+	}
+
+if(eType.isBooleanType()){
+	
+	}
+
+if(eType.isFloatType()){
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_fload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
+}
+	}
+
+if(eType.isLongType()){
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_lload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
+}
+	}
+
+if(eType.isDoubleType()){
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_dload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
+}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	classFile.addComment(up, "End UnaryPostExpr");
 	return null;
     }
@@ -1045,7 +1126,16 @@ if(eType.isShortType()){
 	}
 
 if(eType.isIntegerType()){
-	
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_isub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iadd));
+}
 	}
 
 if(eType.isByteType()){
@@ -1061,15 +1151,42 @@ if(eType.isBooleanType()){
 	}
 
 if(eType.isFloatType()){
-	
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_fload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_fadd));
+}
 	}
 
 if(eType.isLongType()){
-	
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_lload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_lconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_ladd));
+}
 	}
 
 if(eType.isDoubleType()){
-	
+		classFile.addInstruction(new Instruction(RuntimeConstants.opc_dload_0));
+	//	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+if(up.op().getKind() == PreOp.MINUSMINUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dsub));
+}
+if(up.op().getKind() == PreOp.PLUSPLUS){
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dconst_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
+}
 	}
 
 
