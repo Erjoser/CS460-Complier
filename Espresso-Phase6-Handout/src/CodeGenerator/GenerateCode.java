@@ -466,7 +466,61 @@ class GenerateCode extends Visitor {
     public Object visitBinaryExpr(BinaryExpr be) {
 	println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 	classFile.addComment(be, "Binary Expression");
-		
+		//taken from typechecker
+	Type lType = (Type) be.left().visit(this);
+	Type rType = (Type) be.right().visit(this);
+	String op = be.op().operator();
+	NameExpr left = (NameExpr)be.left();
+	NameExpr right = (NameExpr)be.right();
+
+	int address = ((VarDecl)left.myDecl).address();	    
+
+classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true, false));
+
+	address = ((VarDecl)right.myDecl).address();	    
+classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)right.myDecl).type(), address, true, false));
+/*
+if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmpgt));}
+if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmple));}
+if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmpge));}
+if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.AND){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.OR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.XOR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.PLUS){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.MINUS){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.`MULT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.DIV){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.MOD){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
+*/
+
+//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
+
+	//
+	/*
+Local or Parameter
+		makeStringBuilder();
+		// load the left-hand side
+		NameExpr left = (NameExpr)as.left();
+		int address = ((VarDecl)left.myDecl).address();	    
+		classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true /load\, false));
+		// add the left-hand side to the string builder
+		classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokevirtual,
+									 "java/lang/StringBuilder", "append",
+									 "(Ljava/lang/String;)Ljava/lang/StringBuilder;"));	     
+
+
+	    classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(as.op(), as.type)));
+
+	 */	
 	// YOUR CODE HERE
 	classFile.addComment(be, "End BinaryExpr");
 	return null;
@@ -660,8 +714,44 @@ class GenerateCode extends Visitor {
     public Object visitIfStat(IfStat is) {
 	println(is.line + ": IfStat:\tGenerating code.");
 	classFile.addComment(is, "If Statement");
+	String varsTopLabel = "", varsBottomLabel = "";
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	Type eType = (Type) is.expr().visit(this);
+	
+	if (is.thenpart() != null){ 
+	    is.thenpart().visit(this);
+	    
+	}
+	    
+	    
+	    
+	if (is.elsepart() != null) {
+	    is.elsepart().visit(this);
 
-	// YOUR CODE HERE //nick here and down
+
+}
+/*
+
+	if (!eType.isBooleanType())
+	    Error.error(is, "Non boolean Expression found as test in if-statement.");
+	if (is.thenpart() != null) 
+	    is.thenpart().visit(this);
+	if (is.elsepart() != null) 
+	    is.elsepart().visit(this);
+ 	    classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, varsBottomLabel));
+ 	    	String varsTopLabel = "", varsBottomLabel = "";
+	if (Settings.generateVars && bl.mySymbolTable.entries.size() > 0)
+	    createDotVars(bl.mySymbolTable, varsTopLabel = "Lv"+gen.getLabel(), varsBottomLabel = "Lv"+gen.getLabel());
+		
+ 	    JumpInstruction(int opCode, String label) {
+ 	    
+*/
+
+
+
+	// YOUR CODE HERE //nick here and down ---------------------------------------------------------------------------------------------------------------------
 	classFile.addComment(is,  "End IfStat");
 	return null;
     }
@@ -671,7 +761,27 @@ class GenerateCode extends Visitor {
     public Object visitInvocation(Invocation in) {
 	println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
 	classFile.addComment(in, "Invocation");
+	
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	
 	// YOUR CODE HERE
+	Type targetType = null;
+	ClassDecl cd = null;
+	String methodName = in.methodName().getname();
+	
+	    if (in.targetType.isStringType()) {
+		in.params().visit(this); // still need to visit the params if they exist.
+	    }
+	    boolean calleeMustBeStatic = false;
+	    if (in.target() != null)
+		in.target().visit(this);
+	    if (in.target() != null && in.target().isClassName()){
+		// This invocation is of the form Class.method(...)
+		calleeMustBeStatic = true;	  
+}
+
 
 	classFile.addComment(in, "End Invocation");
 
@@ -720,11 +830,17 @@ class GenerateCode extends Visitor {
     // LOCAL VARIABLE DECLARATION
     public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ": LocalDecl:\tGenerating code for LocalDecl");
-	    
+	  
 	if (ld.var().init() != null) {
 	    println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
 		    ld.var().name().getname() + "'.");
 	    classFile.addComment(ld, "Local Variable Declaration");
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+		
+		
+		
 		
 	    // YOUR CODE HERE
 	    classFile.addComment(ld, "End LocalDecl");
@@ -761,7 +877,9 @@ class GenerateCode extends Visitor {
 	    classFile.addComment(ne, "End NameExpr");
 	    return null;
 	}
-
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	classFile.addComment(ne, "End NameExpr");
@@ -774,7 +892,9 @@ class GenerateCode extends Visitor {
 	classFile.addComment(ne, "New");
 	boolean OldStringBuilderCreated = StringBuilderCreated;
 	StringBuilderCreated = false;
-	      
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	classFile.addComment(ne, "End New");
@@ -787,7 +907,32 @@ class GenerateCode extends Visitor {
     public Object visitReturnStat(ReturnStat rs) {
 	println(rs.line + ": ReturnStat:\tGenerating code.");
 	classFile.addComment(rs, "Return Statement");
-
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// YOUR CODE HERE
 
 	classFile.addComment(rs, "End ReturnStat");
@@ -800,9 +945,10 @@ class GenerateCode extends Visitor {
 
 	classFile.startMethod(si);
 	classFile.addComment(si, "Static Initializer");
-
 	currentContext = si;
-		
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	si.setCode(classFile.getCurrentMethodCode());
@@ -815,7 +961,9 @@ class GenerateCode extends Visitor {
     public Object visitSuper(Super su) {
 	println(su.line + ": Super:\tGenerating code (access).");	
 	classFile.addComment(su, "Super");
-
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	classFile.addComment(su, "End Super");
@@ -825,6 +973,10 @@ class GenerateCode extends Visitor {
     // SWITCH STATEMENT
     public Object visitSwitchStat(SwitchStat ss) {
 	println(ss.line + ": Switch Statement:\tGenerating code for Switch Statement.");
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	
 	// YOUR CODE HERE
 	classFile.addComment(ss, "End SwitchStat");
 	return null;
@@ -848,7 +1000,9 @@ class GenerateCode extends Visitor {
     public Object visitThis(This th) {
 	println(th.line + ": This:\tGenerating code (access).");       
 	classFile.addComment(th, "This");
-
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	classFile.addComment(th, "End This");
@@ -859,8 +1013,18 @@ class GenerateCode extends Visitor {
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ": UnaryPostExpr:\tGenerating code.");
 	classFile.addComment(up, "Unary Post Expression");
-
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
+
+/*
+	boolean oldLeftHandSide = leftHandSide;
+	leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+	up.expr().visit(this);
+	leftHandSide = oldLeftHandSide;
+*/
+
 
 	classFile.addComment(up, "End UnaryPostExpr");
 	return null;
@@ -870,8 +1034,54 @@ class GenerateCode extends Visitor {
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
 	classFile.addComment(up,"Unary Pre Expression");
-
+	//string topLabel = "L"+gen.getLabel();
+	//string endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(topLabel));
 	// YOUR CODE HERE
+	Type eType = null;
+	eType = (Type) up.expr().visit(this);
+if(eType.isShortType()){
+	
+	}
+
+if(eType.isIntegerType()){
+	
+	}
+
+if(eType.isByteType()){
+	
+	}
+
+if(eType.isCharType()){
+	
+	}
+
+if(eType.isBooleanType()){
+	
+	}
+
+if(eType.isFloatType()){
+	
+	}
+
+if(eType.isLongType()){
+	
+	}
+
+if(eType.isDoubleType()){
+	
+	}
+
+
+
+
+	//boolean oldLeftHandSide = leftHandSide;
+	//leftHandSide = (up.op().getKind() == PreOp.MINUSMINUS || up.op().getKind() == PreOp.PLUSPLUS);
+	//up.expr().visit(this);
+	//leftHandSide = oldLeftHandSide;
+
+
+
 
 	classFile.addComment(up, "End UnaryPreExpr");
 	return null;
@@ -880,6 +1090,20 @@ class GenerateCode extends Visitor {
     // WHILE STATEMENT
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ": While Stat:\tGenerating Code.");
+	
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	//ws.expr().visit();
+	classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, endLabel));
+	if(ws.stat() != null){
+		//ws.stat().visit();
+	}
+	//classFile.addInstruction(new Instruction(RuntimeConstants.opc_goto, topLabel));
+	//classFile.addInstruction(new Instruction(RuntimeConstants.opc_goto, endLabel));
+    classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, endLabel));
+
 
 	classFile.addComment(ws, "While Statement");
 
