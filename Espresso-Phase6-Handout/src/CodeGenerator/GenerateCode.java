@@ -480,8 +480,8 @@ class GenerateCode extends Visitor {
 
 	int address = ((VarDecl)left.myDecl).address();	    
 
-	gen.dataConvert(be.left().type, be.type)
-	gen.dataConvert(be.right().type, be.type)
+	gen.dataConvert(be.left().type, be.type);
+	gen.dataConvert(be.right().type, be.type);
 
 
 	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true, false));
@@ -902,9 +902,9 @@ class GenerateCode extends Visitor {
 	classFile.addComment(ne, "New");
 	boolean OldStringBuilderCreated = StringBuilderCreated;
 	StringBuilderCreated = false;
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	//String topLabel = "L"+gen.getLabel();
+	//String endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
 
 	classFile.addComment(ne, "End New");
@@ -917,30 +917,11 @@ class GenerateCode extends Visitor {
     public Object visitReturnStat(ReturnStat rs) {
 	println(rs.line + ": ReturnStat:\tGenerating code.");
 	classFile.addComment(rs, "Return Statement");
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//String topLabel = "L"+gen.getLabel();
+	//String endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	Type returnValueType = (Type) rs.expr().visit(this);	    
+    classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 	
 	
 	// YOUR CODE HERE
@@ -953,13 +934,15 @@ class GenerateCode extends Visitor {
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
-	classFile.startMethod(si);
-	classFile.addComment(si, "Static Initializer");
-	currentContext = si;
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	//classFile.startMethod(si);
+	//classFile.addComment(si, "Static Initializer");
+	//currentContext = si;
+	//String topLabel = "L"+gen.getLabel();
+	//String endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
+	si.initializer().visit(this);
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 
 	si.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
@@ -971,11 +954,11 @@ class GenerateCode extends Visitor {
     public Object visitSuper(Super su) {
 	println(su.line + ": Super:\tGenerating code (access).");	
 	classFile.addComment(su, "Super");
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	//String topLabel = "L"+gen.getLabel();
+	//String endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
-
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iload_0));
 	classFile.addComment(su, "End Super");
 	return null;
     }
@@ -1013,11 +996,11 @@ class GenerateCode extends Visitor {
     public Object visitThis(This th) {
 	println(th.line + ": This:\tGenerating code (access).");       
 	classFile.addComment(th, "This");
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	//String topLabel = "L"+gen.getLabel();
+	//String endLabel = "L"+gen.getLabel();
+	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
-
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_iload_0));
 	classFile.addComment(th, "End This");
 	return null;
     }
@@ -1108,17 +1091,6 @@ if(up.op().getKind() == PreOp.PLUSPLUS){
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_dadd));
 }
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 	classFile.addComment(up, "End UnaryPostExpr");
 	return null;
