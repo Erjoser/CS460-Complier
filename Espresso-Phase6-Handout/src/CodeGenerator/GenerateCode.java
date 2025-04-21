@@ -91,6 +91,7 @@ class GenerateCode extends Visitor {
 	println(ae.line + ": Visiting ArrayAccessExpr");
 	classFile.addComment(ae, "ArrayAccessExpr");
 	// YOUR CODE HERE
+	// Expresso*
 	classFile.addComment(ae,"End ArrayAccessExpr");
 	return null;
     }
@@ -99,6 +100,7 @@ class GenerateCode extends Visitor {
     public Object visitArrayLiteral(ArrayLiteral al) {
 	println(al.line + ": Visiting an ArrayLiteral ");
 	// YOUR CODE HERE
+	// Expresso*
 	return null;
     }
 
@@ -106,6 +108,7 @@ class GenerateCode extends Visitor {
     public Object visitNewArray(NewArray ne) {
 	println(ne.line + ": NewArray:\t Creating new array of type " + ne.type.typeName());
 	// YOUR CODE HERE
+	// Expresso*
 	return null;
     }
     // END OF ARRAY VISITORS
@@ -466,6 +469,8 @@ class GenerateCode extends Visitor {
     public Object visitBinaryExpr(BinaryExpr be) {
 	println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 	classFile.addComment(be, "Binary Expression");
+
+		// YOUR CODE HERE
 		//taken from typechecker
 	Type lType = (Type) be.left().visit(this);
 	Type rType = (Type) be.right().visit(this);
@@ -475,38 +480,41 @@ class GenerateCode extends Visitor {
 
 	int address = ((VarDecl)left.myDecl).address();	    
 
-classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true, false));
+	gen.dataConvert(be.left().type, be.type)
+	gen.dataConvert(be.right().type, be.type)
 
-	address = ((VarDecl)right.myDecl).address();	    
-classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)right.myDecl).type(), address, true, false));
-/*
-if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmpgt));}
-if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmple));}
-if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmpge));}
-if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.AND){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.OR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.XOR){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.PLUS){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.MINUS){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.`MULT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.DIV){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.MOD){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(RuntimeConstants.opc_if_icmplt));}
-*/
 
-//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
+	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true, false));
+
+	//address = ((VarDecl)right.myDecl).address();	    
+	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)right.myDecl).type(), address, true, false));
+
+	if(be.op().kind == BinOp.LT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt"));}
+	if(be.op().kind == BinOp.GT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gt"));}
+	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lteq"));}
+	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gteq"));}
+	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"eqeq"));}
+	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"noteq"));}
+	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt"));}
+	if(be.op().kind == BinOp.OROR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"andand"));}
+	if(be.op().kind == BinOp.AND){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and"));}
+	if(be.op().kind == BinOp.OR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or"));}
+	if(be.op().kind == BinOp.XOR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"xor"));}
+	if(be.op().kind == BinOp.PLUS){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"add"));}
+	if(be.op().kind == BinOp.MINUS){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub"));}
+	if(be.op().kind == BinOp.MULT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mult"));}
+	if(be.op().kind == BinOp.DIV){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub"));}
+	if(be.op().kind == BinOp.MOD){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mod"));}
+	if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lshift"));}
+	if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rshift"));}
+	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rrshift"));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"instance"));}
+
+	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
 
 	//
 	/*
-Local or Parameter
+	Local or Parameter
 		makeStringBuilder();
 		// load the left-hand side
 		NameExpr left = (NameExpr)as.left();
@@ -521,7 +529,7 @@ Local or Parameter
 	    classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(as.op(), as.type)));
 
 	 */	
-	// YOUR CODE HERE
+
 	classFile.addComment(be, "End BinaryExpr");
 	return null;
     }
@@ -706,7 +714,9 @@ Local or Parameter
 	classFile.addComment(fs, "For Statement");
 
 	// YOUR CODE HERE  //eric here and up
-	classFile.addComment(fs, "End ForStat");	
+	classFile.addComment(fs, "End ForStat");
+	
+
 	return null;
     }
 
@@ -978,6 +988,7 @@ Local or Parameter
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	
 	// YOUR CODE HERE
+	//Expresso+
 	classFile.addComment(ss, "End SwitchStat");
 	return null;
     }
@@ -991,6 +1002,8 @@ Local or Parameter
 	StringBuilderCreated = false;
 
 	// YOUR CODE HERE
+	// Expresso+
+
 	classFile.addComment(te, "Ternary");
 	StringBuilderCreated = OldStringBuilderCreated;
 	return null;
