@@ -720,7 +720,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // IF STATEMENT
+    // IF STATEMENT ================================================================
     public Object visitIfStat(IfStat is) {
 	println(is.line + ": IfStat:\tGenerating code.");
 	classFile.addComment(is, "If Statement");
@@ -767,7 +767,7 @@ class GenerateCode extends Visitor {
     }
 
 
-    // INVOCATION
+    // INVOCATION -----------------------------------------------------------------------------D
     public Object visitInvocation(Invocation in) {
 	println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
 	classFile.addComment(in, "Invocation");
@@ -837,22 +837,17 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // LOCAL VARIABLE DECLARATION
+    // LOCAL VARIABLE DECLARATION -------------------------------------------------------D
     public Object visitLocalDecl(LocalDecl ld) {
 	println(ld.line + ": LocalDecl:\tGenerating code for LocalDecl");
 	  
 	if (ld.var().init() != null) {
 	    println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
 		    ld.var().name().getname() + "'.");
-	    classFile.addComment(ld, "Local Variable Declaration");
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-		
-		
-		
-		
-	    // YOUR CODE HERE
+	    classFile.addComment(ld, "Local Variable Declaration");				
+		ld.var().init().visit(this); //visit the things
+classFile.addInstruction(makeLoadStoreInstruction(ld.var().type(), -1, false /*store*/, false /*array*/));		
+	    // YOUR CODE HERE 
 	    classFile.addComment(ld, "End LocalDecl");
 	}
 	else
@@ -877,7 +872,7 @@ class GenerateCode extends Visitor {
     }
 
 
-    // NAME EXPRESSION
+    // NAME EXPRESSION -----------------------------------------------d
     public Object visitNameExpr(NameExpr ne) {
 	classFile.addComment(ne, "Name Expression --");
 
@@ -887,33 +882,63 @@ class GenerateCode extends Visitor {
 	    classFile.addComment(ne, "End NameExpr");
 	    return null;
 	}
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+//class taken care of, check local and param
+ 	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
+	      //check if local
+	      if (((VarDecl) ne.myDecl).isLocal()) {
+            // Handle loading local variable
+            classFile.addInstruction(makeLoadStoreInstruction(varDecl.getType(), varDecl.getAddress(), true, false));
+        }
+        else if{
+			 if (((VarDecl) ne.myDecl).isStatic()) {
+//public FieldRefInstruction(int opCode, String className, String fieldName, String signature) 
+	classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
+            }
+            else{
+classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield,  ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl.getName(), ((VarDecl) ne.myDecl.getType().getDescriptor()));
+			}//else
+		}//else if
+	}//if
+
+
+/*
+ 	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
+	    ne.type = ((VarDecl)ne.myDecl).type(); 
+	}
+	else if (ne.myDecl instanceof ClassDecl) {
+	    // it wasn't a field - so it must be a class.
+	    // if it weren't a class it would have been caught in the 
+	    // name resolution phase
+	    ne.type = new ClassType(ne.name());
+	    // or how about just new ClassType(ne.name()) Einstein!!!
+	    ((ClassType)ne.type).myDecl = (ClassDecl)ne.myDecl;
+	}
+ */
+
 	// YOUR CODE HERE
 
 	classFile.addComment(ne, "End NameExpr");
 	return null;
     }
 
-    // NEW  //tall //nick
+    // NEW  //tall //nick----------------------------------------------------D
     public Object visitNew(New ne) {
 	println(ne.line + ": New:\tGenerating code");
 	classFile.addComment(ne, "New");
 	boolean OldStringBuilderCreated = StringBuilderCreated;
 	StringBuilderCreated = false;
-	//String topLabel = "L"+gen.getLabel();
-	//String endLabel = "L"+gen.getLabel();
-	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	// YOUR CODE HERE
 
+	// YOUR CODE HERE
+//	public ClassRefInstruction(int opCode, String className) {
+classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_new, ne.type.typeName());
+classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 	classFile.addComment(ne, "End New");
 	StringBuilderCreated = OldStringBuilderCreated;
 
 	return null;
     }
 
-    // RETURN STATEMENT
+    // RETURN STATEMENT -------------------------------------------------------------------------D
     public Object visitReturnStat(ReturnStat rs) {
 	println(rs.line + ": ReturnStat:\tGenerating code.");
 	classFile.addComment(rs, "Return Statement");
@@ -930,7 +955,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // STATIC INITIALIZER //tall //nick
+    // STATIC INITIALIZER //tall //nick -------------------------------------------------------D
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
@@ -950,7 +975,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // SUPER
+    // SUPER -------------------------------------------------------------------------------D
     public Object visitSuper(Super su) {
 	println(su.line + ": Super:\tGenerating code (access).");	
 	classFile.addComment(su, "Super");
@@ -963,7 +988,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // SWITCH STATEMENT
+    // SWITCH STATEMENT-----------------------------------------------------------------------+
     public Object visitSwitchStat(SwitchStat ss) {
 	println(ss.line + ": Switch Statement:\tGenerating code for Switch Statement.");
 	String topLabel = "L"+gen.getLabel();
@@ -976,7 +1001,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // TERNARY EXPRESSION  //tall //eric
+    // TERNARY EXPRESSION  //tall //eric ----------------------------------------------------+
     public Object visitTernary(Ternary te) {
 	println(te.line + ": Ternary:\tGenerating code.");
 	classFile.addComment(te, "Ternary Statement");
@@ -992,7 +1017,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // THIS
+    // THIS -----------------------------------------------------------------------------D
     public Object visitThis(This th) {
 	println(th.line + ": This:\tGenerating code (access).");       
 	classFile.addComment(th, "This");
@@ -1005,7 +1030,7 @@ class GenerateCode extends Visitor {
 	return null;
     }
 
-    // UNARY POST EXPRESSION
+    // UNARY POST EXPRESSION ---------------------------------------------------------D
     public Object visitUnaryPostExpr(UnaryPostExpr up) {
 	println(up.line + ": UnaryPostExpr:\tGenerating code.");
 	classFile.addComment(up, "Unary Post Expression");
@@ -1096,7 +1121,7 @@ if(up.op().getKind() == PreOp.PLUSPLUS){
 	return null;
     }
 
-    // UNARY PRE EXPRESSION
+    // UNARY PRE EXPRESSION ---------------------------------------------------------------------------------------------------------------D
     public Object visitUnaryPreExpr(UnaryPreExpr up) {
 	println(up.line + ": UnaryPreExpr:\tGenerating code for " + up.op().operator() + " : " + up.expr().type.typeName() + " -> " + up.expr().type.typeName() + ".");
 	classFile.addComment(up,"Unary Pre Expression");
@@ -1189,7 +1214,7 @@ if(up.op().getKind() == PreOp.PLUSPLUS){
 	return null;
     }
 
-    // WHILE STATEMENT
+    // WHILE STATEMENT --------------------------------------------------------------------------------------------------D
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ": While Stat:\tGenerating Code.");
 	
