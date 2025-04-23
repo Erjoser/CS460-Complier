@@ -540,6 +540,9 @@ class GenerateCode extends Visitor {
 	classFile.addComment(br, "Break Statement");
 
 	// YOUR CODE HERE
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 
 	classFile.addComment(br, "End BreakStat");
 	return null;
@@ -550,6 +553,7 @@ class GenerateCode extends Visitor {
 	println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 	classFile.addComment(ce, "Cast Expression");
 	// YOUR CODE HERE
+	// todo
 	classFile.addComment(ce, "End CastExpr");
 	return null;
     }
@@ -560,6 +564,10 @@ class GenerateCode extends Visitor {
 	classFile.addComment(ci, "Explicit Constructor Invocation");
 
 	// YOUR CODE HERE
+	if(ci.superConstructorCall()){
+		visitConstructorDecl(ci.constructor);
+	}
+
 	classFile.addComment(ci, "End CInvocation");
 	return null;
     }
@@ -573,6 +581,7 @@ class GenerateCode extends Visitor {
 	currentClass = cd;
 
 	// YOUR CODE HERE
+	// todo
 
 	return null;
     }
@@ -593,7 +602,18 @@ class GenerateCode extends Visitor {
 	cd.cinvocation().visit(this);
 
 	// YOUR CODE HERE
-
+	// explict construct
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_invokespecial));
+	// field initalization
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_invokestatic));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_putfield));
+	// user code?
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_1));
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_putfield));
+	// auto gen return
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 
 	// We are done generating code for this method, so transfer it to the classDecl.
@@ -610,6 +630,9 @@ class GenerateCode extends Visitor {
 	classFile.addComment(cs, "Continue Statement");
 
 	// YOUR CODE HERE
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 
 	classFile.addComment(cs, "End ContinueStat");
 	return null;
@@ -620,7 +643,10 @@ class GenerateCode extends Visitor {
 	println(ds.line + ": DoStat:\tGenerating code.");
 	classFile.addComment(ds, "Do Statement");
 
-	// YOUR CODE HERE 
+	// YOUR CODE HERE
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 
 	classFile.addComment(ds, "End DoStat");
 	return null; 
@@ -713,7 +739,14 @@ class GenerateCode extends Visitor {
 	println(fs.line + ": ForStat:\tGenerating code.");
 	classFile.addComment(fs, "For Statement");
 
-	// YOUR CODE HERE  //eric here and up
+	// your code here  //eric here and up
+	String topLabel = "L"+gen.getLabel();
+	String endLabel = "L"+gen.getLabel();
+	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+
+	classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, topLabel));
+
+
 	classFile.addComment(fs, "End ForStat");
 	
 
@@ -781,16 +814,16 @@ class GenerateCode extends Visitor {
 	ClassDecl cd = null;
 	String methodName = in.methodName().getname();
 	
-	    if (in.targetType.isStringType()) {
+	if (in.targetType.isStringType()) {
 		in.params().visit(this); // still need to visit the params if they exist.
-	    }
-	    boolean calleeMustBeStatic = false;
-	    if (in.target() != null)
+	}
+	boolean calleeMustBeStatic = false;
+	if (in.target() != null)
 		in.target().visit(this);
-	    if (in.target() != null && in.target().isClassName()){
+	if (in.target() != null && in.target().isClassName()){
 		// This invocation is of the form Class.method(...)
 		calleeMustBeStatic = true;	  
-}
+	}
 
 
 	classFile.addComment(in, "End Invocation");
