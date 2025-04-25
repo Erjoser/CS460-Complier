@@ -552,6 +552,32 @@ class GenerateCode extends Visitor {
     public Object visitCastExpr(CastExpr ce) {
 	println(ce.line + ": CastExpr:\tGenerating code for a Cast Expression.");
 	classFile.addComment(ce, "Cast Expression");
+	//ce.expr().visit(this);
+	Type exprType = (Type)ce.expr().visit(this);
+	Type castType = ce.type();
+
+	
+		// Numeric to numeric is always OK.
+	if (exprType.isNumericType() && castType.isNumericType()) {
+	    //ce.type = castType;
+	    //println(ce.line + ":\tCast Expression has type: " + ce.type);
+	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
+	    //return castType;
+	} 
+	
+	if (exprType.identical(castType)){
+classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
+		}
+
+		if (exprType.isClassType() && castType.isClassType())
+	    if (Type.isSuper((ClassType)exprType, (ClassType)castType) ||
+		Type.isSuper((ClassType)castType, (ClassType)exprType)) {
+		//ce.type = castType;
+		//println(ce.line + ":\tCast Expression has type: " + ce.type);
+		//return castType;
+	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
+	    }
+	
 	// YOUR CODE HERE
 	// todo
 	classFile.addComment(ce, "End CastExpr");
@@ -579,6 +605,19 @@ class GenerateCode extends Visitor {
 	// We need to set this here so we can retrieve it when we generate
 	// field initializers for an existing constructor.
 	currentClass = cd;
+	//super.visitClassDecl(cd);
+	/*
+		// If the class is not abstract and not an interface it must implement all
+		// the abstract functions of its superclass(es) and its interfaces.
+		if (!cd.isInterface() && !cd.modifiers.isAbstract()) {
+		    checkImplementationOfAbstractClasses(cd);
+		}
+*/
+    classFile = new ClassFile(cd);
+    cd.classFile = classFile;
+	    for (int i = 0; i < (cd.body()).nchildren; i++) {
+		((ClassBodyDecl) body.children[i]).visit(this);
+}
 
 	// YOUR CODE HERE
 	// todo
