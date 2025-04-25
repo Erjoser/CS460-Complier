@@ -489,26 +489,26 @@ class GenerateCode extends Visitor {
 	//address = ((VarDecl)right.myDecl).address();	    
 	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)right.myDecl).type(), address, true, false));
 
-	if(be.op().kind == BinOp.LT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt"));}
-	if(be.op().kind == BinOp.GT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gt"));}
-	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lteq"));}
-	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gteq"));}
-	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"eqeq"));}
-	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"noteq"));}
-	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt"));}
-	if(be.op().kind == BinOp.OROR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"andand"));}
-	if(be.op().kind == BinOp.AND){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and"));}
-	if(be.op().kind == BinOp.OR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or"));}
-	if(be.op().kind == BinOp.XOR){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"xor"));}
-	if(be.op().kind == BinOp.PLUS){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"add"));}
-	if(be.op().kind == BinOp.MINUS){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub"));}
-	if(be.op().kind == BinOp.MULT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mult"));}
-	if(be.op().kind == BinOp.DIV){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub"));}
-	if(be.op().kind == BinOp.MOD){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mod"));}
-	if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lshift"));}
-	if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rshift"));}
-	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rrshift"));}
-	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"instance"));}
+	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt")));}
+	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gt")));}
+	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lteq")));}
+	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"gteq")));}
+	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"eqeq")));}
+	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"noteq")));}
+	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lt")));}
+	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"andand")));}
+	if(be.op().kind == BinOp.AND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
+	if(be.op().kind == BinOp.OR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
+	if(be.op().kind == BinOp.XOR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"xor")));}
+	if(be.op().kind == BinOp.PLUS){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"add")));}
+	if(be.op().kind == BinOp.MINUS){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub")));}
+	if(be.op().kind == BinOp.MULT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mult")));}
+	if(be.op().kind == BinOp.DIV){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub")));}
+	if(be.op().kind == BinOp.MOD){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mod")));}
+	if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lshift")));}
+	if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rshift")));}
+	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rrshift")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"instance")));}
 
 	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
 
@@ -561,13 +561,13 @@ class GenerateCode extends Visitor {
 	if (exprType.isNumericType() && castType.isNumericType()) {
 	    //ce.type = castType;
 	    //println(ce.line + ":\tCast Expression has type: " + ce.type);
-	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
+	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
 	    //return castType;
 	} 
 	
 	if (exprType.identical(castType)){
-classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
-		}
+		classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
+	}
 
 		if (exprType.isClassType() && castType.isClassType())
 	    if (Type.isSuper((ClassType)exprType, (ClassType)castType) ||
@@ -575,7 +575,7 @@ classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast,
 		//ce.type = castType;
 		//println(ce.line + ":\tCast Expression has type: " + ce.type);
 		//return castType;
-	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.getName()));
+	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
 	    }
 	
 	// YOUR CODE HERE
@@ -615,12 +615,11 @@ classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast,
 */
     classFile = new ClassFile(cd);
     cd.classFile = classFile;
-	    for (int i = 0; i < (cd.body()).nchildren; i++) {
-		((ClassBodyDecl) body.children[i]).visit(this);
-}
+	for (int i = 0; i < (cd.body()).nchildren; i++) {
+		((ClassBodyDecl) cd.body().children[i]).visit(this);
+	}
 
 	// YOUR CODE HERE
-	// todo
 
 	return null;
     }
@@ -918,7 +917,7 @@ classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast,
 		    ld.var().name().getname() + "'.");
 	    classFile.addComment(ld, "Local Variable Declaration");				
 		ld.var().init().visit(this); //visit the things
-classFile.addInstruction(makeLoadStoreInstruction(ld.var().type(), -1, false /*store*/, false /*array*/));		
+		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), -1, false /*store*/, false /*array*/));		
 	    // YOUR CODE HERE 
 	    classFile.addComment(ld, "End LocalDecl");
 	}
@@ -959,18 +958,18 @@ classFile.addInstruction(makeLoadStoreInstruction(ld.var().type(), -1, false /*s
 	      //check if local
 	      if (((VarDecl) ne.myDecl).isLocal()) {
             // Handle loading local variable
-            classFile.addInstruction(makeLoadStoreInstruction(varDecl.getType(), varDecl.getAddress(), true, false));
-        }
-        else if{
-			 if (((VarDecl) ne.myDecl).isStatic()) {
-//public FieldRefInstruction(int opCode, String className, String fieldName, String signature) 
-	classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
-            }
-            else{
-classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield,  ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl.getName(), ((VarDecl) ne.myDecl.getType().getDescriptor()));
-			}//else
-		}//else if
+            classFile.addInstruction(makeLoadStoreInstruction(ne.myDecl.getType(), ne.myDecl.getAddress(), true, false));
+		  }
 	}//if
+    else{
+		if (((VarDecl) ne.myDecl).isStatic()) {
+			//public FieldRefInstruction(int opCode, String className, String fieldName, String signature) 
+				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
+        }
+        else{
+			classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield,  ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
+		}//else
+	}//else
 
 
 /*
@@ -1002,7 +1001,7 @@ classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield, 
 
 	// YOUR CODE HERE
 //	public ClassRefInstruction(int opCode, String className) {
-classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_new, ne.type.typeName());
+classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_new, ne.type.typeName()));
 classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 	classFile.addComment(ne, "End New");
 	StringBuilderCreated = OldStringBuilderCreated;
