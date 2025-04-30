@@ -589,14 +589,28 @@ class GenerateCode extends Visitor {
 	println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 	classFile.addComment(ci, "Explicit Constructor Invocation");
 
+
+/*
 	// YOUR CODE HERE
 	if(ci.superConstructorCall()){
 		visitConstructorDecl(ci.constructor);
 	}
+*/
+
+classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send this to stack
+		super.visitCInvocation(ci); //visit self
+		//MethodInvocationInstruction                                 (int opCode            , String className   ,String methodName, String signature
+classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", ci.constructor.paramSignature()));
+
 
 	classFile.addComment(ci, "End CInvocation");
 	return null;
     }
+
+
+
+
+
 
     // CLASS DECLARATION
     public Object visitClassDecl(ClassDecl cd) {
@@ -657,6 +671,9 @@ class GenerateCode extends Visitor {
 	// We are done generating code for this method, so transfer it to the classDecl.
 	cd.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
+	
+	
+	
 	currentContext = null;
 	return null;
     }
@@ -1029,13 +1046,16 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
-	//classFile.startMethod(si);
-	//classFile.addComment(si, "Static Initializer");
-	//currentContext = si;
+	classFile.startMethod(si);
+	classFile.addComment(si, "Static Initializer");
+	currentContext = si;
+	
+	
 	//String topLabel = "L"+gen.getLabel();
 	//String endLabel = "L"+gen.getLabel();
 	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 	// YOUR CODE HERE
+	
 	si.initializer().visit(this);
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 
