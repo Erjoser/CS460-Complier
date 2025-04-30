@@ -953,24 +953,22 @@ class GenerateCode extends Visitor {
 	    classFile.addComment(ne, "End NameExpr");
 	    return null;
 	}
+	
+	
+
+
+
+	
+	
 //class taken care of, check local and param
  	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
 	      //check if local
-	      if (((VarDecl) ne.myDecl).isLocal()) {
+	      if (ne.myDecl instanceof LocalDecl) { //11
             // Handle loading local variable
-            classFile.addInstruction(makeLoadStoreInstruction(ne.myDecl.getType(), ne.myDecl.getAddress(), true, false));
-		  }
+			int address = ((VarDecl)ne.myDecl).address() ;
+           classFile.addInstruction(makeLoadStoreInstruction((((VarDecl)ne.myDecl).type()), address, true, false));
+		  }//11
 	}//if
-    else{
-		if (((VarDecl) ne.myDecl).isStatic()) {
-			//public FieldRefInstruction(int opCode, String className, String fieldName, String signature) 
-				classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getstatic, ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
-        }
-        else{
-			classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_getfield,  ((VarDecl) ne.myDecl).getDeclaringClass().getName(), ((VarDecl) ne.myDecl).getName(), ((VarDecl) ne.myDecl).getType().getDescriptor()));
-		}//else
-	}//else
-
 
 /*
  	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
@@ -985,6 +983,7 @@ class GenerateCode extends Visitor {
 	    ((ClassType)ne.type).myDecl = (ClassDecl)ne.myDecl;
 	}
  */
+
 
 	// YOUR CODE HERE
 
