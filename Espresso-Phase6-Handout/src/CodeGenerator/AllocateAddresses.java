@@ -68,11 +68,34 @@ println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local
 	// works the same as local
     public Object visitParamDecl(ParamDecl pd) {
 	// YOUR CODE HERE //nick and down
-	println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
-	int tempAddress = gen.getAddress();
+	
+	
+	//println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
+	//int tempAddress = gen.getAddress();
 	//println(pd.line + ": genaddress:" + gen.getAddress() + "   tempAddress:" + tempAddress ); //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& COMMENT OUT LINE LATER
-	pd.visitChildren(this);
-	gen.setAddress(tempAddress);
+	//pd.visitChildren(this);
+	//gen.setAddress(tempAddress);
+	
+	
+		pd.address = gen.getAddress();
+	//gen.setAddress(gen.getAddress());
+		
+	//increment counter in the generator by 1 (2 if double or long)
+	if(pd.type().isDoubleType() || pd.type().isLongType()){
+		gen.inc2Address();
+	}
+	
+	else{
+		gen.incAddress();
+	}
+	
+	//ld.localsUsed = gen.getLocalsUsed();
+	
+//lol the bug was this needed to be called at the end XD
+println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
+
+	
+	
 	return null;
     }
     
