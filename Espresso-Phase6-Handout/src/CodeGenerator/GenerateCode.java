@@ -947,16 +947,16 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     // METHOD DECLARATION
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ": MethodDecl:\tGenerating code for method '" + md.name().getname() + "'.");	
-	classFile.startMethod(md);
+	classFile.startMethod(md); //sets class for new thehod to be addedd
 	currentContext = md;
 		
 	classFile.addComment(md, "Method Declaration (" + md.name() + ")");
-	md.params().visit(this);
-	if (md.block() !=null) 
-	    md.block().visit(this);
-	gen.endMethod(md);
-	currentContext = null;
-	return null;
+	md.params().visit(this); //check all perams
+	if (md.block() !=null)  //checks if empty
+	    md.block().visit(this); //sees whats inside
+	classFile.endMethod(); //method done, close up shop
+	currentContext = null;  //nuke context
+	return null; //return = 1; :3
     }
 
 
