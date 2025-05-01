@@ -31,10 +31,11 @@ class AllocateAddresses extends Visitor {
 		
 	
 	// YOUR CODE HERE //eric
-	println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
+	
+	//println(ld.line + ": genaddress:" + gen.getAddress() ); //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& COMMENT OUT LINE LATER
 	//assign field based on available address
-	//ld.address = 
-	gen.setAddress(gen.getAddress());
+	ld.address = gen.getAddress();
+	//gen.setAddress(gen.getAddress());
 		
 	//increment counter in the generator by 1 (2 if double or long)
 	if(ld.type().isDoubleType() || ld.type().isLongType()){
@@ -47,7 +48,9 @@ class AllocateAddresses extends Visitor {
 	
 	//ld.localsUsed = gen.getLocalsUsed();
 	
-	
+//lol the bug was this needed to be called at the end XD
+println(ld.line + ": LocalDecl:\tAssigning address:  " + ld.address + " to local variable '" + ld.var().name().getname() + "'.");
+
 	return null;
     }
 
@@ -67,6 +70,7 @@ class AllocateAddresses extends Visitor {
 	// YOUR CODE HERE //nick and down
 	println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to parameter '" + pd.paramName().getname() + "'.");
 	int tempAddress = gen.getAddress();
+	//println(pd.line + ": genaddress:" + gen.getAddress() + "   tempAddress:" + tempAddress ); //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& COMMENT OUT LINE LATER
 	pd.visitChildren(this);
 	gen.setAddress(tempAddress);
 	return null;
@@ -115,11 +119,15 @@ class AllocateAddresses extends Visitor {
 	return null;
     }
     
+    	//println(si.line + ": genaddress:" + gen.getAddress() + "   tempAddress:" + tempAddress ); //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& COMMENT OUT LINE LATER
+
+    
     // STATIC INITIALIZER
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tResetting address counter for static initializer for class '" + currentClass.name() + "'.");
 	// YOUR CODE HERE
 	int tempAddress = gen.getAddress();
+	gen.setAddress(0); //cuz reset address is different
 	si.visitChildren(this);
 	gen.setAddress(tempAddress);
 	gen.resetAddress();
