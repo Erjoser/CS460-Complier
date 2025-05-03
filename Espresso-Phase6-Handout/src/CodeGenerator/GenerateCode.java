@@ -619,19 +619,22 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	// We need to set this here so we can retrieve it when we generate
 	// field initializers for an existing constructor.
 	currentClass = cd;
-	//super.visitClassDecl(cd);
-	/*
-		// If the class is not abstract and not an interface it must implement all
-		// the abstract functions of its superclass(es) and its interfaces.
-		if (!cd.isInterface() && !cd.modifiers.isAbstract()) {
-		    checkImplementationOfAbstractClasses(cd);
-		}
-*/
+
     classFile = new ClassFile(cd);
     cd.classFile = classFile;
+    //variables first
 	for (int i = 0; i < (cd.body()).nchildren; i++) {
+		if(((ClassBodyDecl) cd.body().children[i]) instanceof FieldDecl){
 		((ClassBodyDecl) cd.body().children[i]).visit(this);
 	}
+	}
+//everything else after
+	for (int i = 0; i < (cd.body()).nchildren; i++) {
+	if((((ClassBodyDecl) cd.body().children[i]) instanceof FieldDecl) == false){ // == false is better than ! , fight me
+		((ClassBodyDecl) cd.body().children[i]).visit(this);
+	}	
+	}
+
 
 	// YOUR CODE HERE
 
@@ -671,8 +674,6 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	// We are done generating code for this method, so transfer it to the classDecl.
 	cd.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
-	
-	
 	
 	currentContext = null;
 	return null;
@@ -1045,25 +1046,26 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     // STATIC INITIALIZER //tall //nick -------------------------------------------------------D
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-
+    classFile = gen.getClassFile();     
 	classFile.startMethod(si);
 	classFile.addComment(si, "Static Initializer");
 	currentContext = si;
-	
-	
-	//String topLabel = "L"+gen.getLabel();
-	//String endLabel = "L"+gen.getLabel();
-	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	// YOUR CODE HERE
-	
-	si.initializer().visit(this);
-	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-
+for (int i = 0; i < currentClass.body().nchildren; i++) {
+    if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {
+        if (((FieldDecl) currentClass.body().children[i]).getModifiers().isStatic() && ((FieldDecl) currentClass.body().children[i]).var().init() != null) {
+            println(((FieldDecl)  currentClass.body().children[i]).line + ": FieldDecl:\tGenerating init code for static field '" +
+            ((FieldDecl)  currentClass.body().children[i]).name() + "'.");
+            classFile.addComment(currentClass.body().children[i], "Static field '" + ((FieldDecl) currentClass.body().children[i]).name() + "' initializer");
+            ((FieldDecl) currentClass.body().children[i]).var().init().visit(this);
+        }
+    }
+}
 	si.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
 	currentContext = null;
 	return null;
-    }
+}
+
 
     // SUPER -------------------------------------------------------------------------------D
     public Object visitSuper(Super su) {
