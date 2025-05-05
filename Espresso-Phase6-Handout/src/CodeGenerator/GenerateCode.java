@@ -589,7 +589,6 @@ class GenerateCode extends Visitor {
 	println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 	classFile.addComment(ci, "Explicit Constructor Invocation");
 
-
 /*
 	// YOUR CODE HERE
 	if(ci.superConstructorCall()){
@@ -597,9 +596,14 @@ class GenerateCode extends Visitor {
 	}
 */
 
-classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send this to stack
-		super.visitCInvocation(ci); //visit self
+classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send "this" to stack
+		//super.visitCInvocation(ci); //visit self
 		//MethodInvocationInstruction                                 (int opCode            , String className   ,String methodName, String signature
+
+    for (int k = 0; k < ci.args().nchildren; k++) {
+        ((Expression) ci.args().children[k]).visit(this);
+    }
+
 classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", ci.constructor.paramSignature()));
 
 
@@ -644,19 +648,17 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     // CONSTRUCTOR DECLARATION //tall //eric
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
-
+	classFile = gen.getClassFile();  //used to prevent null crashes with jasmin 
 	classFile.startMethod(cd);
 	classFile.addComment(cd, "Constructor Declaration");
-		
 	currentContext = cd;
-
 	cd.params().visit(this);
-
-		
 	// 12/05/13 = removed if (just in case this ever breaks ;-) )
 	cd.cinvocation().visit(this);
 
-	// YOUR CODE HERE
+	// YOUR CODE HERE/////////////////////////----------------------------------
+	
+	/*
 	// explict construct
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_invokespecial));
@@ -669,8 +671,27 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_1));
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_putfield));
 	// auto gen return
-	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+	*/
 
+    for (int i = 0; i < currentClass.body().nchildren; i++) {
+        if (currentClass.body().children[i] instanceof FieldDecl) { //chercks childrem for feild decl
+            if (!((FieldDecl) currentClass.body().children[i]).getModifiers().isStatic() && ((FieldDecl) currentClass.body().children[i]).var().init() != null) {
+                println(((FieldDecl) currentClass.body().children[i]).line + ": FieldDecl:\tGenerating init code for non-static field '" + ((FieldDecl) currentClass.body().children[i]).name() + "'.");
+                classFile.addComment(((FieldDecl) currentClass.body().children[i]), "Non‑static field '" + ((FieldDecl) currentClass.body().children[i]).name() + "' initializer");
+                classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0));
+                ((FieldDecl) currentClass.body().children[i]).var().init().visit(this);
+
+ classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_putfield,((FieldDecl) currentClass.body().children[i]).name(),((FieldDecl) currentClass.body().children[i]).name(),((FieldDecl) currentClass.body().children[i]).type().signature()));
+ 
+            }
+        }
+    }
+
+    if (cd.body() != null){ //check if body has stuff
+        cd.body().visit(this); //if so look at stuff
+}
+	//------------------------------------------------------
+	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 	// We are done generating code for this method, so transfer it to the classDecl.
 	cd.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
@@ -980,6 +1001,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	
 //class taken care of, check local and param
  	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
+	      println(ne.line + ": NameExpr:\tGenerating code for a local var/param (access) for '" + ne.name() + "'.");
 	      //check if local
 	      if (ne.myDecl instanceof LocalDecl) { //11
             // Handle loading local variable
@@ -987,6 +1009,10 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
            classFile.addInstruction(makeLoadStoreInstruction((((VarDecl)ne.myDecl).type()), address, true, false));
 		  }//11
 	}//if
+
+
+
+
 
 /*
  	if (ne.myDecl instanceof LocalDecl || ne.myDecl instanceof ParamDecl) {
@@ -1044,12 +1070,14 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     }
 
     // STATIC INITIALIZER //tall //nick -------------------------------------------------------D
+    
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-    classFile = gen.getClassFile();     
+    classFile = gen.getClassFile(); //used to prevent null crashes with jasmin     
 	classFile.startMethod(si);
 	classFile.addComment(si, "Static Initializer");
 	currentContext = si;
+	
 for (int i = 0; i < currentClass.body().nchildren; i++) {
     if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {
         if (((FieldDecl) currentClass.body().children[i]).getModifiers().isStatic() && ((FieldDecl) currentClass.body().children[i]).var().init() != null) {
@@ -1058,7 +1086,8 @@ for (int i = 0; i < currentClass.body().nchildren; i++) {
             classFile.addComment(currentClass.body().children[i], "Static field '" + ((FieldDecl) currentClass.body().children[i]).name() + "' initializer");
             ((FieldDecl) currentClass.body().children[i]).var().init().visit(this);
         }
-    }
+//if nonstatic this wont work, need to shove that in the method before here
+}
 }
 	si.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
