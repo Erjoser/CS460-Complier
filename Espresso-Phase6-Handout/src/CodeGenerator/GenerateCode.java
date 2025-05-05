@@ -556,30 +556,28 @@ class GenerateCode extends Visitor {
 	Type exprType = (Type)ce.expr().visit(this);
 	Type castType = ce.type();
 
-	
+	if(exprType != null){
 		// Numeric to numeric is always OK.
-	if (exprType.isNumericType() && castType.isNumericType()) {
-	    //ce.type = castType;
-	    //println(ce.line + ":\tCast Expression has type: " + ce.type);
-	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
-	    //return castType;
-	} 
-	
-	if (exprType.identical(castType)){
-		classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
-	}
-
+		if (exprType.isNumericType() && castType.isNumericType()) {
+			//ce.type = castType;
+			//println(ce.line + ":\tCast Expression has type: " + ce.type);
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
+			//return castType;
+		} 
+		
+		if (exprType.identical(castType)){
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
+		}
 		if (exprType.isClassType() && castType.isClassType())
-	    if (Type.isSuper((ClassType)exprType, (ClassType)castType) ||
-		Type.isSuper((ClassType)castType, (ClassType)exprType)) {
-		//ce.type = castType;
-		//println(ce.line + ":\tCast Expression has type: " + ce.type);
-		//return castType;
-	    classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
-	    }
-	
+		if (Type.isSuper((ClassType)exprType, (ClassType)castType) ||
+			Type.isSuper((ClassType)castType, (ClassType)exprType)) {
+			//ce.type = castType;
+			//println(ce.line + ":\tCast Expression has type: " + ce.type);
+			//return castType;
+			classFile.addInstruction(new ClassRefInstruction(RuntimeConstants.opc_checkcast, castType.typeName()));
+		}
+	}
 	// YOUR CODE HERE
-	// todo
 	classFile.addComment(ce, "End CastExpr");
 	return null;
     }
@@ -955,10 +953,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	    println(ld.line + ": LocalDecl:\tGenerating code for the initializer for variable '" + 
 		    ld.var().name().getname() + "'.");
 	    classFile.addComment(ld, "Local Variable Declaration");				
-		ld.var().init().visit(this); //visit the things
-		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), -1, false /*store*/, false /*array*/));		
+
 	    // YOUR CODE HERE 
-	    classFile.addComment(ld, "End LocalDecl");
+		ld.var().init().visit(this); //visit the things
+		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), 1, false /*store*/, false /*array*/));
+		classFile.addComment(ld, "End LocalDecl");
 	}
 	else
 	    println(ld.line + ": LocalDecl:\tVisiting local variable declaration for variable '" + ld.var().name().getname() + "'.");
