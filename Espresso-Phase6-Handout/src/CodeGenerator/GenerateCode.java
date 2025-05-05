@@ -1088,7 +1088,14 @@ for (int i = 0; i < currentClass.body().nchildren; i++) {
         }
 //if nonstatic this wont work, need to shove that in the method before here
 }
+
+
 }
+
+    if (si.initializer() != null){    //00001 Visiting local variable declaration for variable            
+        si.initializer().visit(this);
+}
+
 	si.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
 	currentContext = null;
