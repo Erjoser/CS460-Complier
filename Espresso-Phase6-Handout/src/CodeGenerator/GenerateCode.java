@@ -470,17 +470,19 @@ class GenerateCode extends Visitor {
 	println(be.line + ": BinaryExpr:\tGenerating code for " + be.op().operator() + " :  " + be.left().type.typeName() + " -> " + be.right().type.typeName() + " -> " + be.type.typeName() + ".");
 	classFile.addComment(be, "Binary Expression");
 
-		// YOUR CODE HERE
-		//taken from typechecker
+	// YOUR CODE HERE
+	//taken from typechecker
 	Type lType = (Type) be.left().visit(this);
 	Type rType = (Type) be.right().visit(this);
 	String op = be.op().operator();
 	NameExpr left = (NameExpr)be.left();
+	//sometimes errors here
 	NameExpr right = (NameExpr)be.right();
 
 	int address = ((VarDecl)left.myDecl).address();	    
 
 	gen.dataConvert(be.left().type, be.type);
+	//and here, might have something to do with opCodes below?
 	gen.dataConvert(be.right().type, be.type);
 
 
@@ -490,15 +492,27 @@ class GenerateCode extends Visitor {
 	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)right.myDecl).type(), address, true, false));
 	if(be.op().kind == BinOp.PLUS){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"add")));}
 	if(be.op().kind == BinOp.MINUS){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"sub")));}
-	if(be.op().kind == BinOp.MULT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mult")));}
+	if(be.op().kind == BinOp.MULT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mul")));}
 	if(be.op().kind == BinOp.DIV){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"div")));}
-	if(be.op().kind == BinOp.MOD){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"mod")));}
+	if(be.op().kind == BinOp.MOD){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rem")));}
 	if(be.op().kind == BinOp.AND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
 	if(be.op().kind == BinOp.OR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
 	if(be.op().kind == BinOp.XOR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"xor")));}
-	if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"lshift")));}
-	if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rshift")));}
-	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"rrshift")));}
+	if(be.op().kind == BinOp.LSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"shl")));}
+	if(be.op().kind == BinOp.RSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"shr")));}
+	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"ushr")));}
+	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
+	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
+
+	//need to figure out the opCodes for these
+	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
+	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instance")));}
+	
 
 	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
 
