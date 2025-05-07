@@ -590,7 +590,6 @@ class GenerateCode extends Visitor {
     public Object visitCInvocation(CInvocation ci) {
 	println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 	classFile.addComment(ci, "Explicit Constructor Invocation");
-
 /*
 	// YOUR CODE HERE
 	if(ci.superConstructorCall()){
@@ -607,7 +606,6 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send 
     }
 
 classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", ci.constructor.paramSignature()));
-
 
 	classFile.addComment(ci, "End CInvocation");
 	return null;
@@ -650,8 +648,8 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     // CONSTRUCTOR DECLARATION //tall //eric
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
-	classFile = gen.getClassFile();  //used to prevent null crashes with jasmin 
 	classFile.startMethod(cd);
+	//gen.setClassFile(classFile);
 	classFile.addComment(cd, "Constructor Declaration");
 	currentContext = cd;
 	cd.params().visit(this);
@@ -943,7 +941,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	    break;
 	case Literal.LongKind:
 	    gen.loadLong(li.getText());
-	    break;	    
+	    break;	   
 	}
 	classFile.addComment(li,  "End Literal");
 	return null;
@@ -1073,13 +1071,14 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     }
 
     // STATIC INITIALIZER //tall //nick -------------------------------------------------------D
-    
+     
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-    classFile = gen.getClassFile(); //used to prevent null crashes with jasmin     
-	classFile.startMethod(si);
-	classFile.addComment(si, "Static Initializer");
-	currentContext = si;
+
+    classFile = gen.getClassFile();     // ←–––– keep in step with Generator
+    classFile.startMethod(si);          // currentMethod is now set
+    classFile.addComment(si, "Static Initializer");
+    currentContext = si;
 	
 for (int i = 0; i < currentClass.body().nchildren; i++) {
     if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {

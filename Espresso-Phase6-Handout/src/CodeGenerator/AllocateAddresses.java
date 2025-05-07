@@ -158,10 +158,11 @@ println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to param
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tResetting address counter for static initializer for class '" + currentClass.name() + "'.");
 	// YOUR CODE HERE
-	int tempAddress = gen.getAddress();
+
+	//int tempAddress = gen.getAddress();
 	gen.setAddress(0); //cuz reset address is different
 	si.visitChildren(this);
-	gen.setAddress(tempAddress);
+	//gen.setAddress(tempAddress);
 	//gen.resetAddress();
 	println(si.line + ": End StaticInit");
 	return null;
