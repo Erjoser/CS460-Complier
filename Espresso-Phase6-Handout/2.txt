@@ -1,0 +1,21 @@
+---------------------------------------------------------
+Generating code for: A
+
+** Assigning Addresses:
+0: StaticInit:	Resetting address counter for static initializer for class 'A'.
+0: End StaticInit
+0: ConstructorDecl:	Resetting address counter for constructor 'A'.
+0: End ConstructorDecl
+
+** Generating Bytecode Instructions:
+1: ClassDecl:	Generating code for class 'A'.
+2: FieldDecl:	Generating code.
+2: FieldDecl:	Generating code.
+2: FieldDecl:	Generating code.
+0: StaticInit:	Generating code for a Static initializer.
+0: ConstructorDecl: Generating Code for constructor for class A
+0: CInvocation:	Generating code for Explicit Constructor Invocation.
+Not generating code for 'java/lang/Object'
+---------------------------------------------------------
+Writing Unoptimized jasmin file : 'A.rj'
+============= S = U = C = C = E = S = S =================
