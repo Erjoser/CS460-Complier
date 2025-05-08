@@ -503,15 +503,22 @@ class GenerateCode extends Visitor {
 	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"ushr")));}
 	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
 	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
+	//if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	//if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	//if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	//if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}
 
 	//need to figure out the opCodes for these
-	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
-	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
-	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instance")));}
+	//if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ){
+	//		classFile.addInstruction(new Instruction(gen.getOpCodeFromString("lcmp")));
+	//		if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
+	//		if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+	//}
+
+	
+
+	
 	
 
 	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
@@ -842,16 +849,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	
 	if (is.thenpart() != null){ 
 	    is.thenpart().visit(this);
-	    
 	}
-	    
-	    
-	    
+	     
 	if (is.elsepart() != null) {
 	    is.elsepart().visit(this);
-
-
-}
+	}
 /*
 
 	if (!eType.isBooleanType())
@@ -958,7 +960,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 
 	    // YOUR CODE HERE 
 		ld.var().init().visit(this); //visit the things
-		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), 1, false /*store*/, false /*array*/));
+		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), ld.address(), false /*store*/, false /*array*/));
 		classFile.addComment(ld, "End LocalDecl");
 	}
 	else
