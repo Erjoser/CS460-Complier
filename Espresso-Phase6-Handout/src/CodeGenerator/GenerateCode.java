@@ -503,22 +503,15 @@ class GenerateCode extends Visitor {
 	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"ushr")));}
 	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
 	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
-	//if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	//if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	//if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	//if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}
 
 	//need to figure out the opCodes for these
-	//if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ){
-	//		classFile.addInstruction(new Instruction(gen.getOpCodeFromString("lcmp")));
-	//		if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
-	//		if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
-	//}
-
-	
-
-	
+	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
+	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
+	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
+	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instance")));}
 	
 
 	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
@@ -551,9 +544,6 @@ class GenerateCode extends Visitor {
 	classFile.addComment(br, "Break Statement");
 
 	// YOUR CODE HERE
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 
 	classFile.addComment(br, "End BreakStat");
 	return null;
@@ -597,6 +587,7 @@ class GenerateCode extends Visitor {
     public Object visitCInvocation(CInvocation ci) {
 	println(ci.line + ": CInvocation:\tGenerating code for Explicit Constructor Invocation.");     
 	classFile.addComment(ci, "Explicit Constructor Invocation");
+
 /*
 	// YOUR CODE HERE
 	if(ci.superConstructorCall()){
@@ -608,11 +599,12 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send 
 		//super.visitCInvocation(ci); //visit self
 		//MethodInvocationInstruction                                 (int opCode            , String className   ,String methodName, String signature
 
-    for (int k = 0; k < ci.args().nchildren; k++) {
-        ((Expression) ci.args().children[k]).visit(this);
+    for (int i = 0; i < ci.args().nchildren; i++) {
+        ((Expression) ci.args().children[i]).visit(this);
     }
 
 classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", ci.constructor.paramSignature()));
+
 
 	classFile.addComment(ci, "End CInvocation");
 	return null;
@@ -623,22 +615,49 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 
 
 
-    // CLASS DECLARATION
-    public Object visitClassDecl(ClassDecl cd) {
+     public Object visitClassDecl(ClassDecl cd) {
 	println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
 
 	// We need to set this here so we can retrieve it when we generate
 	// field initializers for an existing constructor.
 	currentClass = cd;
 
-    classFile = new ClassFile(cd);
-    cd.classFile = classFile;
-    //variables first
+    boolean f1 = false; //check if sid
+    boolean f2 = false;
+    
+    	for (int i = 0; i < (cd.body()).nchildren; i++) {
+			
+		if(((ClassBodyDecl) cd.body().children[i]) instanceof StaticInitDecl){
+			f1 = true; //first we need to check if child is part of SID
+			//if so its not useful
+		}
+		
+		if(((ClassBodyDecl) cd.body().children[i]) instanceof FieldDecl){
+			//aight erhe is a chance
+			if(((FieldDecl)((ClassBodyDecl) cd.body().children[i])).getModifiers().isStatic() && (((FieldDecl)((ClassBodyDecl) cd.body().children[i])).var().init() == null) == false){
+				//now we check if modifiers are static, and there is somthing inside
+			f2 = true;
+			//in busness
+		}
+		}
+			
+	}
+  
+
+    //variables first,
 	for (int i = 0; i < (cd.body()).nchildren; i++) {
 		if(((ClassBodyDecl) cd.body().children[i]) instanceof FieldDecl){
 		((ClassBodyDecl) cd.body().children[i]).visit(this);
 	}
 	}
+	
+	//aight read both checks if not in SID and is partr feild decl + other thing
+	  if(f1 == false && f2 == true){
+	println(cd.line + ": Inserting empty StaticInit into parse tree."); //output to cli
+	//todo
+	  }
+	  
+	  
 //everything else after
 	for (int i = 0; i < (cd.body()).nchildren; i++) {
 	if((((ClassBodyDecl) cd.body().children[i]) instanceof FieldDecl) == false){ // == false is better than ! , fight me
@@ -647,16 +666,16 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	}
 
 
+  
 	// YOUR CODE HERE
 
 	return null;
     }
-
+    
     // CONSTRUCTOR DECLARATION //tall //eric
     public Object visitConstructorDecl(ConstructorDecl cd) {
 	println(cd.line + ": ConstructorDecl: Generating Code for constructor for class " + cd.name().getname());
 	classFile.startMethod(cd);
-	//gen.setClassFile(classFile);
 	classFile.addComment(cd, "Constructor Declaration");
 	currentContext = cd;
 	cd.params().visit(this);
@@ -693,6 +712,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
             }
         }
     }
+    
+    
+    
+    
+    
 
     if (cd.body() != null){ //check if body has stuff
         cd.body().visit(this); //if so look at stuff
@@ -700,9 +724,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	//------------------------------------------------------
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 	// We are done generating code for this method, so transfer it to the classDecl.
-	cd.setCode(classFile.getCurrentMethodCode());
+	cd.setCode(classFile.getCurrentMethodCode()); // THIS MIGHT BE IMPORTANT TO UNDERSTAND -_-
 	classFile.endMethod();
 	
+	
+//println(cd.line + ": ConstructorDecl: Done " + cd.name().getname());
 	currentContext = null;
 	return null;
     }
@@ -714,9 +740,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	classFile.addComment(cs, "Continue Statement");
 
 	// YOUR CODE HERE
+	/*
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+*/
 
 	classFile.addComment(cs, "End ContinueStat");
 	return null;
@@ -728,10 +756,11 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	classFile.addComment(ds, "Do Statement");
 
 	// YOUR CODE HERE
+	/*
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-
+*/
 	classFile.addComment(ds, "End DoStat");
 	return null; 
     }
@@ -823,13 +852,14 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	println(fs.line + ": ForStat:\tGenerating code.");
 	classFile.addComment(fs, "For Statement");
 
+/*
 	// your code here  //eric here and up
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
 
 	classFile.addInstruction(new JumpInstruction(RuntimeConstants.opc_ifeq, topLabel));
-
+*/
 
 	classFile.addComment(fs, "End ForStat");
 	
@@ -841,38 +871,47 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     public Object visitIfStat(IfStat is) {
 	println(is.line + ": IfStat:\tGenerating code.");
 	classFile.addComment(is, "If Statement");
+	
+/*	
 	String varsTopLabel = "", varsBottomLabel = "";
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	Type eType = (Type) is.expr().visit(this);
+*/
+	
+Type eType = (Type) is.expr().visit(this);
 	
 	if (is.thenpart() != null){ 
 	    is.thenpart().visit(this);
 	}
-	     
 	if (is.elsepart() != null) {
 	    is.elsepart().visit(this);
-	}
+}
+
 /*
+//taken from book
+// Save current Lt and Lf
+String oldLt = Lt;
+String oldLf = Lf;
+Lt = newLabel();
+Lf = newLabel();
+String Ldone = newLabel();
+ifstat.getExpression().visit(this);
+gen.add(new LabelInstruction(RTC.opc_label, Lt));
+ifstat.getThenStat().visit(this);
+if (ifstat.getElseStat() != null){
+	gen.add(new JumpInstructions(RTC.opc_goto, Ldone));
+}
+	gen.add(new LabelInstruction(RTC.opc_label, Lf));
 
-	if (!eType.isBooleanType())
-	    Error.error(is, "Non boolean Expression found as test in if-statement.");
-	if (is.thenpart() != null) 
-	    is.thenpart().visit(this);
-	if (is.elsepart() != null) 
-	    is.elsepart().visit(this);
- 	    classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, varsBottomLabel));
- 	    	String varsTopLabel = "", varsBottomLabel = "";
-	if (Settings.generateVars && bl.mySymbolTable.entries.size() > 0)
-	    createDotVars(bl.mySymbolTable, varsTopLabel = "Lv"+gen.getLabel(), varsBottomLabel = "Lv"+gen.getLabel());
-		
- 	    JumpInstruction(int opCode, String label) {
- 	    
+if (ifstat.getElseStat() != null){
+	ifstat.getElseStat().visit(this);
+	gen.add(new LabelInstruction(RTC.opc_label, Ldone));
+}
+
+Lt = oldLt;
+Lf = oldLf;
 */
-
-
-
 	// YOUR CODE HERE //nick here and down ---------------------------------------------------------------------------------------------------------------------
 	classFile.addComment(is,  "End IfStat");
 	return null;
@@ -883,31 +922,17 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     public Object visitInvocation(Invocation in) {
 	println(in.line + ": Invocation:\tGenerating code for invoking method '" + in.methodName().getname() + "' in class '" + in.targetType.typeName() + "'.");
 	classFile.addComment(in, "Invocation");
-	
-	String topLabel = "L"+gen.getLabel();
-	String endLabel = "L"+gen.getLabel();
-	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	
 	// YOUR CODE HERE
-	Type targetType = null;
-	ClassDecl cd = null;
-	String methodName = in.methodName().getname();
-	
+
 	if (in.targetType.isStringType()) {
 		in.params().visit(this); // still need to visit the params if they exist.
 	}
-	boolean calleeMustBeStatic = false;
-	if (in.target() != null)
+	if (in.target() != null){
 		in.target().visit(this);
-	if (in.target() != null && in.target().isClassName()){
-		// This invocation is of the form Class.method(...)
-		calleeMustBeStatic = true;	  
 	}
-
-
+//	if (in.target() != null && in.target().isClassName()){
+//	}
 	classFile.addComment(in, "End Invocation");
-
-
 	return null;
     }
 
@@ -943,7 +968,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	    break;
 	case Literal.LongKind:
 	    gen.loadLong(li.getText());
-	    break;	   
+	    break;	    
 	}
 	classFile.addComment(li,  "End Literal");
 	return null;
@@ -960,7 +985,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 
 	    // YOUR CODE HERE 
 		ld.var().init().visit(this); //visit the things
-		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), ld.address(), false /*store*/, false /*array*/));
+		classFile.addInstruction(makeLoadStoreInstruction(ld.type(), 1, false /*store*/, false /*array*/));
 		classFile.addComment(ld, "End LocalDecl");
 	}
 	else
@@ -974,11 +999,19 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 	println(md.line + ": MethodDecl:\tGenerating code for method '" + md.name().getname() + "'.");	
 	classFile.startMethod(md); //sets class for new thehod to be addedd
 	currentContext = md;
-		
 	classFile.addComment(md, "Method Declaration (" + md.name() + ")");
+	
+	
 	md.params().visit(this); //check all perams
 	if (md.block() !=null)  //checks if empty
 	    md.block().visit(this); //sees whats inside
+	    
+	    
+	if (md.returnType().isVoidType()){ //check return type if void add to classfile
+    classFile.addInstruction(new Instruction(RuntimeConstants.opc_return)); 
+}  
+
+	md.setCode(classFile.getCurrentMethodCode()); //needed for 300 & 301
 	classFile.endMethod(); //method done, close up shop
 	currentContext = null;  //nuke context
 	return null; //return = 1; :3
@@ -1073,14 +1106,15 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     }
 
     // STATIC INITIALIZER //tall //nick -------------------------------------------------------D
-     
+    
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-
-    //classFile = gen.getClassFile(); 
-    classFile.startMethod(si);  
-    classFile.addComment(si, "Static Initializer");
-    currentContext = si;
+    classFile = gen.getClassFile(); //used to prevent null crashes with jasmin     
+	classFile.startMethod(si);
+	classFile.addComment(si, "Static Initializer");
+	currentContext = si;
+	
+	
 	
 for (int i = 0; i < currentClass.body().nchildren; i++) {
     if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {
