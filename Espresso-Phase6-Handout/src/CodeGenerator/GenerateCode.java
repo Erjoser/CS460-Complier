@@ -1075,8 +1075,8 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
 
-    classFile = gen.getClassFile();     // ←–––– keep in step with Generator
-    classFile.startMethod(si);          // currentMethod is now set
+    //classFile = gen.getClassFile(); 
+    classFile.startMethod(si);  
     classFile.addComment(si, "Static Initializer");
     currentContext = si;
 	

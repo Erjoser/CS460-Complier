@@ -102,24 +102,16 @@ println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to param
     // METHOD DECLARATION
     public Object visitMethodDecl(MethodDecl md) {
 	println(md.line + ": MethodDecl:\tResetting address counter for method '" + md.name().getname() + "'.");
-	// YOUR CODE HERE
-	// set this to 0 if static, 1 if not (0 is this)	
-	//if(md.getModifiers().isStatic()){
-		//md.address = gen.setAddress(0);
-	//	gen.setAddress(0);
-	//}
-	//else{
-		//md.address = gen.setAddress(1);
-	//	gen.setAddress(1);
-	//}
 	int tempAddress = gen.getAddress();
 	gen.resetAddress();
 	if(md.getModifiers().isStatic()){
 	gen.setAddress(0);
 	}
+	else{
+	gen.setAddress(1);	
+	}
+	
 	md.visitChildren(this);
-
-
 
 	md.localsUsed = gen.getLocalsUsed();
 	println("Locals Used: " + gen.getLocalsUsed());	
