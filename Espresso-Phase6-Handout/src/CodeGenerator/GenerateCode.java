@@ -606,7 +606,7 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send 
         ((Expression) ci.args().children[i]).visit(this);
     }
 
-classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", "()V"));
+classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init> ", "()V"));
 
 
 	classFile.addComment(ci, "End CInvocation");

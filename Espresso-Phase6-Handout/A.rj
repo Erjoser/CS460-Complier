@@ -1,20 +1,19 @@
 .class public A
 .super java/lang/Object
 
-.field public static i I
-
-.field public j I
-
 .method static <clinit>()V
 	.limit stack 100
 	.limit locals 0
 ;  (0) Static Initializer
 ;  (0) Field Init Generation Start
-;  (2) Literal
-	iconst_0
-;  (2) End Literal
-	putstatic A/i I
 ;  (0) Field Init Generation End
+	return
+.end method
+
+.method public foo()V
+	.limit stack 100
+	.limit locals 1
+;  (5) Method Declaration (foo)
 	return
 .end method
 
