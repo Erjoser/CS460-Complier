@@ -10,10 +10,10 @@
 	.limit locals 0
 ;  (0) Static Initializer
 ;  (0) Field Init Generation Start
-;  (2) Static field 'i' initializer
 ;  (2) Literal
 	iconst_0
 ;  (2) End Literal
+	putstatic A/i I
 ;  (0) Field Init Generation End
 	return
 .end method

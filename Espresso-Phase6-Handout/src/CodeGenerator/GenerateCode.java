@@ -1119,10 +1119,11 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 for (int i = 0; i < currentClass.body().nchildren; i++) {
     if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {
         if (((FieldDecl) currentClass.body().children[i]).getModifiers().isStatic() && ((FieldDecl) currentClass.body().children[i]).var().init() != null) {
-            println(((FieldDecl)  currentClass.body().children[i]).line + ": FieldDecl:\tGenerating init code for static field '" +
-            ((FieldDecl)  currentClass.body().children[i]).name() + "'.");
-            classFile.addComment(currentClass.body().children[i], "Static field '" + ((FieldDecl) currentClass.body().children[i]).name() + "' initializer");
+            println(((FieldDecl)  currentClass.body().children[i]).line + ": FieldDecl:\tGenerating init code for static field '" +((FieldDecl)  currentClass.body().children[i]).name() + "'.");
             ((FieldDecl) currentClass.body().children[i]).var().init().visit(this);
+         classFile.addInstruction(new FieldRefInstruction(RuntimeConstants.opc_putstatic, currentClass.name(),((FieldDecl) currentClass.body().children[i]).name(),((FieldDecl) currentClass.body().children[i]).type().signature()));
+ 
+            
         }
 //if nonstatic this wont work, need to shove that in the method before here
 }
