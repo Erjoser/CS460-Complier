@@ -154,8 +154,9 @@ println(pd.line + ": ParamDecl:\tAssigning address:  " + pd.address + " to param
 	//int tempAddress = gen.getAddress();
 	gen.setAddress(0); //cuz reset address is different
 	si.visitChildren(this);
+	si.localsUsed = gen.getLocalsUsed();
 	//gen.setAddress(tempAddress);
-	//gen.resetAddress();
+	gen.resetAddress();
 	println(si.line + ": End StaticInit");
 	return null;
     }

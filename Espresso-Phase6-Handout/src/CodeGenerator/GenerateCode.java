@@ -603,7 +603,7 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_aload_0)); //send 
         ((Expression) ci.args().children[i]).visit(this);
     }
 
-classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", ci.constructor.paramSignature()));
+classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_invokespecial,ci.targetClass.name(), "<init>", "()V"));
 
 
 	classFile.addComment(ci, "End CInvocation");
@@ -715,12 +715,14 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
     
     
     
-    
+ classFile.addComment(cd, "Field Init Generation Start");   
     
 
     if (cd.body() != null){ //check if body has stuff
         cd.body().visit(this); //if so look at stuff
 }
+
+ classFile.addComment(cd, "Field Init Generation End");
 	//------------------------------------------------------
 	classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
 	// We are done generating code for this method, so transfer it to the classDecl.
@@ -1109,13 +1111,11 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
     
     public Object visitStaticInitDecl(StaticInitDecl si) {
 	println(si.line + ": StaticInit:\tGenerating code for a Static initializer.");	
-    classFile = gen.getClassFile(); //used to prevent null crashes with jasmin     
 	classFile.startMethod(si);
 	classFile.addComment(si, "Static Initializer");
 	currentContext = si;
-	
-	
-	
+    classFile.addComment(si, "Field Init Generation Start");
+    	
 for (int i = 0; i < currentClass.body().nchildren; i++) {
     if ((ClassBodyDecl)currentClass.body().children[i] instanceof FieldDecl) {
         if (((FieldDecl) currentClass.body().children[i]).getModifiers().isStatic() && ((FieldDecl) currentClass.body().children[i]).var().init() != null) {
@@ -1129,11 +1129,12 @@ for (int i = 0; i < currentClass.body().nchildren; i++) {
 
 
 }
-
+    classFile.addComment(si, "Field Init Generation End");
     if (si.initializer() != null){    //00001 Visiting local variable declaration for variable            
         si.initializer().visit(this);
 }
-
+    classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
+    gen.setAddress(si.localsUsed);
 	si.setCode(classFile.getCurrentMethodCode());
 	classFile.endMethod();
 	currentContext = null;
@@ -1157,9 +1158,11 @@ for (int i = 0; i < currentClass.body().nchildren; i++) {
     // SWITCH STATEMENT-----------------------------------------------------------------------+
     public Object visitSwitchStat(SwitchStat ss) {
 	println(ss.line + ": Switch Statement:\tGenerating code for Switch Statement.");
+	/*
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
 	classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
+	*/
 	
 	// YOUR CODE HERE
 	//Expresso+
