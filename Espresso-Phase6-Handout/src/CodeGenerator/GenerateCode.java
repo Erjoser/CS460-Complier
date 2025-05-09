@@ -503,15 +503,18 @@ class GenerateCode extends Visitor {
 	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"ushr")));}
 	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
 	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
-
-	//need to figure out the opCodes for these
 	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
 	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
 	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
 	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
-	if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmp")));}
-	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instance")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}
+
+	//need to figure out the opCodes for these
+	if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ){
+			classFile.addInstruction(new Instruction(gen.getOpCodeFromString("lcmp")));
+			if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
+			if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+	}
 	
 
 	//classFile.addInstruction(new Instruction(Generator.getBinaryAssignmentOpInstruction(be.op(), be.type)));
@@ -1097,12 +1100,11 @@ classFile.addInstruction(new Instruction(RuntimeConstants.opc_dup));
 	//String topLabel = "L"+gen.getLabel();
 	//String endLabel = "L"+gen.getLabel();
 	//classFile.addInstruction(new LabelInstruction(RuntimeConstants.opc_label, topLabel));
-	Type returnValueType = (Type) rs.expr().visit(this);	    
-    classFile.addInstruction(new Instruction(RuntimeConstants.opc_return));
-	
 	
 	// YOUR CODE HERE
-
+	Type returnValueType = (Type) rs.expr().visit(this);	    
+	classFile.addInstruction(new Instruction(gen.getOpCodeFromString(returnValueType.getTypePrefix()+"return")));
+	
 	classFile.addComment(rs, "End ReturnStat");
 	return null;
     }
