@@ -476,13 +476,12 @@ class GenerateCode extends Visitor {
 	//Type rType = (Type) be.right().visit(this);
 	//String op = be.op().operator();
 	//NameExpr left = (NameExpr)be.left();
-	//sometimes errors here
 	//NameExpr right = (NameExpr)be.right();
 
 	//int address = ((VarDecl)left.myDecl).address();
 	
 	PrimitiveType newType = (PrimitiveType) be.left().visit(this);
-	//and here, might have something to do with opCodes below?
+	//sometimes errors here
 	gen.dataConvert(be.left().type, newType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type));
 	gen.dataConvert(be.right().type, newType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type));
 
@@ -507,7 +506,7 @@ class GenerateCode extends Visitor {
 	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
 	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}	
 
-	//need to figure out the opCodes for these
+	//checks if compare
 	if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ || be.op().kind == BinOp.LT || be.op().kind == BinOp.LTEQ ||
 		be.op().kind == BinOp.GT || be.op().kind == BinOp.GTEQ){
 			//if(jumpOnTrue){
@@ -516,6 +515,7 @@ class GenerateCode extends Visitor {
 			//else{
 			//	opS = be.op().neg + " " + gen.getLabel();
 			//}
+			//simliar to book 
 			if(be.left().type.isIntegerType()){
 				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpeq")));}
 				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpne")));}
@@ -662,6 +662,7 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
      public Object visitClassDecl(ClassDecl cd) {
 	println(cd.line + ": ClassDecl:\tGenerating code for class '" + cd.name() + "'.");
 
+	// YOUR CODE HERE
 	// We need to set this here so we can retrieve it when we generate
 	// field initializers for an existing constructor.
 	currentClass = cd;
@@ -708,10 +709,6 @@ classFile.addInstruction(new MethodInvocationInstruction(RuntimeConstants.opc_in
 		((ClassBodyDecl) cd.body().children[i]).visit(this);
 	}	
 	}
-
-
-  
-	// YOUR CODE HERE
 
 	return null;
     }
@@ -1430,6 +1427,8 @@ if(up.op().getKind() == PreOp.PLUSPLUS){
     // WHILE STATEMENT --------------------------------------------------------------------------------------------------D
     public Object visitWhileStat(WhileStat ws) {
 	println(ws.line + ": While Stat:\tGenerating Code.");
+
+	// YOUR CODE HERE
 	
 	String topLabel = "L"+gen.getLabel();
 	String endLabel = "L"+gen.getLabel();
@@ -1447,7 +1446,6 @@ if(up.op().getKind() == PreOp.PLUSPLUS){
 
 	classFile.addComment(ws, "While Statement");
 
-	// YOUR CODE HERE
 
 	classFile.addComment(ws, "End WhileStat");	
 	return null;
