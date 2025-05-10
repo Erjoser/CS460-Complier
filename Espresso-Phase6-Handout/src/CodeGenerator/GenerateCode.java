@@ -472,20 +472,22 @@ class GenerateCode extends Visitor {
 
 	// YOUR CODE HERE
 	//taken from typechecker
-	Type lType = (Type) be.left().visit(this);
-	Type rType = (Type) be.right().visit(this);
-	String op = be.op().operator();
-	NameExpr left = (NameExpr)be.left();
+	//Type lType = (Type) be.left().visit(this);
+	//Type rType = (Type) be.right().visit(this);
+	//String op = be.op().operator();
+	//NameExpr left = (NameExpr)be.left();
 	//sometimes errors here
-	NameExpr right = (NameExpr)be.right();
+	//NameExpr right = (NameExpr)be.right();
 
-	int address = ((VarDecl)left.myDecl).address();	    
-
-	gen.dataConvert(be.left().type, be.type);
+	//int address = ((VarDecl)left.myDecl).address();
+	
+	PrimitiveType newType = (PrimitiveType) be.left().visit(this);
 	//and here, might have something to do with opCodes below?
-	gen.dataConvert(be.right().type, be.type);
+	gen.dataConvert(be.left().type, newType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type));
+	gen.dataConvert(be.right().type, newType.ceilingType((PrimitiveType) be.left().type, (PrimitiveType) be.right().type));
 
-
+	String opS;
+	boolean jumpOnTrue = true;
 	//classFile.addInstruction(makeLoadStoreInstruction(((VarDecl)left.myDecl).type(), address, true, false));
 
 	//address = ((VarDecl)right.myDecl).address();	    
@@ -503,17 +505,56 @@ class GenerateCode extends Visitor {
 	if(be.op().kind == BinOp.RRSHIFT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"ushr")));}
 	if(be.op().kind == BinOp.ANDAND){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"and")));}
 	if(be.op().kind == BinOp.OROR){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"or")));}
-	if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpl")));}
-	if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString(be.type.getTypePrefix()+"cmpg")));}
-	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}
+	if(be.op().kind == BinOp.INSTANCEOF){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("instanceof")));}	
 
 	//need to figure out the opCodes for these
-	if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ){
-			classFile.addInstruction(new Instruction(gen.getOpCodeFromString("lcmp")));
-			if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
-			if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+	if(be.op().kind == BinOp.EQEQ || be.op().kind == BinOp.NOTEQ || be.op().kind == BinOp.LT || be.op().kind == BinOp.LTEQ ||
+		be.op().kind == BinOp.GT || be.op().kind == BinOp.GTEQ){
+			//if(jumpOnTrue){
+			//	opS = be.op() + " " + gen.getLabel();
+			//}
+			//else{
+			//	opS = be.op().neg + " " + gen.getLabel();
+			//}
+			if(be.left().type.isIntegerType()){
+				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpeq")));}
+				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpne")));}
+				if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmplt")));}
+				if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpgt")));}
+				if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmple")));}
+				if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_icmpge")));}
+			}
+			else if(be.left().type.isLongType()){
+				classFile.addInstruction(new Instruction(gen.getOpCodeFromString("lcmp")));
+				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
+				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+				if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("iflt")));}
+				if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifgt")));}
+				if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifle")));}
+				if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifge")));}
+			}
+			else if(be.left().type.isFloatType()){
+				classFile.addInstruction(new Instruction(gen.getOpCodeFromString("fcmpg")));
+				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
+				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+				if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("iflt")));}
+				if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifgt")));}
+				if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifle")));}
+				if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifge")));}
+			}
+			else if(be.left().type.isDoubleType()){
+				classFile.addInstruction(new Instruction(gen.getOpCodeFromString("dcmpg")));
+				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifeq")));}
+				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifne")));}
+				if(be.op().kind == BinOp.LT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("iflt")));}
+				if(be.op().kind == BinOp.GT){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifgt")));}
+				if(be.op().kind == BinOp.LTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifle")));}
+				if(be.op().kind == BinOp.GTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("ifge")));}
+			}
+			else{
+				if(be.op().kind == BinOp.EQEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_acmpeq")));}
+				if(be.op().kind == BinOp.NOTEQ){classFile.addInstruction(new Instruction(gen.getOpCodeFromString("if_acmpne")));}
+			}
 	}
 	
 
